@@ -88,16 +88,16 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><a href="lectures/11-ensemble/slides_clean.pdf">slides</a></td>
 </tr>
 
-<tr class="no-class">
+<tr>
 <td>Nov 13</td>
-<td><em>No class</em></td>
+<td><em>TBD</em></td>
 <td>—</td>
 <td>—</td>
 </tr>
 
-<tr class="no-class">
+<tr>
 <td>Nov 20</td>
-<td><em>No class</em></td>
+<td><em>TBD</em></td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -109,7 +109,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>—</td>
 </tr>
 
-<tr class="no-class">
+<tr>
 <td>Dec 4</td>
 <td><em>In-class final project presentations</em></td>
 <td>—</td>
