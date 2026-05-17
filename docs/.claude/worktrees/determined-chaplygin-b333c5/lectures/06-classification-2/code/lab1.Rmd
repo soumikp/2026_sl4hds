@@ -1,0 +1,234 @@
+---
+title: "Class 6/Lab1: Classification with Support Vector Machines (SVMs)"
+date: "Week 6 (10.03)"
+output:
+  html_document:
+    toc: FALSE
+    toc_float: true
+    theme: united
+---
+
+```{=html}
+<style type="text/css">
+    .main-container {
+      max-width: 1600px !important; /* Adjust this value as needed for the main content */
+    }
+
+    /* Optional: Adjust the width of the floating TOC */
+    .tocify {
+      width: 200px; /* Adjust this value to control TOC width */
+    }
+
+    /* Optional: Ensure content doesn't overlap with TOC on scroll */
+    @media (min-width: 768px) { /* Apply for larger screens where TOC floats */
+      body.toc-left .main-container {
+        margin-left: 210px; /* Adjust this to be slightly more than TOC width */
+      }
+    }
+
+</style>
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Introduction {.tabset}
+
+In this lab, we will:
+
+1.  Load and explore the `iris` dataset.
+2.  Visualize the data to understand the relationships between variables.
+3.  Split the data into training and testing sets.
+4.  Train three different types of SVM models: **linear**, **polynomial**, and **radial basis function (RBF)**.
+5.  Evaluate and compare the performance of these models on the test data.
+
+---
+
+
+```{r load-packages}
+# Clear environment and unload packages
+rm(list = ls())
+# The following line might show a note if no packages were loaded, which is normal.
+pacman::p_unload(pacman::p_loaded())
+
+# Load necessary packages
+pacman::p_load(tidyverse, e1071, caret, ggsci, patchwork)
+```
+
+---
+
+### Examine the Data
+
+The `iris` dataset is a classic dataset in machine learning and is built into R. It contains measurements for 150 iris flowers from three different species: **setosa**, **versicolor**, and **virginica**.
+
+Let's load the data and inspect it using `head()`, `summary()`, and `str()`.
+
+* `head()`: Shows the first few rows of the data.
+* `summary()`: Provides descriptive statistics for each variable, such as mean, median, and quartiles.
+* `str()`: Displays the structure of the data, including the data type of each variable and the number of observations.
+
+```{r examine-data}
+# Load the iris dataset
+data(iris)
+
+# Display the first 6 rows
+head(iris)
+
+# Get a statistical summary
+summary(iris)
+
+# Examine the structure of the dataframe
+str(iris)
+```
+
+**Interpretation of the Data:**
+From the output, we can see the dataset has 150 observations and 5 variables. The variables are `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`, which are all numeric (`num`), and `Species`, which is a categorical variable (`Factor`) with 3 levels. There are 50 samples for each of the three species.
+
+---
+
+### Visualization
+
+Visualizing the data is a crucial step to understand the separability of the classes. We create two scatter plots: one for sepal dimensions and one for petal dimensions. We color the points by `Species` to see how distinct the groups are.
+
+```{r visualize-data, fig.width=10, fig.height=5}
+(iris |>
+  ggplot(aes(x = Sepal.Width, y = Sepal.Length, color = Species, shape = Species)) + 
+  geom_point(size = 2) +
+  theme_bw() +
+  scale_color_aaas() +
+  theme(legend.position = "bottom") +
+  labs(x = "Width (sepal)", y = "Length (sepal)")) +
+(iris |>
+   ggplot(aes(x = Petal.Width, y = Petal.Length, color = Species, shape = Species)) +
+   geom_point(size = 2) +
+   theme_bw() +
+   scale_color_aaas() +
+   theme(legend.position = "bottom") +
+   labs(x = "Width (petal)", y = "Length (petal)")) +
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    title = 'Sepal and petal measures for IRIS dataset',
+    subtitle = 'Clear linear separation for petals but not for sepal'
+  )  &
+  theme(legend.position = "bottom")
+```
+
+**Plot Interpretation:**
+As noted in the plot's subtitle, the species are much more clearly separated when we plot them by their **petal dimensions**. The sepal dimensions show significant overlap, especially between the versicolor and virginica species. For this lab, we will intentionally use the more challenging sepal features to see how well SVM can perform.
+
+---
+
+### Training and Testing Splits
+
+To evaluate our model's performance on unseen data, we must split our dataset into a **training set** (used to build the model) and a **testing set** (used to evaluate it). We'll use an 80/20 split, meaning 80% of the data will be used for training and 20% for testing.
+
+We use the `createDataPartition` function from the `caret` package to create a stratified split, which ensures that the proportion of each species is the same in both the training and testing sets.
+
+**Note:** For this analysis, we are only using `Sepal.Length` and `Sepal.Width` as our predictors (`train_x`, `test_x`).
+
+```{r data-split}
+# Set a seed for reproducibility
+set.seed(42)
+
+# Create indices for the 80% training data
+train_indices <- createDataPartition(iris$Species, p = 0.8, list = FALSE)
+
+# Create the training feature set (X) and target (y)
+train_x <- as.matrix(iris |> dplyr::select(-Species))[train_indices, c("Sepal.Length", "Sepal.Width")]
+train_y <- as.matrix(iris |> dplyr::select(Species))[train_indices, ]
+
+# Create the testing feature set (X) and target (y)
+test_x <- as.matrix(iris |> dplyr::select(-Species))[-train_indices, c("Sepal.Length", "Sepal.Width")]
+test_y <- (iris |> dplyr::select(Species))[-train_indices, ]
+```
+
+---
+
+### Fitting SVMs
+
+Now we'll train three SVM models with different kernels. We use the `train` function from `caret`, which helps automate hyperparameter tuning using cross-validation. We'll use 10-fold repeated cross-validation  to get a robust estimate of model performance. We also pre-process the data by centering and scaling it, which is standard practice for SVMs.
+
+```{r svm-training}
+# Define the training control method
+train_control <- trainControl(method="repeatedcv", number=10)
+
+## Train a Linear SVM
+# We tune the cost parameter 'C'
+svm_linear <- train(x = train_x, y = train_y,
+                    method = "svmLinear",
+                    trControl = train_control,
+                    preProcess = c("center","scale"),
+                    tuneGrid = expand.grid(C = c(1/16, 1/8, 1/4, 1/2, 1, 2, 4))) 
+
+## Train a Polynomial SVM
+# We tune 'degree', 'scale', and 'C'
+svm_poly <- train(x = train_x, y = train_y,
+                  method = "svmPoly",
+                  trControl = train_control,
+                  preProcess = c("center","scale"),
+                  tuneGrid = expand.grid(degree = c(1:4),
+                                         scale = c(0.001, 0.010, 0.1, 1),
+                                         C = c(1/16, 1/8, 1/4, 1/2, 1, 2, 4))) 
+
+## Train a Radial Basis Function (RBF) SVM
+# We tune 'sigma' and 'C'
+svm_radial <- train(x = train_x, y = train_y,
+                    method = "svmRadial",
+                    trControl = train_control,
+                    preProcess = c("center","scale"),
+                    tuneGrid = expand.grid(sigma = c(0.001, 0.010, 0.1, 1),
+                                           C = c(1/16, 1/8, 1/4, 1/2, 1, 2, 4))) 
+```
+
+---
+
+### Model Performance
+
+After training, we evaluate each model on the held-out test set (`test_x` and `test_y`). A **confusion matrix** is an excellent tool for this, as it shows us exactly where the model made correct and incorrect predictions for each class.
+
+#### SVM with Linear Kernel
+
+```{r eval-linear}
+# Note: The output below is from the provided temp.txt file.
+confusionMatrix(data = predict(svm_linear, newdata = test_x), reference = test_y)
+```
+
+
+**Interpretation:**
+The linear SVM achieved an overall **accuracy of 70%**.
+
+1. It was perfect at identifying `setosa`.
+2. However, it struggled with `virginica`, only correctly identifying 4 out of 10 (`Sensitivity` = 0.40). It misclassified 6 `virginica` flowers as `versicolor`.
+
+#### SVM with Radial (RBF) Kernel
+
+```{r eval-radial}
+# Note: The output below is from the provided temp.txt file.
+confusionMatrix(data = predict(svm_radial, newdata = test_x), reference = test_y)
+```
+
+**Interpretation:**
+The radial SVM performed slightly better, with an **accuracy of 73.3%** and a **Kappa of 0.6**.
+
+1. Like the linear model, it perfectly identified `setosa`.
+2. It showed improved performance for `virginica`, correctly classifying 6 out of 10 (`Sensitivity` = 0.60). This is a noticeable improvement over the linear kernel.
+
+#### SVM with Polynomial Kernel
+
+```{r eval-poly}
+# Note: The output below is from the provided temp.txt file.
+confusionMatrix(data = predict(svm_poly, newdata = test_x), reference = test_y)
+```
+
+**Interpretation:**
+The polynomial SVM was the worst-performing model, with an **accuracy of 66.7%**.
+
+1. It also perfectly identified `setosa`.
+2. However, its performance on `virginica` was very poor, with a `Sensitivity` of only 0.30. It misclassified 7 `virginica` flowers as `versicolor`.
+
+---
+
+### Conclusion 
+
+The **SVM with the Radial Basis Function (RBF) kernel was the top-performing model**. This suggests that the decision boundary between the species based on sepal data is non-linear, and the RBF kernel was most effective at capturing this complex relationship. This exercise demonstrates the importance of testing different kernels and tuning hyperparameters to find the best model for a given dataset.

@@ -1,0 +1,209 @@
+---
+title: 'BIOST 2155: Assignment 2'
+author: 'YOUR NAME HERE (YOUR PITT EMAIL HERE)'
+date: "**Released**: 2025-10-24. **Due by**: 2025-11-09, 11:59 PM"
+output: pdf_document
+header-includes: |
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \fancyhead[L]{BIOST 2155, Fall 2025}
+  \fancyhead[R]{Assignment 2}
+  \fancyfoot[C]{Page \thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancypagestyle{plain}{%
+    \fancyhead[L]{BIOST 2155, Fall 2025}%
+    \fancyhead[R]{Assignment 2}%
+    \fancyfoot[C]{Page \thepage}%
+    \renewcommand{\headrulewidth}{0.4pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+  }
+
+urlcolor: blue  
+---
+
+
+\hrule
+
+## Instructions
+
+
+* This file serves as a template for your assignment. \textcolor{red}{Remember to set eval = TRUE below when compiling the report.}
+```{r setup}
+pacman::p_load(formatR)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, 
+                      fig.height = 4, fig.width = 7, fig.align = "center", 
+                      message=FALSE, tidy.opts = list(width.cutoff = 70), tidy = TRUE, 
+                      class.output  = "shadebox",
+                      class.message = "shadebox",
+                      class.warning = "shadebox",
+                      class.error   = "shadebox")
+```
+* Use comments to annotate and explain your code whenever possible. 
+* This assignment uses one data set: `Maternal Health Risk` and is saved as `assign2_classData.csv`
+\newline
+\hrule
+
+\definecolor{shadecolor}{RGB}{185, 210, 250}
+
+## Theory (20 + 10 = 30 points)
+
+### Part A (7 + 7 + 2 + 2 + 2 = 20 points)
+
+ISLR 12.6.2, page 546. Please attempt all five parts. Seven (7) points each for parts (a) and (b) and two (2) points each for parts (c), (d), and (e). Show your working - you may upload handwritten answers for this, I don't expect you to type out dendrograms. 
+
+### Part B (7 + 3 = 10 points)
+
+This problem involves the K-means clustering algorithm. Please attempt both parts. Seven (7) points for part (a) and three (3) points for part (b). Show your working - you may upload handwritten answers for this as well.  Let $C_1,…,C_K$ be a clustering of n data points. The objective function of K-means is given by $$\min_{C_1, \ldots, C_K} \left\{ \sum_{k=1}^K n(C_k)^{-1} \sum_{j, j' \in C_k} \sum_{i = 1}^p   \left( {x}_{ji} - {x}_{j'i}\right)^2\right\},$$ where $n(C_k)$ is the number of data points in $C_k$. 
+
+(i) Given that the center of $C_k$ is $\boldsymbol{\mu}_{k} = n(C_k)^{-1} \sum_{j \in C_k} \boldsymbol{x}_j$, prove that the objective function above is equivalent to $$\min _{\left(C_1, \ldots, C_K\right)} \sum_{k=1}^K\left\{2 \cdot \sum_{j \in C_k} \sum_{i=1}^p\left(x_{ji}-\mu_{k i}\right)^2\right\}.$$
+(ii) On the basis of the identity proved in (i), argue that Lloyd’s clustering algorithm decreases the above objective function at each iteration. 
+
+
+
+## Application (10 + 10 + 15 + 15 + 20 points = 70 points)
+
+You are tasked with analyzing a new dataset on maternal health. The dataset contains physiological measurements (blood pressure, heart rate, etc.) for `n = 1,014` patients and a clinical assessment of their pregnancy risk level (`high risk`, `mid risk`, and `low risk`). Your goal is to explore this data, build predictive models to classify patient risk, and investigate the underlying structure of the data. **Please set a random seed (`set.seed(42)`) before any step involving data splitting or randomization to ensure your results are reproducible.**
+
+Data has been collected from different hospitals, community clinics, maternal health cares from the rural areas of Bangladesh through the IoT based risk monitoring system. Below is a description of the variables contained in the dataset.
+
+  - `Age`: Age of the patient in years.
+  - `SystolicBP`: The upper value of blood pressure, measured in mmHg.
+  - `DiastolicBP`: The lower value of blood pressure, measured in mmHg.
+  - `BS`: Blood Sugar levels, measured in mmol/L.
+  - `BodyTemp`: Body Temperature, measured in Fahrenheit.
+  - `HeartRate`: Resting heart rate, measured in beats per minute (BPM).
+  - `RiskLevel`: The predicted clinical risk level during pregnancy (Low, Mid, or High).
+  
+  
+```{r}
+rm(list = ls())
+pacman::p_load(tidyverse, caret, boot, here, corrplot, tableone, biotools)
+data <- read_csv(file.path("assign2_classData.csv"))
+```
+
+### Question 1: Initial Data Exploration (10 Points)
+
+Before building any models, it's crucial to understand the data. Create a table 1 that summarizes the patient characteristics, stratified by `RiskLevel.` You may use the `tableone` package for this. Please report and interpret mean $\pm$ standard deviation for all continuous variables and a column for the overall p-value to test for differences between the three groups. Based on your table 1  p-values, which patient variables show a statistically significant difference across the three `RiskLevel` groups?
+```{r}
+### table1 ####
+```
+
+### Question 2: Checking Statistical Assumptions (3 + 5 + 2 = 10 Points)
+
+We want to build a classifier like Linear or Quadratic Discriminant Analysis (LDA/QDA). These models have statistical assumptions about the data that we must check first.
+
+#### Part A (3 points)
+
+Perform a one-way [`MANOVA`](https://rdrr.io/r/stats/manova.html) to test the null hypothesis that the mean vectors (the combined average of all 6 predictors) are the same across all three `RiskLevel` groups. Based on the p-value, do we reject or fail to reject the null hypothesis? What does this result tell us about the patient groups?
+
+```{r}
+### equality of means ####
+```
+
+#### Part B (5 points)
+
+Use [`Box's M`](https://search.r-project.org/CRAN/refmans/heplots/html/boxM.html) test to check the assumption of homogeneity of dispersion matrices (i.e., if the variance-covariance matrices are the same) across the three groups. Based on the p-value, are the dispersion matrices the same or different?
+
+```{r}
+### equality of dispersion matrices ####
+```
+
+
+#### Part C (2 points)
+
+Given your findings from (A) and (B) combined, which model is the more appropriate choice: LDA or QDA? Briefly explain why.
+
+### Question 3: Discriminant Analysis (LDA/QDA) (2 + 3 + 3 + 2 + 5 = 15 Points)
+
+Based on your findings in question 2, please build the appropriate discriminant analysis model.
+
+#### Part A (2 points) 
+
+Split the data into a training set (80%) and a test set (20%). 
+
+```{r}
+### test and train split (set seed = 42)
+```
+
+#### Part B (3 points) 
+
+Train your chosen discriminant model on the training set and generate predictions on the test set. 
+
+```{r}
+### So we must run LDA/QDA
+```
+
+#### Part C (3 points) 
+
+Create and display the confusion matrix and all associated statistics by using `confusionMatrix()` 
+
+```{r}
+### how did the model do
+```
+
+#### Part D (2 points) 
+
+What is the model's `Overall Accuracy` on the test set? 
+
+
+#### Part E (5 points) 
+
+Look at the `Statistics by Class`. Comment on the model's strengths and weaknesses?
+
+
+### Question 4: K-Nearest Neighbors (k-NN) (7 + 3 + 5 = 15 Points)
+
+Let's see if a non-parametric model can perform better. 
+
+#### Part A (7 points)
+
+Using the same train-test splits you created in question 3, train a k-nn model. **You must scale your data (e.g., using the `preProcess = c("center", "scale")` argument within the train function).** Use 10-fold cross-validation to automatically tune the `k` parameter. 
+
+```{r}
+# lets do k-nn instead...
+```
+
+#### Part B (3 points)
+
+Generate and display the confusion matrix from the model's performance on the test set.
+
+```{r}
+### how does k-nn do?
+```
+
+#### Part C (1 + 1 + 3 = 5 points)
+
+(i) What is the overall accuracy of the optimized k-NN model? 
+(ii) How does it compare to the discriminant model from question 3? 
+(iii) Look at the specific errors in the confusion matrix. From a clinical safety perspective, what is the single most dangerous type of error this model is making, and how many times did it make that error in the test set?
+
+### Question 5: Unsupervised Clustering (15 + 5 = 20 Points)
+
+In this section, we will ignore the `RiskLevel` labels and use unsupervised methods to see if the data naturally forms groups. Using only the 6 predictor variables (no `RiskLevel`) we will build an unsupervised clustering model. **Scale this data. This is critical for clustering.** For this question, use the whole dataset instead of training and testing splits. 
+
+#### Part A (6 + 6 + 3 = 15 points)
+
+(i) Perform K-Means clustering with `centers = 3`.
+(ii) Perform Hierarchical clustering (use `average` dissimilarity on a `Euclidean` distance matrix) and cut the resulting tree into `k = 3` clusters.
+(iii) For both clustering results, create a cross-tabulation (a `table()`) that compares the true RiskLevel labels to the cluster assignments.
+
+```{r}
+### k-means
+```
+
+```{r}
+### hierarchical clustering
+```    
+
+#### Part B (5 points)
+
+Based on the tables from part (a) above, did either clustering algorithm successfully recover the true `RiskLevel` categories? What does this tell you about the structure of the data and the separability of each of the risk groups?
+
+```{r}
+### how did kmeans do? 
+```
+
+```{r}
+### how did hclust do?
+```

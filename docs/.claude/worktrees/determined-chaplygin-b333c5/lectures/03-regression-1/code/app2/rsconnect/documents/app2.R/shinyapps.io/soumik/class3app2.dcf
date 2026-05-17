@@ -1,0 +1,12 @@
+name: class3app2
+title: class3app2
+username: soumik
+account: soumik
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15388839
+bundleId: 10881614
+url: https://soumik.shinyapps.io/class3app2/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

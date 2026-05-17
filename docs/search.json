@@ -98,6 +98,76 @@
     "text": "Tips on choosing a project\n\nFor applied projects: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic / single-cell, EHR-derived, or NHANES-style cohorts all work well.\nFor methodology reviews: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.\nScope honestly: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole."
   },
   {
+    "objectID": "lectures/10-trees/index.html",
+    "href": "lectures/10-trees/index.html",
+    "title": "Decision trees",
+    "section": "",
+    "text": "Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners.\nAssigned reading: ISLR §8.1"
+  },
+  {
+    "objectID": "lectures/10-trees/index.html#materials",
+    "href": "lectures/10-trees/index.html#materials",
+    "title": "Decision trees",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides\nCode: app1.R class10_lab1.Rmd fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: Breiman (2001) Chen and Ishwaran (2012) Watanabe et al. (2021)"
+  },
+  {
+    "objectID": "lectures/08-clustering-gmm/index.html",
+    "href": "lectures/08-clustering-gmm/index.html",
+    "title": "Clustering II",
+    "section": "",
+    "text": "Gaussian mixture models as soft clustering; the EM algorithm; model selection via BIC; comparing GMMs to k-means.\nAssigned reading: PRML §9.1–9.2"
+  },
+  {
+    "objectID": "lectures/08-clustering-gmm/index.html#materials",
+    "href": "lectures/08-clustering-gmm/index.html#materials",
+    "title": "Clustering II",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides\nCode: app1.R fig1.R fig2.R lab1.Rmd\nSupplementary readings: Altman and Krzywinski (2017) Garcia-Vidal et al. (2024)"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html",
+    "href": "lectures/06-classification-2/index.html",
+    "title": "Classification II",
+    "section": "",
+    "text": "Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries.\nAssigned reading: ISLR ch. 9"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#materials",
+    "href": "lectures/06-classification-2/index.html#materials",
+    "title": "Classification II",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides\nCode: app1.R fig1.R fig2.R fig3.R lab1.R lab1.Rmd\nSupplementary readings: Jones and Farrow (2025)"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html",
+    "href": "lectures/04-regression-2/index.html",
+    "title": "Regression II",
+    "section": "",
+    "text": "Polynomials, step functions, regression splines, smoothing splines, and an introduction to the kernel trick — moving beyond the linear model while keeping the regression framework.\nAssigned reading: ISLR ch. 7"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#materials",
+    "href": "lectures/04-regression-2/index.html#materials",
+    "title": "Regression II",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R fig5.R helper.R lab1.R lab2.R\nSupplementary readings: Stricker et al. (2017) Zimbalist et al. (2025)"
+  },
+  {
+    "objectID": "lectures/02-training/index.html",
+    "href": "lectures/02-training/index.html",
+    "title": "Training statistical learning models",
+    "section": "",
+    "text": "Under- and over-fitting; the training/validation/test split; k-fold cross-validation and the bootstrap. Foundations for every method we’ll see later in the course.\nAssigned reading: ISLR §2.2, ch. 5"
+  },
+  {
+    "objectID": "lectures/02-training/index.html#materials",
+    "href": "lectures/02-training/index.html#materials",
+    "title": "Training statistical learning models",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R helper.R\nSupplementary readings: reading1_efron1983 reading2_efron1981 reading3_bates2024\nExtras: Extra_kFold_vs_moving_CV.R Extra_kFold_vs_moving_CV.pdf"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "BIOST 2155",
@@ -231,45 +301,87 @@
     "text": "Course overview and the landscape of statistical learning. We distinguish supervised problems (regression, classification) from unsupervised ones (clustering, dimensionality reduction), and motivate the rest of the semester through health-science examples.\nAssigned reading: ISLR ch. 2"
   },
   {
-    "objectID": "lectures/01-intro/index.html#slides",
-    "href": "lectures/01-intro/index.html#slides",
+    "objectID": "lectures/01-intro/index.html#materials",
+    "href": "lectures/01-intro/index.html#materials",
     "title": "Introduction",
-    "section": "Slides",
-    "text": "Slides\n\n\n📥 Download slides (PDF)"
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: islr_class1 reading1_breimann2001 reading2_gelman2020\nExtras: Extra_NoisyLabels.pdf"
   },
   {
-    "objectID": "lectures/01-intro/index.html#readings",
-    "href": "lectures/01-intro/index.html#readings",
-    "title": "Introduction",
-    "section": "Readings",
-    "text": "Readings\n\n\n📄 ISLR (selected pages)\n\n\n📄 Breimann (2001)\n\n\n📄 Gelman (2020)"
+    "objectID": "lectures/03-regression-1/index.html",
+    "href": "lectures/03-regression-1/index.html",
+    "title": "Regression I",
+    "section": "",
+    "text": "Linear regression as a baseline; best-subset and stepwise selection; ridge regression and the lasso as principled alternatives when p is large or predictors are correlated.\nAssigned reading: ISLR ch. 3, 6"
   },
   {
-    "objectID": "lectures/01-intro/index.html#code",
-    "href": "lectures/01-intro/index.html#code",
-    "title": "Introduction",
-    "section": "Code",
-    "text": "Code\nFigure scripts — reproduce each figure from the slides:\n\n\n📈 fig1.R\n\n\n📈 fig2.R\n\n\n📈 fig3.R\n\n\n📈 fig4.R"
+    "objectID": "lectures/03-regression-1/index.html#materials",
+    "href": "lectures/03-regression-1/index.html#materials",
+    "title": "Regression I",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R helper.R model1.R\nSupplementary readings: Frank and Friedman (1993) Heinze et al. (2017)"
   },
   {
-    "objectID": "lectures/01-intro/index.html#data",
-    "href": "lectures/01-intro/index.html#data",
-    "title": "Introduction",
-    "section": "Data",
-    "text": "Data\n\n\n📊 breast_tumor_measurements.csv\n\n\n📊 heart_failure_data.csv\n\n\n📊 neonatal_brain_volumes.csv\n\n\n📊 sbp_bmi_measurements.csv"
+    "objectID": "lectures/05-classification-1/index.html",
+    "href": "lectures/05-classification-1/index.html",
+    "title": "Classification I",
+    "section": "",
+    "text": "Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as generative classifiers. Decision boundaries and what each approach assumes about the data.\nAssigned reading: ISLR ch. 4"
   },
   {
-    "objectID": "lectures/01-intro/index.html#extras",
-    "href": "lectures/01-intro/index.html#extras",
-    "title": "Introduction",
-    "section": "Extras",
-    "text": "Extras\nOptional supplementary material:\n\n\n📄 Extra_NoisyLabels.pdf"
+    "objectID": "lectures/05-classification-1/index.html#materials",
+    "href": "lectures/05-classification-1/index.html#materials",
+    "title": "Classification I",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides\nCode: extra_simulation.R fig1.R fig2.R fig3.R fig4.R fig5.R lab1.Rmd\nSupplementary readings: Van Calster et al. (2025)\nExtras: classification_recap.pdf"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html",
+    "href": "lectures/07-clustering-kmeans/index.html",
+    "title": "Clustering I",
+    "section": "",
+    "text": "k-means as an EM-style algorithm; choosing k; silhouette scores and gap statistics; what cluster evaluation actually tells you.\nAssigned reading: ISLR §10.3"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#materials",
+    "href": "lectures/07-clustering-kmeans/index.html#materials",
+    "title": "Clustering I",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides\nCode: fig1.R fig2.R lab1.Rmd\nSupplementary readings: Moraru et al. (2025) Prabakaran et al. (2019)"
+  },
+  {
+    "objectID": "lectures/09-pca/index.html",
+    "href": "lectures/09-pca/index.html",
+    "title": "Dimensionality reduction",
+    "section": "",
+    "text": "PCA as variance maximization and as a reconstruction problem; the SVD; choosing the number of components; PCR as a regression follow-up.\nAssigned reading: ISLR §6.3"
+  },
+  {
+    "objectID": "lectures/09-pca/index.html#materials",
+    "href": "lectures/09-pca/index.html#materials",
+    "title": "Dimensionality reduction",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides\nCode: class9_lab1.Rmd fig1.R fig2.R\nSupplementary readings: Novembre et al. (2008) Zhang and Castelló (2017)"
+  },
+  {
+    "objectID": "lectures/11-ensemble/index.html",
+    "href": "lectures/11-ensemble/index.html",
+    "title": "Ensemble learning",
+    "section": "",
+    "text": "Why averaging helps; bagging and the bootstrap; random forests and feature subsampling; boosting (AdaBoost, gradient boosting) as a different ensemble philosophy.\nAssigned reading: ISLR §8.2"
+  },
+  {
+    "objectID": "lectures/11-ensemble/index.html#materials",
+    "href": "lectures/11-ensemble/index.html#materials",
+    "title": "Ensemble learning",
+    "section": "Materials",
+    "text": "Materials\nSlides: Slides | Annotated slides\nCode: class11_lab1.Rmd\nSupplementary readings: Phillips et al. (2023)"
   },
   {
     "objectID": "schedule.html",
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 29\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 5\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 12\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 19\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 26\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 3\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 10\n\n\nFall break — no class\n\n\n—\n\n\n—\n\n\n\n\nOct 17\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 24\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 31\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nNov 7\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\nNov 14\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 21\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 28\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 5\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes: ISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013). ESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009). PRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006). UDL — Prince, Understanding Deep Learning (MIT, 2024)."
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 29\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 5\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 12\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 19\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 26\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 3\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 10\n\n\nFall break — no class\n\n\n—\n\n\n—\n\n\n\n\nOct 17\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 24\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 31\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nNov 7\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\nNov 14\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 21\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 28\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 5\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes: ISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013). ESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009). PRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006). UDL — Prince, Understanding Deep Learning (MIT, 2024)."
   }
 ]
