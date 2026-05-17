@@ -109,7 +109,7 @@
     "href": "lectures/10-trees/index.html#materials",
     "title": "Decision trees",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides\nCode: app1.R class10_lab1.Rmd fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: Breiman (2001) Chen and Ishwaran (2012) Watanabe et al. (2021)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: app1.R class10_lab1.Rmd fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: Breiman (2001) Chen and Ishwaran (2012) Watanabe et al. (2021)"
   },
   {
     "objectID": "lectures/08-clustering-gmm/index.html",
@@ -123,7 +123,7 @@
     "href": "lectures/08-clustering-gmm/index.html#materials",
     "title": "Clustering II",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides\nCode: app1.R fig1.R fig2.R lab1.Rmd\nSupplementary readings: Altman and Krzywinski (2017) Garcia-Vidal et al. (2024)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: app1.R fig1.R fig2.R lab1.Rmd\nSupplementary readings: Altman and Krzywinski (2017) Garcia-Vidal et al. (2024)"
   },
   {
     "objectID": "lectures/06-classification-2/index.html",
@@ -137,7 +137,7 @@
     "href": "lectures/06-classification-2/index.html#materials",
     "title": "Classification II",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides\nCode: app1.R fig1.R fig2.R fig3.R lab1.R lab1.Rmd\nSupplementary readings: Jones and Farrow (2025)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: app1.R fig1.R fig2.R fig3.R lab1.R lab1.Rmd\nSupplementary readings: Jones and Farrow (2025)"
   },
   {
     "objectID": "lectures/04-regression-2/index.html",
@@ -151,7 +151,7 @@
     "href": "lectures/04-regression-2/index.html#materials",
     "title": "Regression II",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R fig5.R helper.R lab1.R lab2.R\nSupplementary readings: Stricker et al. (2017) Zimbalist et al. (2025)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R fig5.R helper.R lab1.R lab2.R\nSupplementary readings: Stricker et al. (2017) Zimbalist et al. (2025)"
   },
   {
     "objectID": "lectures/02-training/index.html",
@@ -165,7 +165,7 @@
     "href": "lectures/02-training/index.html#materials",
     "title": "Training statistical learning models",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R helper.R\nSupplementary readings: reading1_efron1983 reading2_efron1981 reading3_bates2024\nExtras: Extra_kFold_vs_moving_CV.R Extra_kFold_vs_moving_CV.pdf"
+    "text": "Materials\nSlides: slides_clean | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R helper.R\nSupplementary readings: reading1_efron1983 reading2_efron1981 reading3_bates2024\nExtras: Extra_kFold_vs_moving_CV.R Extra_kFold_vs_moving_CV.pdf"
   },
   {
     "objectID": "index.html",
@@ -179,7 +179,7 @@
     "href": "index.html#course-at-a-glance",
     "title": "BIOST 2155",
     "section": "Course at a glance",
-    "text": "Course at a glance\n\n\n\nTerm\nFall 2025\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, A622 Public Health\n\n\nOffice hours\nFridays 12:30–1:30 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
+    "text": "Course at a glance\n\n\n\nTerm\nFall 2026\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, A622 Public Health\n\n\nOffice hours\nFridays 12:30–1:30 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
   },
   {
     "objectID": "index.html#where-to-start",
@@ -305,7 +305,7 @@
     "href": "lectures/01-intro/index.html#materials",
     "title": "Introduction",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: islr_class1 reading1_breimann2001 reading2_gelman2020\nExtras: Extra_NoisyLabels.pdf"
+    "text": "Materials\nSlides: slides_clean | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: islr_class1 reading1_breimann2001 reading2_gelman2020\nExtras: Extra_NoisyLabels.pdf"
   },
   {
     "objectID": "lectures/03-regression-1/index.html",
@@ -319,7 +319,7 @@
     "href": "lectures/03-regression-1/index.html#materials",
     "title": "Regression I",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides | Split view\nCode: fig1.R fig2.R fig3.R fig4.R helper.R model1.R\nSupplementary readings: Frank and Friedman (1993) Heinze et al. (2017)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R helper.R model1.R\nSupplementary readings: Frank and Friedman (1993) Heinze et al. (2017)"
   },
   {
     "objectID": "lectures/05-classification-1/index.html",
@@ -333,7 +333,7 @@
     "href": "lectures/05-classification-1/index.html#materials",
     "title": "Classification I",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides\nCode: extra_simulation.R fig1.R fig2.R fig3.R fig4.R fig5.R lab1.Rmd\nSupplementary readings: Van Calster et al. (2025)\nExtras: classification_recap.pdf"
+    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: extra_simulation.R fig1.R fig2.R fig3.R fig4.R fig5.R lab1.Rmd\nSupplementary readings: Van Calster et al. (2025)\nExtras: classification_recap.pdf"
   },
   {
     "objectID": "lectures/07-clustering-kmeans/index.html",
@@ -347,7 +347,7 @@
     "href": "lectures/07-clustering-kmeans/index.html#materials",
     "title": "Clustering I",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides\nCode: fig1.R fig2.R lab1.Rmd\nSupplementary readings: Moraru et al. (2025) Prabakaran et al. (2019)"
+    "text": "Materials\nSlides: slides_clean\nCode: fig1.R fig2.R lab1.Rmd\nSupplementary readings: Moraru et al. (2025) Prabakaran et al. (2019)"
   },
   {
     "objectID": "lectures/09-pca/index.html",
@@ -361,7 +361,7 @@
     "href": "lectures/09-pca/index.html#materials",
     "title": "Dimensionality reduction",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides\nCode: class9_lab1.Rmd fig1.R fig2.R\nSupplementary readings: Novembre et al. (2008) Zhang and Castelló (2017)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: class9_lab1.Rmd fig1.R fig2.R\nSupplementary readings: Novembre et al. (2008) Zhang and Castelló (2017)"
   },
   {
     "objectID": "lectures/11-ensemble/index.html",
@@ -375,13 +375,13 @@
     "href": "lectures/11-ensemble/index.html#materials",
     "title": "Ensemble learning",
     "section": "Materials",
-    "text": "Materials\nSlides: Slides | Annotated slides\nCode: class11_lab1.Rmd\nSupplementary readings: Phillips et al. (2023)"
+    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: class11_lab1.Rmd\nSupplementary readings: Phillips et al. (2023)"
   },
   {
     "objectID": "schedule.html",
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 29\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 5\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 12\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 19\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 26\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 3\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 10\n\n\nFall break — no class\n\n\n—\n\n\n—\n\n\n\n\nOct 17\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 24\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 31\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nNov 7\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\nNov 14\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 21\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 28\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 5\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes: ISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013). ESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009). PRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006). UDL — Prince, Understanding Deep Learning (MIT, 2024)."
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 2\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 9\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 16\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 23\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nOct 30\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 6\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 13\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\nNov 20\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes: ISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013). ESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009). PRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006). UDL — Prince, Understanding Deep Learning (MIT, 2024)."
   }
 ]
