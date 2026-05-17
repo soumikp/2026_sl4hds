@@ -1,0 +1,82 @@
+/*-- scss:defaults --*/
+
+// Pitt-ish navy and gold (subtle, not saturated)
+$primary: #003594;
+$link-color: #003594;
+$body-bg: #ffffff;
+$body-color: #1f2328;
+$font-family-sans-serif: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$headings-font-weight: 600;
+
+/*-- scss:rules --*/
+
+.navbar-title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.01em;
+}
+
+// Schedule table styling
+table.schedule {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+table.schedule th {
+  background: #f5f7fb;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 2px solid #d0d7de;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #57606a;
+}
+table.schedule td {
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid #eaeef2;
+  vertical-align: top;
+}
+table.schedule tr.no-class td {
+  color: #8c959f;
+  font-style: italic;
+  background: #fafbfc;
+}
+table.schedule tr.no-class a { color: #8c959f; }
+
+// Slide embed
+.slide-embed {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+// Resource list
+.resource-list {
+  list-style: none;
+  padding-left: 0;
+}
+.resource-list li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #eaeef2;
+}
+.resource-list li:last-child { border-bottom: none; }
+.resource-list .resource-meta {
+  color: #57606a;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+// Callout-style "lab" header
+.lab-header {
+  background: #f0f7ff;
+  border-left: 3px solid $primary;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}

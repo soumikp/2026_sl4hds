@@ -1,0 +1,71 @@
+---
+title: "Syllabus"
+---
+
+## Course description
+
+This 2-credit course introduces basic concepts and methods for statistical learning, with an emphasis on modern health science applications. Topics include linear regression with regularization, supervised classification, unsupervised clustering, and dimensionality reduction. The target audience is second-year Biostatistics master's students or early PhD students with interests in statistical learning techniques for health science data. Students will be trained with hands-on materials to understand the methods, implement the algorithms, and interpret results in real applications.
+
+## Prerequisites
+
+BIOST 2141, 2142, and 3011. Students are expected to have programming experience in R, or in a low-level language such as C, C++, Java, or Fortran. Prerequisites can be met with other relevant coursework or experience with consent from the instructor.
+
+## Learning objectives
+
+By the end of this course, students will be able to:
+
+1. Explain the motivation and intuition behind the statistical learning methods covered in class.
+2. Demonstrate basic theory proofs for selected fundamental concepts and methods.
+3. Implement methods on real datasets in health sciences.
+4. Produce an analysis pipeline and interpret the results in a real application.
+
+## Textbook
+
+Primary textbook (highly recommended; free PDF):
+
+- James, Witten, Hastie & Tibshirani. *An Introduction to Statistical Learning: with Applications in R*. Springer, 2013. <https://www.statlearning.com/>
+
+Optional references:
+
+- Hastie, Tibshirani & Friedman. *The Elements of Statistical Learning*. Springer, 2009.
+- Prince. *Understanding Deep Learning*. MIT Press, 2024.
+- Bishop. *Pattern Recognition and Machine Learning*. Springer, 2006.
+
+## Computing
+
+We will use **R** as our main programming language. RStudio with R Markdown is recommended for homework. Templates are provided.
+
+## Grading
+
+| Component | Weight |
+|-----------|-------:|
+| Homework 1 | 25% |
+| Homework 2 | 25% |
+| Homework 3 | 25% |
+| Final project presentation | 25% |
+
+Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%. Plus/minus assigned by thirds within each band.
+
+### Homework policy
+
+Three homework assignments — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
+
+Late homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.
+
+### Final project
+
+By **10/03**, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On **12/05**, each student gives a 5-minute presentation summarizing their work. See the [project page](project.qmd) for details.
+
+## Academic integrity
+
+Cheating and plagiarism are not allowed and will be reported. See the University of Pittsburgh's [Policy on Academic Integrity](http://www.provost.pitt.edu/info/ai1.html).
+
+## Disability services
+
+If you have a disability for which you are or may be requesting accommodation, please contact both the instructor and Disability Resources and Services (DRS) — 140 William Pitt Union, (412) 648-7890, [drsrecep\@pitt.edu](mailto:drsrecep@pitt.edu), (412) 228-5347 for P3 ASL users — as early as possible in the term.
+
+## Title IX & sexual misconduct
+
+University faculty are required to report instances of sexual misconduct, including harassment and sexual violence, to the Office of Civil Rights and Title IX. To make a confidential report, the University Counseling Center is available at 412-648-7930 (8:30 AM – 5 PM M–F) and 412-648-7856 (after hours). Pittsburgh Action Against Rape: 1-866-363-7273 (24/7). For an immediate safety concern, contact the University of Pittsburgh Police: 412-624-2121.
+
+An exception to the reporting requirement applies to disclosures shared as a relevant part of an academic project, classroom discussion, or course assignment.

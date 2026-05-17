@@ -1,0 +1,21 @@
+---
+title: "Decision trees"
+subtitle: "CART for regression and classification"
+date: "Oct 30, 2026"
+date-format: long
+---
+
+Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners.
+
+**Assigned reading:** ISLR §8.1
+
+---
+
+## Materials
+
+**Slides:** [Slides](class10_clean.pdf) | [Annotated slides](class10_annotated.pdf)
+
+**Code:** [app1.R](code/app1.R) [class10_lab1.Rmd](code/class10_lab1.Rmd) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R)
+
+**Supplementary readings:** [Breiman (2001)](readings/Breiman (2001).pdf) [Chen and Ishwaran (2012)](readings/Chen and Ishwaran (2012).pdf) [Watanabe et al. (2021)](readings/Watanabe et al. (2021).pdf)
+

@@ -1,0 +1,21 @@
+---
+title: "Regression II"
+subtitle: "Non-linear regression, splines, and the kernel trick"
+date: "Sep 18, 2026"
+date-format: long
+---
+
+Polynomials, step functions, regression splines, smoothing splines, and an introduction to the kernel trick — moving beyond the linear model while keeping the regression framework.
+
+**Assigned reading:** ISLR ch. 7
+
+---
+
+## Materials
+
+**Slides:** [Slides](class4_clean.pdf) | [Annotated slides](class4_annotated.pdf) | [Split view](class4_split.pdf)
+
+**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [fig5.R](code/fig5.R) [helper.R](code/helper.R) [lab1.R](code/lab1.R) [lab2.R](code/lab2.R)
+
+**Supplementary readings:** [Stricker et al. (2017)](readings/Stricker et al. (2017).pdf) [Zimbalist et al. (2025)](readings/Zimbalist et al. (2025).pdf)
+

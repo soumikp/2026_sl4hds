@@ -1,0 +1,23 @@
+---
+title: "Introduction"
+subtitle: "Supervised vs. unsupervised learning"
+date: "Aug 28, 2026"
+date-format: long
+---
+
+Course overview and the landscape of statistical learning. We distinguish supervised problems (regression, classification) from unsupervised ones (clustering, dimensionality reduction), and motivate the rest of the semester through health-science examples.
+
+**Assigned reading:** ISLR ch. 2
+
+---
+
+## Materials
+
+**Slides:** [Slides](class1_merged.pdf) | [Split view](class1_split.pdf)
+
+**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R)
+
+**Supplementary readings:** [islr_class1](readings/islr_class1.pdf) [reading1_breimann2001](readings/reading1_breimann2001.pdf) [reading2_gelman2020](readings/reading2_gelman2020.pdf)
+
+**Extras:** [Extra_NoisyLabels.pdf](extras/Extra_NoisyLabels.pdf)
+

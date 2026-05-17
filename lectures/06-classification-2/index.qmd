@@ -1,0 +1,21 @@
+---
+title: "Classification II"
+subtitle: "Support vector machines"
+date: "Oct 2, 2026"
+date-format: long
+---
+
+Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries.
+
+**Assigned reading:** ISLR ch. 9
+
+---
+
+## Materials
+
+**Slides:** [Slides](class6_clean.pdf) | [Annotated slides](class6_annotated.pdf)
+
+**Code:** [app1.R](code/app1.R) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [lab1.R](code/lab1.R) [lab1.Rmd](code/lab1.Rmd)
+
+**Supplementary readings:** [Jones and Farrow (2025)](readings/Jones and Farrow (2025).pdf)
+

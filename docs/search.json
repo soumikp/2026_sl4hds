@@ -1,0 +1,275 @@
+[
+  {
+    "objectID": "syllabus.html",
+    "href": "syllabus.html",
+    "title": "Syllabus",
+    "section": "",
+    "text": "This 2-credit course introduces basic concepts and methods for statistical learning, with an emphasis on modern health science applications. Topics include linear regression with regularization, supervised classification, unsupervised clustering, and dimensionality reduction. The target audience is second-year Biostatistics master’s students or early PhD students with interests in statistical learning techniques for health science data. Students will be trained with hands-on materials to understand the methods, implement the algorithms, and interpret results in real applications."
+  },
+  {
+    "objectID": "syllabus.html#course-description",
+    "href": "syllabus.html#course-description",
+    "title": "Syllabus",
+    "section": "",
+    "text": "This 2-credit course introduces basic concepts and methods for statistical learning, with an emphasis on modern health science applications. Topics include linear regression with regularization, supervised classification, unsupervised clustering, and dimensionality reduction. The target audience is second-year Biostatistics master’s students or early PhD students with interests in statistical learning techniques for health science data. Students will be trained with hands-on materials to understand the methods, implement the algorithms, and interpret results in real applications."
+  },
+  {
+    "objectID": "syllabus.html#prerequisites",
+    "href": "syllabus.html#prerequisites",
+    "title": "Syllabus",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nBIOST 2141, 2142, and 3011. Students are expected to have programming experience in R, or in a low-level language such as C, C++, Java, or Fortran. Prerequisites can be met with other relevant coursework or experience with consent from the instructor."
+  },
+  {
+    "objectID": "syllabus.html#learning-objectives",
+    "href": "syllabus.html#learning-objectives",
+    "title": "Syllabus",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nBy the end of this course, students will be able to:\n\nExplain the motivation and intuition behind the statistical learning methods covered in class.\nDemonstrate basic theory proofs for selected fundamental concepts and methods.\nImplement methods on real datasets in health sciences.\nProduce an analysis pipeline and interpret the results in a real application."
+  },
+  {
+    "objectID": "syllabus.html#textbook",
+    "href": "syllabus.html#textbook",
+    "title": "Syllabus",
+    "section": "Textbook",
+    "text": "Textbook\nPrimary textbook (highly recommended; free PDF):\n\nJames, Witten, Hastie & Tibshirani. An Introduction to Statistical Learning: with Applications in R. Springer, 2013. https://www.statlearning.com/\n\nOptional references:\n\nHastie, Tibshirani & Friedman. The Elements of Statistical Learning. Springer, 2009.\nPrince. Understanding Deep Learning. MIT Press, 2024.\nBishop. Pattern Recognition and Machine Learning. Springer, 2006."
+  },
+  {
+    "objectID": "syllabus.html#computing",
+    "href": "syllabus.html#computing",
+    "title": "Syllabus",
+    "section": "Computing",
+    "text": "Computing\nWe will use R as our main programming language. RStudio with R Markdown is recommended for homework. Templates are provided."
+  },
+  {
+    "objectID": "syllabus.html#grading",
+    "href": "syllabus.html#grading",
+    "title": "Syllabus",
+    "section": "Grading",
+    "text": "Grading\n\n\n\nComponent\nWeight\n\n\n\n\nHomework 1\n25%\n\n\nHomework 2\n25%\n\n\nHomework 3\n25%\n\n\nFinal project presentation\n25%\n\n\n\nLetter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F &lt; 60%. Plus/minus assigned by thirds within each band.\n\nHomework policy\nThree homework assignments — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. Discussion of homework with classmates is allowed, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.\nLate homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.\n\n\nFinal project\nBy 10/03, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On 12/05, each student gives a 5-minute presentation summarizing their work. See the project page for details."
+  },
+  {
+    "objectID": "syllabus.html#academic-integrity",
+    "href": "syllabus.html#academic-integrity",
+    "title": "Syllabus",
+    "section": "Academic integrity",
+    "text": "Academic integrity\nCheating and plagiarism are not allowed and will be reported. See the University of Pittsburgh’s Policy on Academic Integrity."
+  },
+  {
+    "objectID": "syllabus.html#disability-services",
+    "href": "syllabus.html#disability-services",
+    "title": "Syllabus",
+    "section": "Disability services",
+    "text": "Disability services\nIf you have a disability for which you are or may be requesting accommodation, please contact both the instructor and Disability Resources and Services (DRS) — 140 William Pitt Union, (412) 648-7890, drsrecep@pitt.edu, (412) 228-5347 for P3 ASL users — as early as possible in the term."
+  },
+  {
+    "objectID": "syllabus.html#title-ix-sexual-misconduct",
+    "href": "syllabus.html#title-ix-sexual-misconduct",
+    "title": "Syllabus",
+    "section": "Title IX & sexual misconduct",
+    "text": "Title IX & sexual misconduct\nUniversity faculty are required to report instances of sexual misconduct, including harassment and sexual violence, to the Office of Civil Rights and Title IX. To make a confidential report, the University Counseling Center is available at 412-648-7930 (8:30 AM – 5 PM M–F) and 412-648-7856 (after hours). Pittsburgh Action Against Rape: 1-866-363-7273 (24/7). For an immediate safety concern, contact the University of Pittsburgh Police: 412-624-2121.\nAn exception to the reporting requirement applies to disclosures shared as a relevant part of an academic project, classroom discussion, or course assignment."
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Final Project",
+    "section": "",
+    "text": "The final project is 25% of the course grade. Each student presents individual work in a 5-minute talk on the last day of class (12/05). You may choose either an applied analysis of a real dataset or a review of a methodological paper."
+  },
+  {
+    "objectID": "project.html#key-dates",
+    "href": "project.html#key-dates",
+    "title": "Final Project",
+    "section": "Key dates",
+    "text": "Key dates\n\n10/03 — One-page proposal due (dataset or paper, plus planned scope)\n12/05 — In-class presentations (5 min/student)"
+  },
+  {
+    "objectID": "project.html#project-description",
+    "href": "project.html#project-description",
+    "title": "Final Project",
+    "section": "Project description",
+    "text": "Project description\n📄 Full project description (PDF) · 📝 Source (R Markdown)"
+  },
+  {
+    "objectID": "project.html#tips-on-choosing-a-project",
+    "href": "project.html#tips-on-choosing-a-project",
+    "title": "Final Project",
+    "section": "Tips on choosing a project",
+    "text": "Tips on choosing a project\n\nFor applied projects: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic / single-cell, EHR-derived, or NHANES-style cohorts all work well.\nFor methodology reviews: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.\nScope honestly: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "BIOST 2155",
+    "section": "",
+    "text": "A graduate-level introduction to statistical learning methods, with applications drawn from modern health science data. Topics include linear regression with regularization, classification, clustering, dimensionality reduction, and ensemble methods."
+  },
+  {
+    "objectID": "index.html#course-at-a-glance",
+    "href": "index.html#course-at-a-glance",
+    "title": "BIOST 2155",
+    "section": "Course at a glance",
+    "text": "Course at a glance\n\n\n\nTerm\nFall 2025\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, A622 Public Health\n\n\nOffice hours\nFridays 12:30–1:30 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
+  },
+  {
+    "objectID": "index.html#where-to-start",
+    "href": "index.html#where-to-start",
+    "title": "BIOST 2155",
+    "section": "Where to start",
+    "text": "Where to start\n\nThe schedule lists each week with slides, readings, and code.\nThe assignments page has the three homeworks.\nThe project page describes the final project.\nThe syllabus covers grading, policies, and prerequisites."
+  },
+  {
+    "objectID": "index.html#recommended-textbook",
+    "href": "index.html#recommended-textbook",
+    "title": "BIOST 2155",
+    "section": "Recommended textbook",
+    "text": "Recommended textbook\nJames, Witten, Hastie & Tibshirani. An Introduction to Statistical Learning: with Applications in R. Springer, 2013. Free PDF"
+  },
+  {
+    "objectID": "index.html#optional-references",
+    "href": "index.html#optional-references",
+    "title": "BIOST 2155",
+    "section": "Optional references",
+    "text": "Optional references\n\nHastie–Tibshirani–Friedman Elements of Statistical Learning\nBishop Pattern Recognition and Machine Learning\nPrince Understanding Deep Learning."
+  },
+  {
+    "objectID": "assignments/hw3.html",
+    "href": "assignments/hw3.html",
+    "title": "Homework 3",
+    "section": "",
+    "text": "📄 Assignment (PDF)\n📝 Template (R Markdown)\n📊 Data: assign3_data.csv"
+  },
+  {
+    "objectID": "assignments/hw3.html#materials",
+    "href": "assignments/hw3.html#materials",
+    "title": "Homework 3",
+    "section": "",
+    "text": "📄 Assignment (PDF)\n📝 Template (R Markdown)\n📊 Data: assign3_data.csv"
+  },
+  {
+    "objectID": "assignments/hw3.html#instructions",
+    "href": "assignments/hw3.html#instructions",
+    "title": "Homework 3",
+    "section": "Instructions",
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+  },
+  {
+    "objectID": "assignments/hw1.html",
+    "href": "assignments/hw1.html",
+    "title": "Homework 1",
+    "section": "",
+    "text": "📄 Assignment (PDF)\n📝 Template (R Markdown)\n📊 Data: assign1_regData.csv"
+  },
+  {
+    "objectID": "assignments/hw1.html#materials",
+    "href": "assignments/hw1.html#materials",
+    "title": "Homework 1",
+    "section": "",
+    "text": "📄 Assignment (PDF)\n📝 Template (R Markdown)\n📊 Data: assign1_regData.csv"
+  },
+  {
+    "objectID": "assignments/hw1.html#instructions",
+    "href": "assignments/hw1.html#instructions",
+    "title": "Homework 1",
+    "section": "Instructions",
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+  },
+  {
+    "objectID": "assignments/hw2.html",
+    "href": "assignments/hw2.html",
+    "title": "Homework 2",
+    "section": "",
+    "text": "📄 Assignment (PDF)\n📝 Template (R Markdown)\n📊 Data: assign2_classData.csv"
+  },
+  {
+    "objectID": "assignments/hw2.html#materials",
+    "href": "assignments/hw2.html#materials",
+    "title": "Homework 2",
+    "section": "",
+    "text": "📄 Assignment (PDF)\n📝 Template (R Markdown)\n📊 Data: assign2_classData.csv"
+  },
+  {
+    "objectID": "assignments/hw2.html#instructions",
+    "href": "assignments/hw2.html#instructions",
+    "title": "Homework 2",
+    "section": "Instructions",
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+  },
+  {
+    "objectID": "assignments/index.html",
+    "href": "assignments/index.html",
+    "title": "Assignments",
+    "section": "",
+    "text": "Three homework assignments, each worth 25% of the course grade. Submit electronic copies via Canvas."
+  },
+  {
+    "objectID": "assignments/index.html#submission-and-grading",
+    "href": "assignments/index.html#submission-and-grading",
+    "title": "Assignments",
+    "section": "Submission and grading",
+    "text": "Submission and grading\n\nSubmissions go through Canvas as a knitted PDF (and optionally the .Rmd source).\nSolutions are graded on both correctness and clarity — use whitespace, write clear comments, and label your output.\nPartial credit is given for identifying gaps in an argument when a complete solution cannot be derived."
+  },
+  {
+    "objectID": "assignments/index.html#late-policy",
+    "href": "assignments/index.html#late-policy",
+    "title": "Assignments",
+    "section": "Late policy",
+    "text": "Late policy\n\n\n\nDays late\nCredit\n\n\n\n\n0–1\n80%\n\n\n1–2\n50%\n\n\n&gt; 2\n0%\n\n\n\nExceptions for sickness or emergency require the instructor be informed in advance."
+  },
+  {
+    "objectID": "assignments/index.html#collaboration",
+    "href": "assignments/index.html#collaboration",
+    "title": "Assignments",
+    "section": "Collaboration",
+    "text": "Collaboration\nDiscussion among students is allowed and encouraged. Each student must independently write and implement their own solution. Cite any external sources you consulted."
+  },
+  {
+    "objectID": "lectures/01-intro/index.html",
+    "href": "lectures/01-intro/index.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "Course overview and the landscape of statistical learning. We distinguish supervised problems (regression, classification) from unsupervised ones (clustering, dimensionality reduction), and motivate the rest of the semester through health-science examples.\nAssigned reading: ISLR ch. 2"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#slides",
+    "href": "lectures/01-intro/index.html#slides",
+    "title": "Introduction",
+    "section": "Slides",
+    "text": "Slides\n\n\n📥 Download slides (PDF)"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#readings",
+    "href": "lectures/01-intro/index.html#readings",
+    "title": "Introduction",
+    "section": "Readings",
+    "text": "Readings\n\n\n📄 ISLR (selected pages)\n\n\n📄 Breimann (2001)\n\n\n📄 Gelman (2020)"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#code",
+    "href": "lectures/01-intro/index.html#code",
+    "title": "Introduction",
+    "section": "Code",
+    "text": "Code\nFigure scripts — reproduce each figure from the slides:\n\n\n📈 fig1.R\n\n\n📈 fig2.R\n\n\n📈 fig3.R\n\n\n📈 fig4.R"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#data",
+    "href": "lectures/01-intro/index.html#data",
+    "title": "Introduction",
+    "section": "Data",
+    "text": "Data\n\n\n📊 breast_tumor_measurements.csv\n\n\n📊 heart_failure_data.csv\n\n\n📊 neonatal_brain_volumes.csv\n\n\n📊 sbp_bmi_measurements.csv"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#extras",
+    "href": "lectures/01-intro/index.html#extras",
+    "title": "Introduction",
+    "section": "Extras",
+    "text": "Extras\nOptional supplementary material:\n\n\n📄 Extra_NoisyLabels.pdf"
+  },
+  {
+    "objectID": "schedule.html",
+    "href": "schedule.html",
+    "title": "Schedule",
+    "section": "",
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 29\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 5\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 12\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 19\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 26\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 3\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 10\n\n\nFall break — no class\n\n\n—\n\n\n—\n\n\n\n\nOct 17\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 24\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 31\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nNov 7\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\nNov 14\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 21\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 28\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 5\n\n\nNo class\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes: ISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013). ESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009). PRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006). UDL — Prince, Understanding Deep Learning (MIT, 2024)."
+  }
+]

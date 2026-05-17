@@ -1,0 +1,99 @@
+---
+title: 'BIOST 2155: Project'
+date: "**Due by**: 2025-11-02, 11:59 PM (proposal) and 2025-12-12, 11:59 PM (final report). In-class presentation on 2025-12-05 from 9.00-10.50 AM."
+output: pdf_document
+header-includes: |
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \fancyhead[L]{BIOST 2155, Fall 2025}
+  \fancyhead[R]{Project}
+  \fancyfoot[C]{Page \thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancypagestyle{plain}{%
+    \fancyhead[L]{BIOST 2155, Fall 2025}%
+    \fancyhead[R]{Project}%
+    \fancyfoot[C]{Page \thepage}%
+    \renewcommand{\headrulewidth}{0.4pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+  }
+
+urlcolor: blue  
+---
+
+\hrule
+
+## Instructions
+
+1. Please form groups of `2` by `11/02` and select a topic. 
+
+2. Students will be evaluated on the basis of the following
+
+    a. Project proposal: 25 points (due by Sunday `11/02` by `11.59PM`)
+    b. Group presentation: 50 points (in-class presentation on Friday `12/05`)
+    c. Final report: 25 points (due by Sunday, `12/12` by `11.59PM`)
+
+4. Planning for your proposal: The proposal need not be long, but should include the following components: 
+
+    a. Teaming
+    b. Project title
+    c. The data set(s) involved (5 points)
+    d. A short paragraph of what you plan to do (15 points)
+    e. References: make sure you don't hallucinate your references (5 points)
+    
+3. Planning for your presentation: Each group will prepare and upload a presentation (to Canvas). Each group will take turn to present (we will fix presentation ordering closer to `12/05`). Each group is expected to prepare a 10 minute presentation and allow 5 minutes for Q&A. All group members are expected to participate. Your grading rubric will be as follows:  
+
+    a. How clearly did the speaker define the objectives of the presentation?
+    b. Did the speaker clearly explain key concepts and findings?
+    c. Was the presentation well-structured and logical?
+    d. How well did the speaker address questions or comments from the audience? 
+    e. How engaging was the speaker's delivery?
+    f. Did the speaker maintain a good pace throughout the presentation?
+    g. Was the speaker’s use of visual aids (slides, diagrams, etc.) appropriate?
+    h. How clear and audible was the speaker’s voice?
+    i. Did the speaker make effective eye contact and engage with the audience?
+    j. Were there any distracting habits (e.g., fidgeting, overuse of filler words, etc.)?
+    
+    Each item will be graded on a scale of 0 (poor) to 5 (perfect). 
+    
+4. Planning for your final report: Each group will prepare and upload a short PDF document to Canvas with the following components. 
+
+    a. Introduction - contextualize your analysis: clearly state and justify your hypotheses, present brief overview of literature (with references)
+    b. Describing the data: discuss if chosen data is appropriate for your chosen hypotheses. Discuss preprocessing, data standardization, missing value imputation or filtering (if needed) 
+    c. Describe the method: visualization, exploratory data analyses, dimension reduction (if neeeded), and statistical learning method(s) used. Discuss evaluation metric(s) and appropriateness of metric(s) chosen
+    d. Findings and discussion: interpret and summarize your findings in the context of the hypotheses you are investigating. Provide scientific knowledge (other published literature) that either supports or rejects your findings. Discuss limitations of your approach and propose future work
+    e. References: make sure you don't hallucinate your references
+    
+    Each item will be graded on a scale of 0 (poor) to 5 (perfect). 
+
+
+5. I will create three separate assignments on Canvas: 
+
+    a. Project proposal (due by Sunday `11/02` by `11.59PM`): both group members must upload the same document to Canvas. Please be sure to mention your teammate's name on your proposal so I know the groupings. 
+    b. Project presentation (due by Friday `12/05` by `8.59AM`): both group members must upload the same document to Canvas. Please be sure to mention your teammate's name on your presentation so I know the groupings. You will have until right before class on `12/05` to upload. 
+    c. Final report: (due by Sunday `12/12` by `11.59PM`): both group members must upload the same document to Canvas. Please be sure to mention your teammate's name on your report so I know the groupings. 
+    
+
+
+
+\
+\hrule
+
+## Preparing for the final project.
+
+1. **If you are planning to work on analyzing data:** Clearly describe the data source and motivation of the project. You are encouraged to use any external expertise you might have (e.g. biology, medicine, epidemiology, pharmacology etc.) so that your project makes the best use of your domain knowledge and is as interesting as possible. Apply method(s) you have learned in the lectures for some meaningful analysis of a data set of your choice. You can design your analysis around the scientific focus of the data you collect.
+
+2. **If there is an already published machine learning paper(s) that uses public data, and its method application extends what we have discussed in class, your project can be a reproduction of the methods used:**
+
+    a. Review the design and data. 
+    b. What analyses have been done? (What's new and different from what we have learned?)
+    c. Repeat the analysis and evaluate reproducibility. 
+    d. What conclusions were drawn in the paper and what you found? 
+    e. What do you think can be done differently? 
+
+3. Here are some data repositories for your consideration/exploration:
+
+    a. [CMU datasets and projects](http://www.cs.cmu.edu/~guestrin/Class/10701/projects.html) 
+    b. [UCI archive](https://archive.ics.uci.edu/)
+    c. [Kaggle Healthcare datasets](https://www.kaggle.com/tags/healthcare)
+    d. If all else fails, [Wikipedia](https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research) is your friend.

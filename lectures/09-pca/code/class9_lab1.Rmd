@@ -1,0 +1,209 @@
+---
+title: "Lab Session: PCA and PCR"
+date: "Class 9"
+output:
+  html_document:
+    toc: FALSE
+    toc_float: true
+    theme: united
+---
+
+```{=html}
+<style type="text/css">
+    .main-container {
+      max-width: 1600px !important; /* Adjust this value as needed for the main content */
+    }
+
+    /* Optional: Adjust the width of the floating TOC */
+    .tocify {
+      width: 200px; /* Adjust this value to control TOC width */
+    }
+
+    /* Optional: Ensure content doesn't overlap with TOC on scroll */
+    @media (min-width: 768px) { /* Apply for larger screens where TOC floats */
+      body.toc-left .main-container {
+        margin-left: 210px; /* Adjust this to be slightly more than TOC width */
+      }
+    }
+    body {
+  font-size: 12pt; /* Sets the base font size for the entire document */
+}
+h1,h2,h3,h4,h5,h6{
+  font-size: 24pt;
+}
+code {
+  font-size: 12pt; /* Sets font size for code blocks */
+}
+output {
+  font-size: 24pt; /* Sets font size for code blocks */
+}
+
+</style>
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+## Lab: PCA and PCR using Hitters Data {.tabset}
+
+In this lab, we will explore Principal Component Analysis (PCA) as an unsupervised technique for dimensionality reduction and visualization, and then apply Principal Component Regression (PCR) as a supervised learning method. We'll use the `Hitters` dataset from the `ISLR2` package, which contains statistics for baseball players along with their salaries.
+
+
+```{r load-packages}
+rm(list = ls())
+pacman::p_unload(pacman::p_loaded())
+pacman::p_load(tidyverse, cluster, factoextra, here, knitr, ISLR2, ggsci)
+```
+
+---
+
+### Data, EDA, & Preprocessing
+
+First, we load the `Hitters` dataset. It contains player statistics from the 1986 season and salary data for the 1987 season.
+
+```{r}
+data("Hitters", package = "ISLR2")
+print(str(Hitters))
+print(summary(Hitters))
+```
+
+#### Handling Missing Data:
+
+The `Salary` variable has missing values. We need to remove these observations before proceeding with PCA and PCR, as these methods typically require complete data.
+
+```{r, echo = FALSE}
+cat("Number of missing Salary values:", sum(is.na(Hitters$Salary)), "\n")
+Hitters <- Hitters %>% na.omit()
+cat("Dimensions after removing missing Salary:", dim(Hitters), "\n") # Check dimensions 
+cat("Number of missing values remaining:", sum(is.na(Hitters)), "\n") # Check remaining NAs
+```
+
+#### Scaling Consideration
+
+PCA is sensitive to the scale of the variables. Variables with larger variances will disproportionately influence the principal components. Since the predictors in `Hitters` are on different scales (e.g., number of hits vs. number of years), it's crucial to standardize them before performing PCA. We will use the built-in scaling options in the `prcomp` and `pcr` functions rather than scaling manually here. 
+
+
+#### Train/Test Split
+
+For PCR, we need to evaluate model performance on unseen data. We'll split the data into a training set (2/3) and a test set (1/3)
+
+```{r, echo = FALSE}
+set.seed(1) # for reproducibility
+n <- nrow(Hitters)
+train_indices <- sample(1:n, floor(2/3 * n))
+test_indices <- setdiff(1:n, train_indices)
+
+train_data <- Hitters[train_indices, ]
+test_data <- Hitters[test_indices, ]
+
+cat("Training set size:", nrow(train_data), "\n")
+cat("Test set size:", nrow(test_data), "\n")
+```
+
+
+
+
+### Principal Component Analysis (PCA)
+
+#### Running PCA
+
+PCA is an unsupervised method used to find linear combinations of the original predictors (principal components) that capture the maximum variance in the data. We perform PCA on the predictor variables of the training data. Note that `Salary` (the response) and non-numeric predictors are excluded from the PCA itself. 
+
+```{r}
+numeric_predictors_train <- train_data %>%
+  select_if(is.numeric) %>%
+  select(-Salary) # exclude the response variable
+
+# PCA using prcomp(), scaling the variables
+pca_result <- prcomp(numeric_predictors_train, scale. = TRUE)
+
+# summary of PCA results
+print(summary(pca_result)) # standard deviation, PVE, cumulative PVE 
+
+#  principal component loadings (rotation matrix) 
+pc_4 <- data.frame(round(pca_result$rotation[, 1:4], 3)) 
+pc_4$names <- rownames(pc_4)
+pc_4$names <- factor(pc_4$names, levels = rev(pc_4$names))
+pc_4 |>
+  pivot_longer(cols = -names) |> 
+  ggplot(aes(x = name, y = names)) + 
+  geom_tile(aes(fill = value), color = "black") + 
+  geom_text(aes(label = sprintf("%0.2f", value))) + 
+  scale_x_discrete(expand = c(0, 0)) + 
+  scale_y_discrete(expand = c(0, 0)) + 
+  labs(x = "PC", y = "Variable") + 
+  scale_fill_gsea() + 
+  theme(legend.position = "none")
+```
+
+Interpretation of PCA Results:
+
+- The `summary` output shows the standard deviation, proportion of variance explained (PVE), and cumulative proportion of variance for each principal component.
+- The rotation matrix contains the principal component loading vectors. Each column represents a component, and the values are the weights applied to the original scaled variables to create that component. 
+- PC1: The loadings for the first principal component (PC1) are predominantly positive and largest for career statistics (`CAtBat`, `CHits`, `CHmRun`, `CRuns`, `CRBI`, `CWalks`) and `Years.` It also gives substantial positive weight to current season offensive stats (`AtBat`, `Hits`, `Runs`, `RBI`, `Walks`). This suggests PC1 is a measure of overall career offensive performance and experience. Players scoring high on PC1 are established players with strong cumulative stats.
+- PC2: PC2: The second principal component (PC2) shows a contrast. It has strong positive loadings for current season offensive performance (`AtBat`, `Hits`, `Runs`, `RBI`) but negative loadings for `Years` and career statistics (`CAtBat` through `CWalks`). This component seems to capture current season offensive performance relative to career length/performance. A player scoring high on PC2 might be having a strong current season but is possibly earlier in their career or less accomplished overall compared to someone with a similar PC1 score.
+
+
+#### Variance explained
+
+We can visualize the PVE to help decide how many components capture most of the data's variability. The scree plot is a common tool for this.
+
+```{r}
+#  PVE from standard deviations
+pve <- pca_result$sdev^2 / sum(pca_result$sdev^2)
+cumulative_pve <- cumsum(pve) # Use cumsum() for cumulative PVE
+
+# PVE (Scree Plot) and Cumulative PVE
+par(mfrow = c(1, 2))
+plot(pve, type = "b", main = "Scree Plot",
+     xlab = "Principal Component", ylab = "Proportion of Variance Explained",
+     ylim = c(0, max(pve)*1.1)) # Scree plot
+plot(cumulative_pve, type = "b", main = "Cumulative PVE",
+     xlab = "Principal Component", ylab = "Cumulative PVE",
+     ylim = c(0, 1.1)) # Cumulative PVE plot
+abline(h = 0.9, col = "red", lty = 2) # Example threshold at 90%
+abline(h = 1.0, col = "grey", lty = 2)
+par(mfrow = c(1, 1))
+```
+
+### Principal Component Regression (PCR)
+
+Principal Component Regression (PCR) involves performing regression using the first `M = 3` principal components as predictors. We use cross-validation to choose the optimal number of components, M. We use the `pcr` function from the `pls` package.
+
+```{r}
+library(pls) # Load pls package 
+set.seed(42)
+#  scale=TRUE to standardize predictors 
+#  validation="CV" for cross-validation 
+pcr_fit <- pcr(Salary ~ ., data = train_data, scale = TRUE, validation = "CV")
+#  summary
+summary(pcr_fit) # CV scores and variance explained
+```
+
+```{r, echo = FALSE}
+#  cross-validation MSE using validationplot() 
+validationplot(pcr_fit, val.type = "MSEP", main = "PCR Cross-Validation MSE")
+# minimum MSEP M value
+best_m_cv <- which.min(RMSEP(pcr_fit)$val[1,1,])
+abline(v = best_m_cv, col = "red", lty = 2) # Adds line at minimum
+#cat("\nComponent count at minimum CV MSEP:", best_m_cv, "\n")
+```
+
+```{r, echo = FALSE}
+# using the number of components that `minimizes` CV error = 5
+best_m <- 5
+cat("Optimal number of components (M) based on CV:", best_m, "\n")
+
+#  predictions on the test set using the chosen M 
+pcr_pred <- predict(pcr_fit, test_data, ncomp = best_m)
+
+# test MSE
+test_mse_pcr <- mean((pcr_pred - test_data$Salary)^2)
+cat("Test MSE for PCR with M =", best_m, "components:", round(test_mse_pcr, 2), "\n")
+
+# comparison, calculate MSE using all components (equivalent to OLS on standardized data) 
+pcr_pred_all <- predict(pcr_fit, test_data, ncomp = ncol(numeric_predictors_train)) # Use max components
+test_mse_pcr_all <- mean((pcr_pred_all - test_data$Salary)^2)
+cat("Test MSE for PCR with all components:", round(test_mse_pcr_all, 2), "\n")
+```

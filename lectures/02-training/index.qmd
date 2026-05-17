@@ -1,0 +1,23 @@
+---
+title: "Training statistical learning models"
+subtitle: "Bias-variance, validation, resampling"
+date: "Sep 4, 2026"
+date-format: long
+---
+
+Under- and over-fitting; the training/validation/test split; k-fold cross-validation and the bootstrap. Foundations for every method we'll see later in the course.
+
+**Assigned reading:** ISLR §2.2, ch. 5
+
+---
+
+## Materials
+
+**Slides:** [Slides](class2_merged.pdf) | [Split view](class2_split.pdf)
+
+**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [helper.R](code/helper.R)
+
+**Supplementary readings:** [reading1_efron1983](readings/reading1_efron1983.pdf) [reading2_efron1981](readings/reading2_efron1981.pdf) [reading3_bates2024](readings/reading3_bates2024.pdf)
+
+**Extras:** [Extra_kFold_vs_moving_CV.R](extras/Extra_kFold_vs_moving_CV.R) [Extra_kFold_vs_moving_CV.pdf](extras/Extra_kFold_vs_moving_CV.pdf)
+

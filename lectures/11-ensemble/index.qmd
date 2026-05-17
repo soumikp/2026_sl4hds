@@ -1,0 +1,21 @@
+---
+title: "Ensemble learning"
+subtitle: "Bagging, random forests, boosting"
+date: "Nov 6, 2026"
+date-format: long
+---
+
+Why averaging helps; bagging and the bootstrap; random forests and feature subsampling; boosting (AdaBoost, gradient boosting) as a different ensemble philosophy.
+
+**Assigned reading:** ISLR §8.2
+
+---
+
+## Materials
+
+**Slides:** [Slides](class11_clean.pdf) | [Annotated slides](class11_annotated.pdf)
+
+**Code:** [class11_lab1.Rmd](code/class11_lab1.Rmd)
+
+**Supplementary readings:** [Phillips et al. (2023)](readings/Phillips et al. (2023).pdf)
+

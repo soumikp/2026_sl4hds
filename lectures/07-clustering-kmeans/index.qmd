@@ -1,0 +1,21 @@
+---
+title: "Clustering I"
+subtitle: "k-means and cluster evaluation"
+date: "Oct 9, 2026"
+date-format: long
+---
+
+k-means as an EM-style algorithm; choosing k; silhouette scores and gap statistics; what cluster evaluation actually tells you.
+
+**Assigned reading:** ISLR §10.3
+
+---
+
+## Materials
+
+**Slides:** [Slides](class7_clean.pdf)
+
+**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [lab1.Rmd](code/lab1.Rmd)
+
+**Supplementary readings:** [Moraru et al. (2025)](readings/Moraru et al. (2025).pdf) [Prabakaran et al. (2019)](readings/Prabakaran et al. (2019).pdf)
+

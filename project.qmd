@@ -1,0 +1,20 @@
+---
+title: "Final Project"
+---
+
+The final project is **25%** of the course grade. Each student presents individual work in a **5-minute talk on the last day of class** (12/05). You may choose either an applied analysis of a real dataset or a review of a methodological paper.
+
+## Key dates
+
+- **10/03** — One-page proposal due (dataset *or* paper, plus planned scope)
+- **12/05** — In-class presentations (5 min/student)
+
+## Project description
+
+📄 [Full project description (PDF)](project/project.pdf) · 📝 [Source (R Markdown)](project/project.Rmd)
+
+## Tips on choosing a project
+
+- **For applied projects**: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic / single-cell, EHR-derived, or NHANES-style cohorts all work well.
+- **For methodology reviews**: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.
+- **Scope honestly**: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that's the unit of analysis to plan around, not the project as a whole.

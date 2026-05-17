@@ -1,0 +1,31 @@
+---
+title: "Assignments"
+---
+
+Three homework assignments, each worth 25% of the course grade. Submit electronic copies via Canvas.
+
+| # | Topic | Released | Due | Materials |
+|---|-------|----------|-----|-----------|
+| 1 | Regression and regularization | TBD | TBD | [HW 1](hw1.qmd) |
+| 2 | Classification | TBD | TBD | [HW 2](hw2.qmd) |
+| 3 | Clustering and dimensionality reduction | TBD | TBD | [HW 3](hw3.qmd) |
+
+## Submission and grading
+
+- Submissions go through Canvas as a knitted PDF (and optionally the `.Rmd` source).
+- Solutions are graded on **both correctness and clarity** — use whitespace, write clear comments, and label your output.
+- Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
+
+## Late policy
+
+| Days late | Credit |
+|-----------|-------:|
+| 0–1       | 80%    |
+| 1–2       | 50%    |
+| > 2       | 0%     |
+
+Exceptions for sickness or emergency require the instructor be informed in advance.
+
+## Collaboration
+
+Discussion among students is allowed and encouraged. Each student must independently write and implement their own solution. Cite any external sources you consulted.

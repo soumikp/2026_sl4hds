@@ -1,0 +1,21 @@
+---
+title: "Dimensionality reduction"
+subtitle: "Principal component analysis"
+date: "Oct 23, 2026"
+date-format: long
+---
+
+PCA as variance maximization and as a reconstruction problem; the SVD; choosing the number of components; PCR as a regression follow-up.
+
+**Assigned reading:** ISLR §6.3
+
+---
+
+## Materials
+
+**Slides:** [Slides](class9_clean.pdf) | [Annotated slides](class9_annotated.pdf)
+
+**Code:** [class9_lab1.Rmd](code/class9_lab1.Rmd) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R)
+
+**Supplementary readings:** [Novembre et al. (2008)](readings/Novembre et al. (2008).pdf) [Zhang and Castelló  (2017)](readings/Zhang and Castelló  (2017).pdf)
+

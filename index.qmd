@@ -1,0 +1,39 @@
+---
+title: "BIOST 2155"
+subtitle: "Introductory Statistical Learning for Health Sciences"
+toc: false
+---
+
+::: {.lead}
+A graduate-level introduction to statistical learning methods, with applications drawn from
+modern health science data. Topics include linear regression with regularization,
+classification, clustering, dimensionality reduction, and ensemble methods.
+:::
+
+## Course at a glance
+
+|             |                                                          |
+|-------------|----------------------------------------------------------|
+| **Term**    | Fall 2025                                                |
+| **Credits** | 2                                                        |
+| **Lecture** | Fridays 9:00–10:50 AM, A622 Public Health                |
+| **Office hours** | Fridays 12:30–1:30 PM, A740 Public Health *(or by appointment)* |
+| **Instructor** | Soumik Purkayastha · [soumik\@pitt.edu](mailto:soumik@pitt.edu) |
+
+## Where to start
+
+- The [schedule](schedule.qmd) lists each week with slides, readings, and code.
+- The [assignments page](assignments/index.qmd) has the three homeworks.
+- The [project page](project.qmd) describes the final project.
+- The [syllabus](syllabus.qmd) covers grading, policies, and prerequisites.
+
+## Recommended textbook
+
+James, Witten, Hastie & Tibshirani. *An Introduction to Statistical Learning: with Applications in R.* Springer, 2013.
+[Free PDF](https://www.statlearning.com/)
+
+## Optional references
+
+- Hastie–Tibshirani–Friedman *Elements of Statistical Learning*
+- Bishop *Pattern Recognition and Machine Learning*
+- Prince *Understanding Deep Learning*.

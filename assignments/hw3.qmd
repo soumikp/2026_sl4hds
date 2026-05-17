@@ -1,0 +1,28 @@
+---
+title: "Homework 3"
+subtitle: "Clustering and dimensionality reduction"
+---
+
+## Materials
+
+- 📄 [Assignment (PDF)](hw3/assignment3_blank.pdf)
+- 📝 [Template (R Markdown)](hw3/assignment3_blank.Rmd)
+- 📊 [Data: `assign3_data.csv`](hw3/assign3_data.csv)
+
+## Instructions
+
+Open the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the `.Rmd` source) via Canvas before the deadline.
+
+::: {.callout-tip}
+## Reproducibility
+Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(2155)` (or any fixed integer).
+:::
+
+<!--
+SOLUTIONS — uncomment after the deadline to publish answer key:
+
+## Solutions
+
+- 📄 [Solutions (PDF)](_solutions/hw3/assignment3_answers.pdf)
+- 📝 [Solutions (R Markdown)](_solutions/hw3/assignment3_answers.Rmd)
+-->

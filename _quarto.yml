@@ -1,0 +1,58 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - "**/*.qmd"
+    - "!_solutions/**"
+  resources:
+    - "lectures/**/slides.pdf"
+    - "lectures/**/code/**"
+    - "lectures/**/data/**"
+    - "lectures/**/figures/**"
+    - "lectures/**/readings/**"
+    - "lectures/**/extras/**"
+    - "assignments/**/*.Rmd"
+    - "assignments/**/*.pdf"
+    - "assignments/**/*.csv"
+    - "project/*.pdf"
+    - "project/*.Rmd"
+
+website:
+  title: "BIOST 2155"
+  description: "Introductory Statistical Learning for Health Sciences — Fall 2026"
+  site-url: "https://soumikp.github.io/2026_sl4hds/"
+  navbar:
+    background: primary
+    left:
+      - href: index.qmd
+        text: Home
+      - href: schedule.qmd
+        text: Schedule
+      - href: syllabus.qmd
+        text: Syllabus
+      - href: assignments/index.qmd
+        text: Assignments
+      - href: project.qmd
+        text: Project
+  page-footer:
+    left: "© 2026 Soumik Purkayastha"
+    center: "Department of Biostatistics & Health Data Science · University of Pittsburgh"
+    right: "Built with [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme: [cosmo, styles.scss]
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    smooth-scroll: true
+    code-copy: true
+    code-overflow: wrap
+    link-external-newwindow: true
+    fig-align: center
+
+freeze: auto
+execute:
+  freeze: auto
+  warning: false
+  message: false

@@ -1,0 +1,21 @@
+---
+title: "Regression I"
+subtitle: "Subset selection and shrinkage"
+date: "Sep 11, 2026"
+date-format: long
+---
+
+Linear regression as a baseline; best-subset and stepwise selection; ridge regression and the lasso as principled alternatives when p is large or predictors are correlated.
+
+**Assigned reading:** ISLR ch. 3, 6
+
+---
+
+## Materials
+
+**Slides:** [Slides](class3_clean.pdf) | [Annotated slides](class3_annotated.pdf) | [Split view](class3_split.pdf)
+
+**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [helper.R](code/helper.R) [model1.R](code/model1.R)
+
+**Supplementary readings:** [Frank and Friedman (1993)](readings/Frank and Friedman (1993).pdf) [Heinze et al. (2017)](readings/Heinze et al. (2017).pdf)
+

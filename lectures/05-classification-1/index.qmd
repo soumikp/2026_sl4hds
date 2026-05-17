@@ -1,0 +1,23 @@
+---
+title: "Classification I"
+subtitle: "Logistic regression and generative models"
+date: "Sep 25, 2026"
+date-format: long
+---
+
+Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as generative classifiers. Decision boundaries and what each approach assumes about the data.
+
+**Assigned reading:** ISLR ch. 4
+
+---
+
+## Materials
+
+**Slides:** [Slides](class5_clean.pdf) | [Annotated slides](class5_annotated.pdf)
+
+**Code:** [extra_simulation.R](code/extra_simulation.R) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [fig5.R](code/fig5.R) [lab1.Rmd](code/lab1.Rmd)
+
+**Supplementary readings:** [Van Calster et al. (2025)](readings/Van Calster et al. (2025).pdf)
+
+**Extras:** [classification_recap.pdf](extras/classification_recap.pdf)
+
