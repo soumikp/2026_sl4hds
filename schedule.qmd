@@ -15,42 +15,42 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>Aug 29</td>
 <td><strong><a href="lectures/01-intro/index.html">Introduction</a></strong> — supervised vs.&nbsp;unsupervised; regression, classification, clustering, dimensionality reduction</td>
 <td>ISLR ch. 2</td>
-<td><a href="lectures/01-intro/slides.pdf">slides</a></td>
+<td><a href="lectures/01-intro/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Sep 5</td>
 <td><strong><a href="lectures/02-training/index.html">Training models</a></strong> — bias-variance, training/validation/testing, resampling</td>
 <td>ISLR §2.2, ch. 5</td>
-<td><a href="lectures/02-training/slides.pdf">slides</a></td>
+<td><a href="lectures/02-training/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Sep 12</td>
 <td><strong><a href="lectures/03-regression-1/index.html">Regression I</a></strong> — subset selection, ridge, lasso</td>
 <td>ISLR ch. 3, 6</td>
-<td><a href="lectures/03-regression-1/slides.pdf">slides</a></td>
+<td><a href="lectures/03-regression-1/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Sep 19</td>
 <td><strong><a href="lectures/04-regression-2/index.html">Regression II</a></strong> — non-linear regression, splines, kernel trick</td>
 <td>ISLR ch. 7</td>
-<td><a href="lectures/04-regression-2/slides.pdf">slides</a></td>
+<td><a href="lectures/04-regression-2/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Sep 26</td>
 <td><strong><a href="lectures/05-classification-1/index.html">Classification I</a></strong> — logistic regression, generative models</td>
 <td>ISLR ch. 4</td>
-<td><a href="lectures/05-classification-1/slides.pdf">slides</a></td>
+<td><a href="lectures/05-classification-1/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Oct 3</td>
 <td><strong><a href="lectures/06-classification-2/index.html">Classification II</a></strong> — support vector machines</td>
 <td>ISLR ch. 9</td>
-<td><a href="lectures/06-classification-2/slides.pdf">slides</a></td>
+<td><a href="lectures/06-classification-2/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr class="no-class">
@@ -64,21 +64,21 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>Oct 17</td>
 <td><strong><a href="lectures/07-clustering-kmeans/index.html">Clustering I</a></strong> — k-means, cluster evaluation</td>
 <td>ISLR §10.3</td>
-<td><a href="lectures/07-clustering-kmeans/slides.pdf">slides</a></td>
+<td><a href="lectures/07-clustering-kmeans/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Oct 24</td>
 <td><strong><a href="lectures/08-clustering-gmm/index.html">Clustering II</a></strong> — Gaussian mixture models</td>
 <td>PRML §9.1–9.2</td>
-<td><a href="lectures/08-clustering-gmm/slides.pdf">slides</a></td>
+<td><a href="lectures/08-clustering-gmm/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Oct 31</td>
 <td><strong><a href="lectures/09-pca/index.html">Dimensionality reduction</a></strong> — principal component analysis</td>
 <td>ISLR §6.3</td>
-<td><a href="lectures/09-pca/slides.pdf">slides</a></td>
+<td><a href="lectures/09-pca/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr class="no-class">
@@ -92,14 +92,14 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>Nov 14</td>
 <td><strong><a href="lectures/10-trees/index.html">Decision trees</a></strong> — CART, regression and classification trees</td>
 <td>ISLR §8.1</td>
-<td><a href="lectures/10-trees/slides.pdf">slides</a></td>
+<td><a href="lectures/10-trees/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr>
 <td>Nov 21</td>
 <td><strong><a href="lectures/11-ensemble/index.html">Ensemble learning</a></strong> — bagging, random forests, boosting</td>
 <td>ISLR §8.2</td>
-<td><a href="lectures/11-ensemble/slides.pdf">slides</a></td>
+<td><a href="lectures/11-ensemble/slides_clean.pdf">slides</a></td>
 </tr>
 
 <tr class="no-class">

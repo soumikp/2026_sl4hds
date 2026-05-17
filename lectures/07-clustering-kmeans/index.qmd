@@ -13,7 +13,7 @@ k-means as an EM-style algorithm; choosing k; silhouette scores and gap statisti
 
 ## Materials
 
-**Slides:** [Slides](class7_clean.pdf)
+**Slides:** [Slides](slides_clean.pdf)
 
 **Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [lab1.Rmd](code/lab1.Rmd)
 

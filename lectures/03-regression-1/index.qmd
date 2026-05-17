@@ -13,7 +13,7 @@ Linear regression as a baseline; best-subset and stepwise selection; ridge regre
 
 ## Materials
 
-**Slides:** [Slides](class3_clean.pdf) | [Annotated slides](class3_annotated.pdf) | [Split view](class3_split.pdf)
+**Slides:** [Slides](slides_clean.pdf) | [Annotated slides](slides_annotated.pdf) | [Split view](slides_split.pdf)
 
 **Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [helper.R](code/helper.R) [model1.R](code/model1.R)
 
