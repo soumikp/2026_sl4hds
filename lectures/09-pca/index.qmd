@@ -13,7 +13,7 @@ PCA as variance maximization and as a reconstruction problem; the SVD; choosing 
 
 ## Materials
 
-**Slides:** [Slides](slides_clean.pdf) | [Annotated slides](slides_annotated.pdf)
+**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf)
 
 **Code:** [class9_lab1.Rmd](code/class9_lab1.Rmd) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R)
 

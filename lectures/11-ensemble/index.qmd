@@ -13,7 +13,7 @@ Why averaging helps; bagging and the bootstrap; random forests and feature subsa
 
 ## Materials
 
-**Slides:** [Slides](slides_clean.pdf) | [Annotated slides](slides_annotated.pdf)
+**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf)
 
 **Code:** [class11_lab1.Rmd](code/class11_lab1.Rmd)
 

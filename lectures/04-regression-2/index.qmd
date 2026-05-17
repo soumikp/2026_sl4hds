@@ -13,7 +13,7 @@ Polynomials, step functions, regression splines, smoothing splines, and an intro
 
 ## Materials
 
-**Slides:** [Slides](slides_clean.pdf) | [Annotated slides](slides_annotated.pdf) | [Split view](slides_split.pdf)
+**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf) | [slides_split](slides_split.pdf)
 
 **Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [fig5.R](code/fig5.R) [helper.R](code/helper.R) [lab1.R](code/lab1.R) [lab2.R](code/lab2.R)
 
