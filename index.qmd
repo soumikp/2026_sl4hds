@@ -14,7 +14,7 @@ classification, clustering, dimensionality reduction, and ensemble methods.
 
 |             |                                                          |
 |-------------|----------------------------------------------------------|
-| **Term**    | Fall 2025                                                |
+| **Term**    | Fall 2026                                                |
 | **Credits** | 2                                                        |
 | **Lecture** | Fridays 9:00–10:50 AM, A622 Public Health                |
 | **Office hours** | Fridays 12:30–1:30 PM, A740 Public Health *(or by appointment)* |

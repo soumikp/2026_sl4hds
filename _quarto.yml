@@ -5,7 +5,7 @@ project:
     - "**/*.qmd"
     - "!_solutions/**"
   resources:
-    - "lectures/**/slides.pdf"
+    - "lectures/**/*.pdf"
     - "lectures/**/code/**"
     - "lectures/**/data/**"
     - "lectures/**/figures/**"
