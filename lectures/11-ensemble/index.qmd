@@ -7,15 +7,22 @@ date-format: long
 
 Why averaging helps; bagging and the bootstrap; random forests and feature subsampling; boosting (AdaBoost, gradient boosting) as a different ensemble philosophy.
 
-**Assigned reading:** ISLR §8.2
+📖 **Assigned reading:** ISLR §8.2
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
-**Code:** [class11_lab1.Rmd](code/class11_lab1.Rmd)
+## 📚 Readings
 
-**Supplementary readings:** [Phillips et al. (2023)](readings/Phillips et al. (2023).pdf)
+- 📄 [Phillips et al. (2023)](readings/Phillips et al. (2023).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 🧪 [class11 lab1 (HTML)](code/class11_lab1.html){target="_blank"}
+- 📝 [Lab source (class11_lab1.Rmd)](code/class11_lab1.Rmd)

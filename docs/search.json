@@ -102,70 +102,189 @@
     "href": "lectures/10-trees/index.html",
     "title": "Decision trees",
     "section": "",
-    "text": "Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners.\nAssigned reading: ISLR §8.1"
+    "text": "Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners.\n📖 Assigned reading: ISLR §8.1"
   },
   {
-    "objectID": "lectures/10-trees/index.html#materials",
-    "href": "lectures/10-trees/index.html#materials",
+    "objectID": "lectures/10-trees/index.html#slides",
+    "href": "lectures/10-trees/index.html#slides",
     "title": "Decision trees",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: app1.R class10_lab1.Rmd fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: Breiman (2001) Chen and Ishwaran (2012) Watanabe et al. (2021)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/10-trees/index.html#readings",
+    "href": "lectures/10-trees/index.html#readings",
+    "title": "Decision trees",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Breiman (2001)\n📄 Chen and Ishwaran (2012)\n📄 Watanabe et al. (2021)"
+  },
+  {
+    "objectID": "lectures/10-trees/index.html#lab",
+    "href": "lectures/10-trees/index.html#lab",
+    "title": "Decision trees",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class10 lab1 (HTML)\n📝 Lab source (class10_lab1.Rmd)"
+  },
+  {
+    "objectID": "lectures/10-trees/index.html#code",
+    "href": "lectures/10-trees/index.html#code",
+    "title": "Decision trees",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R\n\nInteractive demos — Shiny apps (run locally with shiny::runApp()):\n\n🎛️ app1.R"
   },
   {
     "objectID": "lectures/08-clustering-gmm/index.html",
     "href": "lectures/08-clustering-gmm/index.html",
     "title": "Clustering II",
     "section": "",
-    "text": "Gaussian mixture models as soft clustering; the EM algorithm; model selection via BIC; comparing GMMs to k-means.\nAssigned reading: PRML §9.1–9.2"
+    "text": "Gaussian mixture models as soft clustering; the EM algorithm; model selection via BIC; comparing GMMs to k-means.\n📖 Assigned reading: PRML §9.1–9.2"
   },
   {
-    "objectID": "lectures/08-clustering-gmm/index.html#materials",
-    "href": "lectures/08-clustering-gmm/index.html#materials",
+    "objectID": "lectures/08-clustering-gmm/index.html#slides",
+    "href": "lectures/08-clustering-gmm/index.html#slides",
     "title": "Clustering II",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: app1.R fig1.R fig2.R lab1.Rmd\nSupplementary readings: Altman and Krzywinski (2017) Garcia-Vidal et al. (2024)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/08-clustering-gmm/index.html#readings",
+    "href": "lectures/08-clustering-gmm/index.html#readings",
+    "title": "Clustering II",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Altman and Krzywinski (2017)\n📄 Garcia-Vidal et al. (2024)"
+  },
+  {
+    "objectID": "lectures/08-clustering-gmm/index.html#lab",
+    "href": "lectures/08-clustering-gmm/index.html#lab",
+    "title": "Clustering II",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class8 lab1 (HTML)\n🧪 lab1 (HTML)\n📝 Lab source (lab1.Rmd)"
+  },
+  {
+    "objectID": "lectures/08-clustering-gmm/index.html#code",
+    "href": "lectures/08-clustering-gmm/index.html#code",
+    "title": "Clustering II",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n\nInteractive demos — Shiny apps (run locally with shiny::runApp()):\n\n🎛️ app1.R"
   },
   {
     "objectID": "lectures/06-classification-2/index.html",
     "href": "lectures/06-classification-2/index.html",
     "title": "Classification II",
     "section": "",
-    "text": "Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries.\nAssigned reading: ISLR ch. 9"
+    "text": "Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries.\n📖 Assigned reading: ISLR ch. 9"
   },
   {
-    "objectID": "lectures/06-classification-2/index.html#materials",
-    "href": "lectures/06-classification-2/index.html#materials",
+    "objectID": "lectures/06-classification-2/index.html#slides",
+    "href": "lectures/06-classification-2/index.html#slides",
     "title": "Classification II",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: app1.R fig1.R fig2.R fig3.R lab1.R lab1.Rmd\nSupplementary readings: Jones and Farrow (2025)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#readings",
+    "href": "lectures/06-classification-2/index.html#readings",
+    "title": "Classification II",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Jones and Farrow (2025)"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#lab",
+    "href": "lectures/06-classification-2/index.html#lab",
+    "title": "Classification II",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class6 lab1 (HTML)\n🧪 lab1 (HTML)\n📝 Lab source (lab1.Rmd)\n📝 Lab source (lab1.R)"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#code",
+    "href": "lectures/06-classification-2/index.html#code",
+    "title": "Classification II",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n\nInteractive demos — Shiny apps (run locally with shiny::runApp()):\n\n🎛️ app1.R"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#data",
+    "href": "lectures/06-classification-2/index.html#data",
+    "title": "Classification II",
+    "section": "🗂️ Data",
+    "text": "🗂️ Data\n\n📊 iris.csv"
   },
   {
     "objectID": "lectures/04-regression-2/index.html",
     "href": "lectures/04-regression-2/index.html",
     "title": "Regression II",
     "section": "",
-    "text": "Polynomials, step functions, regression splines, smoothing splines, and an introduction to the kernel trick — moving beyond the linear model while keeping the regression framework.\nAssigned reading: ISLR ch. 7"
+    "text": "Polynomials, step functions, regression splines, smoothing splines, and an introduction to the kernel trick — moving beyond the linear model while keeping the regression framework.\n📖 Assigned reading: ISLR ch. 7"
   },
   {
-    "objectID": "lectures/04-regression-2/index.html#materials",
-    "href": "lectures/04-regression-2/index.html#materials",
+    "objectID": "lectures/04-regression-2/index.html#slides",
+    "href": "lectures/04-regression-2/index.html#slides",
     "title": "Regression II",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R fig5.R helper.R lab1.R lab2.R\nSupplementary readings: Stricker et al. (2017) Zimbalist et al. (2025)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)\n🖨️ Slides (2-up) (two per page, for printing)"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#readings",
+    "href": "lectures/04-regression-2/index.html#readings",
+    "title": "Regression II",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Stricker et al. (2017)\n📄 Zimbalist et al. (2025)"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#lab",
+    "href": "lectures/04-regression-2/index.html#lab",
+    "title": "Regression II",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n📝 Lab source (lab1.R)\n📝 Lab source (lab2.R)"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#code",
+    "href": "lectures/04-regression-2/index.html#code",
+    "title": "Regression II",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R\n📈 fig5.R\n\nOther scripts:\n\n📜 helper.R"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#data",
+    "href": "lectures/04-regression-2/index.html#data",
+    "title": "Regression II",
+    "section": "🗂️ Data",
+    "text": "🗂️ Data\n\n📊 diabetes.csv\n📊 wages.csv"
   },
   {
     "objectID": "lectures/02-training/index.html",
     "href": "lectures/02-training/index.html",
     "title": "Training statistical learning models",
     "section": "",
-    "text": "Under- and over-fitting; the training/validation/test split; k-fold cross-validation and the bootstrap. Foundations for every method we’ll see later in the course.\nAssigned reading: ISLR §2.2, ch. 5"
+    "text": "Under- and over-fitting; the training/validation/test split; k-fold cross-validation and the bootstrap. Foundations for every method we’ll see later in the course.\n📖 Assigned reading: ISLR §2.2, ch. 5"
   },
   {
-    "objectID": "lectures/02-training/index.html#materials",
-    "href": "lectures/02-training/index.html#materials",
+    "objectID": "lectures/02-training/index.html#slides",
+    "href": "lectures/02-training/index.html#slides",
     "title": "Training statistical learning models",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R helper.R\nSupplementary readings: reading1_efron1983 reading2_efron1981 reading3_bates2024\nExtras: Extra_kFold_vs_moving_CV.R Extra_kFold_vs_moving_CV.pdf"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n🖨️ Slides (2-up) (two per page, for printing)"
+  },
+  {
+    "objectID": "lectures/02-training/index.html#readings",
+    "href": "lectures/02-training/index.html#readings",
+    "title": "Training statistical learning models",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Efron (1983)\n📄 Efron (1981)\n📄 Bates (2024)"
+  },
+  {
+    "objectID": "lectures/02-training/index.html#code",
+    "href": "lectures/02-training/index.html#code",
+    "title": "Training statistical learning models",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R\n\nOther scripts:\n\n📜 helper.R"
+  },
+  {
+    "objectID": "lectures/02-training/index.html#extras",
+    "href": "lectures/02-training/index.html#extras",
+    "title": "Training statistical learning models",
+    "section": "⭐ Extras",
+    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 K Fold Vs Moving CV\n📜 K Fold Vs Moving CV"
   },
   {
     "objectID": "index.html",
@@ -298,84 +417,231 @@
     "href": "lectures/01-intro/index.html",
     "title": "Introduction",
     "section": "",
-    "text": "Course overview and the landscape of statistical learning. We distinguish supervised problems (regression, classification) from unsupervised ones (clustering, dimensionality reduction), and motivate the rest of the semester through health-science examples.\nAssigned reading: ISLR ch. 2"
+    "text": "Course overview and the landscape of statistical learning. We distinguish supervised problems (regression, classification) from unsupervised ones (clustering, dimensionality reduction), and motivate the rest of the semester through health-science examples.\n📖 Assigned reading: ISLR ch. 2"
   },
   {
-    "objectID": "lectures/01-intro/index.html#materials",
-    "href": "lectures/01-intro/index.html#materials",
+    "objectID": "lectures/01-intro/index.html#slides",
+    "href": "lectures/01-intro/index.html#slides",
     "title": "Introduction",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R\nSupplementary readings: islr_class1 reading1_breimann2001 reading2_gelman2020\nExtras: Extra_NoisyLabels.pdf"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n🖨️ Slides (2-up) (two per page, for printing)"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#readings",
+    "href": "lectures/01-intro/index.html#readings",
+    "title": "Introduction",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 ISLR (selected pages)\n📄 Breimann (2001)\n📄 Gelman (2020)"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#code",
+    "href": "lectures/01-intro/index.html#code",
+    "title": "Introduction",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#data",
+    "href": "lectures/01-intro/index.html#data",
+    "title": "Introduction",
+    "section": "🗂️ Data",
+    "text": "🗂️ Data\n\n📊 breast_tumor_measurements.csv\n📊 heart_failure_data.csv\n📊 neonatal_brain_volumes.csv\n📊 sbp_bmi_measurements.csv"
+  },
+  {
+    "objectID": "lectures/01-intro/index.html#extras",
+    "href": "lectures/01-intro/index.html#extras",
+    "title": "Introduction",
+    "section": "⭐ Extras",
+    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Noisy Labels"
   },
   {
     "objectID": "lectures/03-regression-1/index.html",
     "href": "lectures/03-regression-1/index.html",
     "title": "Regression I",
     "section": "",
-    "text": "Linear regression as a baseline; best-subset and stepwise selection; ridge regression and the lasso as principled alternatives when p is large or predictors are correlated.\nAssigned reading: ISLR ch. 3, 6"
+    "text": "Linear regression as a baseline; best-subset and stepwise selection; ridge regression and the lasso as principled alternatives when p is large or predictors are correlated.\n📖 Assigned reading: ISLR ch. 3, 6"
   },
   {
-    "objectID": "lectures/03-regression-1/index.html#materials",
-    "href": "lectures/03-regression-1/index.html#materials",
+    "objectID": "lectures/03-regression-1/index.html#slides",
+    "href": "lectures/03-regression-1/index.html#slides",
     "title": "Regression I",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated | slides_split\nCode: fig1.R fig2.R fig3.R fig4.R helper.R model1.R\nSupplementary readings: Frank and Friedman (1993) Heinze et al. (2017)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)\n🖨️ Slides (2-up) (two per page, for printing)"
+  },
+  {
+    "objectID": "lectures/03-regression-1/index.html#readings",
+    "href": "lectures/03-regression-1/index.html#readings",
+    "title": "Regression I",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Frank and Friedman (1993)\n📄 Heinze et al. (2017)"
+  },
+  {
+    "objectID": "lectures/03-regression-1/index.html#code",
+    "href": "lectures/03-regression-1/index.html#code",
+    "title": "Regression I",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R\n\nOther scripts:\n\n📜 helper.R\n📜 model1.R"
+  },
+  {
+    "objectID": "lectures/03-regression-1/index.html#data",
+    "href": "lectures/03-regression-1/index.html#data",
+    "title": "Regression I",
+    "section": "🗂️ Data",
+    "text": "🗂️ Data\n\n📊 insurance.csv\n📊 neonatal_brain_volumes.csv\n📊 prostate_cancer.csv\n📊 student_credit.csv"
   },
   {
     "objectID": "lectures/05-classification-1/index.html",
     "href": "lectures/05-classification-1/index.html",
     "title": "Classification I",
     "section": "",
-    "text": "Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as generative classifiers. Decision boundaries and what each approach assumes about the data.\nAssigned reading: ISLR ch. 4"
+    "text": "Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as generative classifiers. Decision boundaries and what each approach assumes about the data.\n📖 Assigned reading: ISLR ch. 4"
   },
   {
-    "objectID": "lectures/05-classification-1/index.html#materials",
-    "href": "lectures/05-classification-1/index.html#materials",
+    "objectID": "lectures/05-classification-1/index.html#slides",
+    "href": "lectures/05-classification-1/index.html#slides",
     "title": "Classification I",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: extra_simulation.R fig1.R fig2.R fig3.R fig4.R fig5.R lab1.Rmd\nSupplementary readings: Van Calster et al. (2025)\nExtras: classification_recap.pdf"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#readings",
+    "href": "lectures/05-classification-1/index.html#readings",
+    "title": "Classification I",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Van Calster et al. (2025)"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#lab",
+    "href": "lectures/05-classification-1/index.html#lab",
+    "title": "Classification I",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class5 lab1 (HTML)\n🧪 lab1 (HTML)\n📝 Lab source (lab1.Rmd)"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#code",
+    "href": "lectures/05-classification-1/index.html#code",
+    "title": "Classification I",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R\n📈 fig5.R\n\nOther scripts:\n\n📜 extra_simulation.R"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#data",
+    "href": "lectures/05-classification-1/index.html#data",
+    "title": "Classification I",
+    "section": "🗂️ Data",
+    "text": "🗂️ Data\n\n📊 winequality.csv"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#extras",
+    "href": "lectures/05-classification-1/index.html#extras",
+    "title": "Classification I",
+    "section": "⭐ Extras",
+    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Classification Recap"
   },
   {
     "objectID": "lectures/07-clustering-kmeans/index.html",
     "href": "lectures/07-clustering-kmeans/index.html",
     "title": "Clustering I",
     "section": "",
-    "text": "k-means as an EM-style algorithm; choosing k; silhouette scores and gap statistics; what cluster evaluation actually tells you.\nAssigned reading: ISLR §10.3"
+    "text": "k-means as an EM-style algorithm; choosing k; silhouette scores and gap statistics; what cluster evaluation actually tells you.\n📖 Assigned reading: ISLR §10.3"
   },
   {
-    "objectID": "lectures/07-clustering-kmeans/index.html#materials",
-    "href": "lectures/07-clustering-kmeans/index.html#materials",
+    "objectID": "lectures/07-clustering-kmeans/index.html#slides",
+    "href": "lectures/07-clustering-kmeans/index.html#slides",
     "title": "Clustering I",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean\nCode: fig1.R fig2.R lab1.Rmd\nSupplementary readings: Moraru et al. (2025) Prabakaran et al. (2019)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#readings",
+    "href": "lectures/07-clustering-kmeans/index.html#readings",
+    "title": "Clustering I",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Moraru et al. (2025)\n📄 Prabakaran et al. (2019)"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#lab",
+    "href": "lectures/07-clustering-kmeans/index.html#lab",
+    "title": "Clustering I",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class7 lab1 (HTML)\n🧪 lab1 (HTML)\n📝 Lab source (lab1.Rmd)"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#code",
+    "href": "lectures/07-clustering-kmeans/index.html#code",
+    "title": "Clustering I",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#data",
+    "href": "lectures/07-clustering-kmeans/index.html#data",
+    "title": "Clustering I",
+    "section": "🗂️ Data",
+    "text": "🗂️ Data\n\n📊 penguins.csv"
   },
   {
     "objectID": "lectures/09-pca/index.html",
     "href": "lectures/09-pca/index.html",
     "title": "Dimensionality reduction",
     "section": "",
-    "text": "PCA as variance maximization and as a reconstruction problem; the SVD; choosing the number of components; PCR as a regression follow-up.\nAssigned reading: ISLR §6.3"
+    "text": "PCA as variance maximization and as a reconstruction problem; the SVD; choosing the number of components; PCR as a regression follow-up.\n📖 Assigned reading: ISLR §6.3"
   },
   {
-    "objectID": "lectures/09-pca/index.html#materials",
-    "href": "lectures/09-pca/index.html#materials",
+    "objectID": "lectures/09-pca/index.html#slides",
+    "href": "lectures/09-pca/index.html#slides",
     "title": "Dimensionality reduction",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: class9_lab1.Rmd fig1.R fig2.R\nSupplementary readings: Novembre et al. (2008) Zhang and Castelló (2017)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/09-pca/index.html#readings",
+    "href": "lectures/09-pca/index.html#readings",
+    "title": "Dimensionality reduction",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Novembre et al. (2008)\n📄 Zhang and Castelló (2017)"
+  },
+  {
+    "objectID": "lectures/09-pca/index.html#lab",
+    "href": "lectures/09-pca/index.html#lab",
+    "title": "Dimensionality reduction",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class9 lab1 (HTML)\n📝 Lab source (class9_lab1.Rmd)"
+  },
+  {
+    "objectID": "lectures/09-pca/index.html#code",
+    "href": "lectures/09-pca/index.html#code",
+    "title": "Dimensionality reduction",
+    "section": "💻 Code",
+    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R"
   },
   {
     "objectID": "lectures/11-ensemble/index.html",
     "href": "lectures/11-ensemble/index.html",
     "title": "Ensemble learning",
     "section": "",
-    "text": "Why averaging helps; bagging and the bootstrap; random forests and feature subsampling; boosting (AdaBoost, gradient boosting) as a different ensemble philosophy.\nAssigned reading: ISLR §8.2"
+    "text": "Why averaging helps; bagging and the bootstrap; random forests and feature subsampling; boosting (AdaBoost, gradient boosting) as a different ensemble philosophy.\n📖 Assigned reading: ISLR §8.2"
   },
   {
-    "objectID": "lectures/11-ensemble/index.html#materials",
-    "href": "lectures/11-ensemble/index.html#materials",
+    "objectID": "lectures/11-ensemble/index.html#slides",
+    "href": "lectures/11-ensemble/index.html#slides",
     "title": "Ensemble learning",
-    "section": "Materials",
-    "text": "Materials\nSlides: slides_clean | slides_annotated\nCode: class11_lab1.Rmd\nSupplementary readings: Phillips et al. (2023)"
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/11-ensemble/index.html#readings",
+    "href": "lectures/11-ensemble/index.html#readings",
+    "title": "Ensemble learning",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Phillips et al. (2023)"
+  },
+  {
+    "objectID": "lectures/11-ensemble/index.html#lab",
+    "href": "lectures/11-ensemble/index.html#lab",
+    "title": "Ensemble learning",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 class11 lab1 (HTML)\n📝 Lab source (class11_lab1.Rmd)"
   },
   {
     "objectID": "schedule.html",

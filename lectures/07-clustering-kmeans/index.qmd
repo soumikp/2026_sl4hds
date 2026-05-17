@@ -7,15 +7,34 @@ date-format: long
 
 k-means as an EM-style algorithm; choosing k; silhouette scores and gap statistics; what cluster evaluation actually tells you.
 
-**Assigned reading:** ISLR §10.3
+📖 **Assigned reading:** ISLR §10.3
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
 
-**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [lab1.Rmd](code/lab1.Rmd)
+## 📚 Readings
 
-**Supplementary readings:** [Moraru et al. (2025)](readings/Moraru et al. (2025).pdf) [Prabakaran et al. (2019)](readings/Prabakaran et al. (2019).pdf)
+- 📄 [Moraru et al. (2025)](readings/Moraru et al. (2025).pdf)
+- 📄 [Prabakaran et al. (2019)](readings/Prabakaran et al. (2019).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 🧪 [class7 lab1 (HTML)](code/class7_lab1.html){target="_blank"}
+- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
+- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+
+## 💻 Code
+
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+
+## 🗂️ Data
+
+- 📊 [penguins.csv](data/penguins.csv)

@@ -7,15 +7,43 @@ date-format: long
 
 Polynomials, step functions, regression splines, smoothing splines, and an introduction to the kernel trick — moving beyond the linear model while keeping the regression framework.
 
-**Assigned reading:** ISLR ch. 7
+📖 **Assigned reading:** ISLR ch. 7
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf) | [slides_split](slides_split.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
+- 🖨️ [Slides (2-up)](slides_split.pdf)  *(two per page, for printing)*
 
-**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [fig5.R](code/fig5.R) [helper.R](code/helper.R) [lab1.R](code/lab1.R) [lab2.R](code/lab2.R)
+## 📚 Readings
 
-**Supplementary readings:** [Stricker et al. (2017)](readings/Stricker et al. (2017).pdf) [Zimbalist et al. (2025)](readings/Zimbalist et al. (2025).pdf)
+- 📄 [Stricker et al. (2017)](readings/Stricker et al. (2017).pdf)
+- 📄 [Zimbalist et al. (2025)](readings/Zimbalist et al. (2025).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 📝 [Lab source (lab1.R)](code/lab1.R)
+- 📝 [Lab source (lab2.R)](code/lab2.R)
+
+## 💻 Code
+
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+- 📈 [fig3.R](code/fig3.R)
+- 📈 [fig4.R](code/fig4.R)
+- 📈 [fig5.R](code/fig5.R)
+
+**Other scripts:**
+
+- 📜 [helper.R](code/helper.R)
+
+## 🗂️ Data
+
+- 📊 [diabetes.csv](data/diabetes.csv)
+- 📊 [wages.csv](data/wages.csv)

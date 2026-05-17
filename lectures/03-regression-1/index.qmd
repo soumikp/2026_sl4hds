@@ -7,15 +7,38 @@ date-format: long
 
 Linear regression as a baseline; best-subset and stepwise selection; ridge regression and the lasso as principled alternatives when p is large or predictors are correlated.
 
-**Assigned reading:** ISLR ch. 3, 6
+📖 **Assigned reading:** ISLR ch. 3, 6
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf) | [slides_split](slides_split.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
+- 🖨️ [Slides (2-up)](slides_split.pdf)  *(two per page, for printing)*
 
-**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [helper.R](code/helper.R) [model1.R](code/model1.R)
+## 📚 Readings
 
-**Supplementary readings:** [Frank and Friedman (1993)](readings/Frank and Friedman (1993).pdf) [Heinze et al. (2017)](readings/Heinze et al. (2017).pdf)
+- 📄 [Frank and Friedman (1993)](readings/Frank and Friedman (1993).pdf)
+- 📄 [Heinze et al. (2017)](readings/Heinze et al. (2017).pdf)
 
+## 💻 Code
+
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+- 📈 [fig3.R](code/fig3.R)
+- 📈 [fig4.R](code/fig4.R)
+
+**Other scripts:**
+
+- 📜 [helper.R](code/helper.R)
+- 📜 [model1.R](code/model1.R)
+
+## 🗂️ Data
+
+- 📊 [insurance.csv](data/insurance.csv)
+- 📊 [neonatal_brain_volumes.csv](data/neonatal_brain_volumes.csv)
+- 📊 [prostate_cancer.csv](data/prostate_cancer.csv)
+- 📊 [student_credit.csv](data/student_credit.csv)

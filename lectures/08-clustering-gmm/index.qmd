@@ -7,15 +7,35 @@ date-format: long
 
 Gaussian mixture models as soft clustering; the EM algorithm; model selection via BIC; comparing GMMs to k-means.
 
-**Assigned reading:** PRML §9.1–9.2
+📖 **Assigned reading:** PRML §9.1–9.2
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
-**Code:** [app1.R](code/app1.R) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [lab1.Rmd](code/lab1.Rmd)
+## 📚 Readings
 
-**Supplementary readings:** [Altman and Krzywinski (2017)](readings/Altman and Krzywinski (2017).pdf) [Garcia-Vidal et al. (2024)](readings/Garcia-Vidal et al. (2024).pdf)
+- 📄 [Altman and Krzywinski (2017)](readings/Altman and Krzywinski (2017).pdf)
+- 📄 [Garcia-Vidal et al. (2024)](readings/Garcia-Vidal et al. (2024).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 🧪 [class8 lab1 (HTML)](code/class8_lab1.html){target="_blank"}
+- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
+- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+
+## 💻 Code
+
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+
+**Interactive demos** — Shiny apps (run locally with `shiny::runApp()`):
+
+- 🎛️ [app1.R](code/app1.R)

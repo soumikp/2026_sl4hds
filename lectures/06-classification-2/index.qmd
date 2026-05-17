@@ -7,15 +7,40 @@ date-format: long
 
 Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries.
 
-**Assigned reading:** ISLR ch. 9
+📖 **Assigned reading:** ISLR ch. 9
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
-**Code:** [app1.R](code/app1.R) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [lab1.R](code/lab1.R) [lab1.Rmd](code/lab1.Rmd)
+## 📚 Readings
 
-**Supplementary readings:** [Jones and Farrow (2025)](readings/Jones and Farrow (2025).pdf)
+- 📄 [Jones and Farrow (2025)](readings/Jones and Farrow (2025).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 🧪 [class6 lab1 (HTML)](code/class6_lab1.html){target="_blank"}
+- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
+- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+- 📝 [Lab source (lab1.R)](code/lab1.R)
+
+## 💻 Code
+
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+- 📈 [fig3.R](code/fig3.R)
+
+**Interactive demos** — Shiny apps (run locally with `shiny::runApp()`):
+
+- 🎛️ [app1.R](code/app1.R)
+
+## 🗂️ Data
+
+- 📊 [iris.csv](data/iris.csv)

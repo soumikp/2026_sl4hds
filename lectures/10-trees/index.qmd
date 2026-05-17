@@ -7,15 +7,37 @@ date-format: long
 
 Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners.
 
-**Assigned reading:** ISLR §8.1
+📖 **Assigned reading:** ISLR §8.1
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_annotated](slides_annotated.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
-**Code:** [app1.R](code/app1.R) [class10_lab1.Rmd](code/class10_lab1.Rmd) [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R)
+## 📚 Readings
 
-**Supplementary readings:** [Breiman (2001)](readings/Breiman (2001).pdf) [Chen and Ishwaran (2012)](readings/Chen and Ishwaran (2012).pdf) [Watanabe et al. (2021)](readings/Watanabe et al. (2021).pdf)
+- 📄 [Breiman (2001)](readings/Breiman (2001).pdf)
+- 📄 [Chen and Ishwaran (2012)](readings/Chen and Ishwaran (2012).pdf)
+- 📄 [Watanabe et al. (2021)](readings/Watanabe et al. (2021).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 🧪 [class10 lab1 (HTML)](code/class10_lab1.html){target="_blank"}
+- 📝 [Lab source (class10_lab1.Rmd)](code/class10_lab1.Rmd)
+
+## 💻 Code
+
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+- 📈 [fig3.R](code/fig3.R)
+- 📈 [fig4.R](code/fig4.R)
+
+**Interactive demos** — Shiny apps (run locally with `shiny::runApp()`):
+
+- 🎛️ [app1.R](code/app1.R)

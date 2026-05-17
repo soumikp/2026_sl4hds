@@ -7,17 +7,37 @@ date-format: long
 
 Under- and over-fitting; the training/validation/test split; k-fold cross-validation and the bootstrap. Foundations for every method we'll see later in the course.
 
-**Assigned reading:** ISLR §2.2, ch. 5
+📖 **Assigned reading:** ISLR §2.2, ch. 5
 
 ---
 
-## Materials
+## 📊 Slides
 
-**Slides:** [slides_clean](slides_clean.pdf) | [slides_split](slides_split.pdf)
+- 🖥️ [Clean slides](slides_clean.pdf)
+- 🖨️ [Slides (2-up)](slides_split.pdf)  *(two per page, for printing)*
 
-**Code:** [fig1.R](code/fig1.R) [fig2.R](code/fig2.R) [fig3.R](code/fig3.R) [fig4.R](code/fig4.R) [helper.R](code/helper.R)
+## 📚 Readings
 
-**Supplementary readings:** [reading1_efron1983](readings/reading1_efron1983.pdf) [reading2_efron1981](readings/reading2_efron1981.pdf) [reading3_bates2024](readings/reading3_bates2024.pdf)
+- 📄 [Efron (1983)](readings/reading1_efron1983.pdf)
+- 📄 [Efron (1981)](readings/reading2_efron1981.pdf)
+- 📄 [Bates (2024)](readings/reading3_bates2024.pdf)
 
-**Extras:** [Extra_kFold_vs_moving_CV.R](extras/Extra_kFold_vs_moving_CV.R) [Extra_kFold_vs_moving_CV.pdf](extras/Extra_kFold_vs_moving_CV.pdf)
+## 💻 Code
 
+**Figure scripts** — reproduce each figure from the slides:
+
+- 📈 [fig1.R](code/fig1.R)
+- 📈 [fig2.R](code/fig2.R)
+- 📈 [fig3.R](code/fig3.R)
+- 📈 [fig4.R](code/fig4.R)
+
+**Other scripts:**
+
+- 📜 [helper.R](code/helper.R)
+
+## ⭐ Extras
+
+Optional supplementary material:
+
+- 📄 [K Fold Vs Moving CV](extras/Extra_kFold_vs_moving_CV.pdf)
+- 📜 [K Fold Vs Moving CV](extras/Extra_kFold_vs_moving_CV.R)
