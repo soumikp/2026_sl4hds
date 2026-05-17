@@ -4,6 +4,7 @@ project:
   render:
     - "**/*.qmd"
     - "!_solutions/**"
+    - "!.claude/**"
   resources:
     - "lectures/**/*.pdf"
     - "lectures/**/code/**"

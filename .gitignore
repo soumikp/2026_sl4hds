@@ -6,3 +6,6 @@
 __MACOSX/
 ._*
 *.swp
+
+**/*.quarto_ipynb
+.claude/
