@@ -3,6 +3,7 @@ project:
   output-dir: docs
   render:
     - "**/*.qmd"
+    - "!assignments/hw*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
   resources:
