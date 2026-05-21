@@ -46,7 +46,7 @@
     "href": "syllabus.html#grading",
     "title": "Syllabus",
     "section": "Grading",
-    "text": "Grading\n\n\n\nComponent\nWeight\n\n\n\n\nHomework 1\n25%\n\n\nHomework 2\n25%\n\n\nHomework 3\n25%\n\n\nFinal project presentation\n25%\n\n\n\nLetter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F &lt; 60%. Plus/minus assigned by thirds within each band.\n\nHomework policy\nThree homework assignments — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. Discussion of homework with classmates is allowed, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.\nLate homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.\n\n\nFinal project\nBy 10/03, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On 12/05, each student gives a 5-minute presentation summarizing their work. See the project page for details."
+    "text": "Grading\nLetter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F &lt; 60%. Plus/minus assigned by thirds within each band.\n\n\n\nComponent\nWeight\n\n\n\n\nHomework 1\n25%\n\n\nHomework 2\n25%\n\n\nHomework 3\n25%\n\n\nFinal project presentation\n25%\n\n\n\n\nHomework policy\nThree homework assignments — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. Discussion of homework with classmates is allowed, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.\nLate homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.\n\n\nFinal project\nBy 11/06, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On 12/04, each student gives a 5-minute presentation summarizing their work. See the project page for details."
   },
   {
     "objectID": "syllabus.html#academic-integrity",
@@ -81,14 +81,14 @@
     "href": "project.html#key-dates",
     "title": "Final Project",
     "section": "Key dates",
-    "text": "Key dates\n\n10/03 — One-page proposal due (dataset or paper, plus planned scope)\n12/05 — In-class presentations (5 min/student)"
+    "text": "Key dates\n\n11/06 — One-page proposal due (dataset or paper, plus planned scope)\n12/04 — In-class presentations (5 min/student)"
   },
   {
-    "objectID": "project.html#project-description",
-    "href": "project.html#project-description",
+    "objectID": "project.html#project-description-tbd",
+    "href": "project.html#project-description-tbd",
     "title": "Final Project",
-    "section": "Project description",
-    "text": "Project description\n📄 Full project description (PDF) · 📝 Source (R Markdown)"
+    "section": "Project description: TBD",
+    "text": "Project description: TBD"
   },
   {
     "objectID": "project.html#tips-on-choosing-a-project",
@@ -298,7 +298,7 @@
     "href": "index.html#course-at-a-glance",
     "title": "BIOST 2155",
     "section": "Course at a glance",
-    "text": "Course at a glance\n\n\n\nTerm\nFall 2026\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, A622 Public Health\n\n\nOffice hours\nFridays 11:00–12:00 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
+    "text": "Course at a glance\n|————-|———————————————————-| | Term | Fall 2026 | | Credits | 2 | | Lecture | Fridays 9:00–10:50 AM, A622 Public Health | | Office hours | Fridays 11:00–12:00 PM, A740 Public Health (or by appointment) | | Instructor | Soumik Purkayastha · soumik@pitt.edu |"
   },
   {
     "objectID": "index.html#where-to-start",
@@ -648,6 +648,6 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 2\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 9\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 16\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 23\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nOct 30\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 6\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 13\n\n\nTBD\n\n\n—\n\n\n—\n\n\n\n\nNov 20\n\n\nTBD\n\n\n—\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes: ISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013). ESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009). PRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006). UDL — Prince, Understanding Deep Learning (MIT, 2024)."
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reduction\n\n\nISLR ch. 2\n\n\nslides\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resampling\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lasso\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, kernel trick\n\n\nISLR ch. 7\n\n\nslides\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative models\n\n\nISLR ch. 4\n\n\nslides\n\n\n\n\nOct 2\n\n\nClassification II — support vector machines\n\n\nISLR ch. 9\n\n\nslides\n\n\n\n\nOct 9\n\n\nClustering I — k-means, cluster evaluation\n\n\nISLR §10.3\n\n\nslides\n\n\n\n\nOct 16\n\n\nClustering II — Gaussian mixture models\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\n\n\nOct 23\n\n\nDimensionality reduction — principal component analysis\n\n\nISLR §6.3\n\n\nslides\n\n\n\n\nOct 30\n\n\nDecision trees — CART, regression and classification trees\n\n\nISLR §8.1\n\n\nslides\n\n\n\n\nNov 6\n\n\nEnsemble learning — bagging, random forests, boosting\n\n\nISLR §8.2\n\n\nslides\n\n\n\n\nNov 13\n\n\nTBD\n\n\n—\n\n\n—\n\n\n\n\nNov 20\n\n\nTBD\n\n\n—\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
   }
 ]
