@@ -18,13 +18,14 @@ Three homework assignments, each worth 25% of the course grade. Submit electroni
 
 ## Late policy
 
+Exceptions for sickness or emergency require the instructor be informed in advance.
+
 | Days late | Credit |
 |-----------|-------:|
 | 0–1       | 80%    |
 | 1–2       | 50%    |
 | > 2       | 0%     |
 
-Exceptions for sickness or emergency require the instructor be informed in advance.
 
 ## Collaboration
 

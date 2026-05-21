@@ -9,13 +9,13 @@ The final project is **25%** of the course grade. Each student presents individu
 - **11/06** — One-page proposal due (dataset *or* paper, plus planned scope)
 - **12/04** — In-class presentations (5 min/student)
 
-## Project description: TBD
+<!--  ## Project description: TBD -->
 
 <!-- 📄 [Full project description (PDF)](project/project.pdf) · 📝 [Source (R Markdown)](project/project.Rmd) -->
 
 
 ## Tips on choosing a project
 
-- **For applied projects**: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic / single-cell, EHR-derived, or NHANES-style cohorts all work well.
+- **For applied projects**: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well.
 - **For methodology reviews**: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.
 - **Scope honestly**: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that's the unit of analysis to plan around, not the project as a whole.
