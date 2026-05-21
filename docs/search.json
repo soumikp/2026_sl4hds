@@ -84,18 +84,11 @@
     "text": "Key dates\n\n11/06 — One-page proposal due (dataset or paper, plus planned scope)\n12/04 — In-class presentations (5 min/student)"
   },
   {
-    "objectID": "project.html#project-description-tbd",
-    "href": "project.html#project-description-tbd",
-    "title": "Final Project",
-    "section": "Project description: TBD",
-    "text": "Project description: TBD"
-  },
-  {
     "objectID": "project.html#tips-on-choosing-a-project",
     "href": "project.html#tips-on-choosing-a-project",
     "title": "Final Project",
     "section": "Tips on choosing a project",
-    "text": "Tips on choosing a project\n\nFor applied projects: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic / single-cell, EHR-derived, or NHANES-style cohorts all work well.\nFor methodology reviews: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.\nScope honestly: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole."
+    "text": "Tips on choosing a project\n\nFor applied projects: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well.\nFor methodology reviews: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.\nScope honestly: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole."
   },
   {
     "objectID": "lectures/10-trees/index.html",
@@ -298,7 +291,7 @@
     "href": "index.html#course-at-a-glance",
     "title": "BIOST 2155",
     "section": "Course at a glance",
-    "text": "Course at a glance\n|————-|———————————————————-| | Term | Fall 2026 | | Credits | 2 | | Lecture | Fridays 9:00–10:50 AM, A622 Public Health | | Office hours | Fridays 11:00–12:00 PM, A740 Public Health (or by appointment) | | Instructor | Soumik Purkayastha · soumik@pitt.edu |"
+    "text": "Course at a glance\n\n\n\nTerm\nFall 2026\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, A622 Public Health\n\n\nOffice hours\nFridays 11:00–12:00 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
   },
   {
     "objectID": "index.html#where-to-start",
@@ -403,7 +396,7 @@
     "href": "assignments/index.html#late-policy",
     "title": "Assignments",
     "section": "Late policy",
-    "text": "Late policy\n\n\n\nDays late\nCredit\n\n\n\n\n0–1\n80%\n\n\n1–2\n50%\n\n\n&gt; 2\n0%\n\n\n\nExceptions for sickness or emergency require the instructor be informed in advance."
+    "text": "Late policy\nExceptions for sickness or emergency require the instructor be informed in advance.\n\n\n\nDays late\nCredit\n\n\n\n\n0–1\n80%\n\n\n1–2\n50%\n\n\n&gt; 2\n0%"
   },
   {
     "objectID": "assignments/index.html#collaboration",
