@@ -12,7 +12,6 @@ classification, clustering, dimensionality reduction, and ensemble methods.
 
 ## Course at a glance
 
-|             |                                                          |
 |-------------|----------------------------------------------------------|
 | **Term**    | Fall 2026                                                |
 | **Credits** | 2                                                        |

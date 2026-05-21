@@ -37,6 +37,8 @@ We will use **R** as our main programming language. RStudio with R Markdown is r
 
 ## Grading
 
+Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%. Plus/minus assigned by thirds within each band.
+
 | Component | Weight |
 |-----------|-------:|
 | Homework 1 | 25% |
@@ -44,7 +46,6 @@ We will use **R** as our main programming language. RStudio with R Markdown is r
 | Homework 3 | 25% |
 | Final project presentation | 25% |
 
-Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%. Plus/minus assigned by thirds within each band.
 
 ### Homework policy
 
@@ -54,7 +55,7 @@ Late homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if mo
 
 ### Final project
 
-By **10/03**, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On **12/05**, each student gives a 5-minute presentation summarizing their work. See the [project page](project.qmd) for details.
+By **11/06**, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On **12/04**, each student gives a 5-minute presentation summarizing their work. See the [project page](project.qmd) for details.
 
 ## Academic integrity
 

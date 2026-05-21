@@ -120,5 +120,13 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 </table>
 
 ::: {.callout-note}
-**Reading codes**: *ISLR* — James, Witten, Hastie, Tibshirani, *An Introduction to Statistical Learning* (Springer, 2013). *ESL* — Hastie, Tibshirani, Friedman, *The Elements of Statistical Learning* (Springer, 2009). *PRML* — Bishop, *Pattern Recognition and Machine Learning* (Springer, 2006). *UDL* — Prince, *Understanding Deep Learning* (MIT, 2024).
+**Reading codes**: 
+
+*ISLR* — James, Witten, Hastie, Tibshirani, *An Introduction to Statistical Learning* (Springer, 2013). 
+
+*ESL* — Hastie, Tibshirani, Friedman, *The Elements of Statistical Learning* (Springer, 2009). 
+
+*PRML* — Bishop, *Pattern Recognition and Machine Learning* (Springer, 2006). 
+
+*UDL* — Prince, *Understanding Deep Learning* (MIT, 2024).
 :::

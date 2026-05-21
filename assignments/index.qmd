@@ -6,9 +6,9 @@ Three homework assignments, each worth 25% of the course grade. Submit electroni
 
 | # | Topic | Released | Due | Materials |
 |---|-------|----------|-----|-----------|
-| 1 | Regression and regularization | TBD | TBD | [HW 1](hw1.qmd) |
-| 2 | Classification | TBD | TBD | [HW 2](hw2.qmd) |
-| 3 | Clustering and dimensionality reduction | TBD | TBD | [HW 3](hw3.qmd) |
+| 1 | Regression and regularization | TBD | TBD | TBD |
+| 2 | Classification | TBD | TBD | TBD |
+| 3 | Clustering and dimensionality reduction | TBD | TBD | TBD |
 
 ## Submission and grading
 

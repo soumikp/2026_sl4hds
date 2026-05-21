@@ -6,12 +6,13 @@ The final project is **25%** of the course grade. Each student presents individu
 
 ## Key dates
 
-- **10/03** — One-page proposal due (dataset *or* paper, plus planned scope)
-- **12/05** — In-class presentations (5 min/student)
+- **11/06** — One-page proposal due (dataset *or* paper, plus planned scope)
+- **12/04** — In-class presentations (5 min/student)
 
-## Project description
+## Project description: TBD
 
-📄 [Full project description (PDF)](project/project.pdf) · 📝 [Source (R Markdown)](project/project.Rmd)
+<!-- 📄 [Full project description (PDF)](project/project.pdf) · 📝 [Source (R Markdown)](project/project.Rmd) -->
+
 
 ## Tips on choosing a project
 
