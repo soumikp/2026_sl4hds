@@ -22,6 +22,13 @@ Linear regression as a baseline; best-subset and stepwise selection; ridge regre
 - 📄 [Frank and Friedman (1993)](readings/Frank and Friedman (1993).pdf)
 - 📄 [Heinze et al. (2017)](readings/Heinze et al. (2017).pdf)
 
+## 🧪 Lab
+
+In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+
+- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
+- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+
 ## 💻 Code
 
 **Figure scripts** — reproduce each figure from the slides:

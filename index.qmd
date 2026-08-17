@@ -16,7 +16,7 @@ classification, clustering, dimensionality reduction, and ensemble methods.
 |-------------|----------------------------------------------------------|
 | **Term**    | Fall 2026                                                |
 | **Credits** | 2                                                        |
-| **Lecture** | Fridays 9:00–10:50 AM, A622 Public Health                |
+| **Lecture** | Fridays 9:00–10:50 AM, 2121C Public Health                |
 | **Office hours** | Fridays 11:00–12:00 PM, A740 Public Health *(or by appointment)* |
 | **Instructor** | Soumik Purkayastha · [soumik\@pitt.edu](mailto:soumik@pitt.edu) |
 
