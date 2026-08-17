@@ -266,6 +266,13 @@
     "text": "📚 Readings\n\n📄 Efron (1983)\n📄 Efron (1981)\n📄 Bates (2024)"
   },
   {
+    "objectID": "lectures/02-training/index.html#lab",
+    "href": "lectures/02-training/index.html#lab",
+    "title": "Training statistical learning models",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 lab1 (HTML)\n📝 Lab source (lab1.Rmd)"
+  },
+  {
     "objectID": "lectures/02-training/index.html#code",
     "href": "lectures/02-training/index.html#code",
     "title": "Training statistical learning models",
@@ -291,7 +298,7 @@
     "href": "index.html#course-at-a-glance",
     "title": "BIOST 2155",
     "section": "Course at a glance",
-    "text": "Course at a glance\n\n\n\nTerm\nFall 2026\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, A622 Public Health\n\n\nOffice hours\nFridays 11:00–12:00 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
+    "text": "Course at a glance\n\n\n\nTerm\nFall 2026\n\n\nCredits\n2\n\n\nLecture\nFridays 9:00–10:50 AM, 2121C Public Health\n\n\nOffice hours\nFridays 11:00–12:00 PM, A740 Public Health (or by appointment)\n\n\nInstructor\nSoumik Purkayastha · soumik@pitt.edu"
   },
   {
     "objectID": "index.html#where-to-start",
@@ -404,6 +411,13 @@
     "title": "Regression I",
     "section": "📚 Readings",
     "text": "📚 Readings\n\n📄 Frank and Friedman (1993)\n📄 Heinze et al. (2017)"
+  },
+  {
+    "objectID": "lectures/03-regression-1/index.html#lab",
+    "href": "lectures/03-regression-1/index.html#lab",
+    "title": "Regression I",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nIn-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.\n\n🧪 lab1 (HTML)\n📝 Lab source (lab1.Rmd)"
   },
   {
     "objectID": "lectures/03-regression-1/index.html#code",
