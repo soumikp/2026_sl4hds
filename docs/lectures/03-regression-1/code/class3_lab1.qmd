@@ -4,6 +4,8 @@ subtitle: "Live in-browser R — edit and re-run any cell"
 date: "Sep 11, 2026"
 format: live-html
 engine: knitr
+resources:
+  - data
 webr:
   packages:
     - ggplot2
@@ -16,8 +18,8 @@ webr:
     - patchwork
     - latex2exp
   resources:
-    - ../data/neonatal_brain_volumes.csv
-    - ../data/insurance.csv
+    - data/neonatal_brain_volumes.csv
+    - data/insurance.csv
 include-after-body:
   - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
 ---
@@ -64,7 +66,7 @@ Before comparing selection methods, it's worth fitting the simplest possible mod
 library(ggplot2)
 library(dplyr)
 
-brain_data <- read.csv("../data/neonatal_brain_volumes.csv")
+brain_data <- read.csv("data/neonatal_brain_volumes.csv")
 head(brain_data)
 ```
 
@@ -100,7 +102,7 @@ With more than a couple of predictors, we need a systematic way to choose which 
 ```{webr}
 library(leaps)
 
-insurance <- read.csv("../data/insurance.csv")
+insurance <- read.csv("data/insurance.csv")
 head(insurance)
 ```
 

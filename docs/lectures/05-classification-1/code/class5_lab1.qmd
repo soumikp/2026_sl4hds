@@ -4,6 +4,8 @@ subtitle: "Live in-browser R — edit and re-run any cell"
 date: "Sep 26, 2026"
 format: live-html
 engine: knitr
+resources:
+  - data
 webr:
   packages:
     - ggplot2
@@ -15,7 +17,7 @@ webr:
     - MASS
     - ggsci
   resources:
-    - ../data/winequality.csv
+    - data/winequality.csv
 include-after-body:
   - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
 ---
@@ -64,7 +66,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-wine_raw <- read.delim("../data/winequality.csv", sep = ";") %>% drop_na()
+wine_raw <- read.delim("data/winequality.csv", sep = ";") %>% drop_na()
 head(wine_raw)
 ```
 
