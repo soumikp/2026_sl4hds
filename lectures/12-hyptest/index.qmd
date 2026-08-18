@@ -1,0 +1,8 @@
+---
+title: "Multiple Hypothesis Testing"
+subtitle: "Controlling error rates across many simultaneous tests"
+date: "Nov 13, 2026"
+date-format: long
+---
+
+Materials for this lecture are still being prepared and will be posted closer to the date.

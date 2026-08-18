@@ -2,13 +2,16 @@
 title: "Assignments"
 ---
 
-Three homework assignments, each worth 25% of the course grade. Submit electronic copies via Canvas.
+Six homework assignments, each worth 10% of the course grade. Submit electronic copies via Canvas.
 
 | # | Topic | Released | Due | Materials |
 |---|-------|----------|-----|-----------|
-| 1 | Regression and regularization | TBD | TBD | TBD |
-| 2 | Classification | TBD | TBD | TBD |
-| 3 | Clustering and dimensionality reduction | TBD | TBD | TBD |
+| 1 | Training models; Regression I | TBD | TBD | TBD |
+| 2 | Regression II; Classification I | TBD | TBD | TBD |
+| 3 | Classification II; Clustering I | TBD | TBD | TBD |
+| 4 | Clustering II; Dimensionality reduction | TBD | TBD | TBD |
+| 5 | Decision trees; Ensemble learning | TBD | TBD | TBD |
+| 6 | Multiple hypothesis testing | TBD | TBD | TBD |
 
 ## Submission and grading
 
@@ -30,3 +33,7 @@ Exceptions for sickness or emergency require the instructor be informed in advan
 ## Collaboration
 
 Discussion among students is allowed and encouraged. Each student must independently write and implement their own solution. Cite any external sources you consulted.
+
+## Quizzes
+
+A 5-question quiz follows each of the 12 lecture topics (10% of the course grade total, all 12 averaged with your lowest score dropped). Released on Canvas the same day as lecture, due before the next lecture. See the [syllabus](../syllabus.qmd#quiz-policy) for details.

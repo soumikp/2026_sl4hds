@@ -41,15 +41,24 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 
 | Component | Weight |
 |-----------|-------:|
-| Homework 1 | 25% |
-| Homework 2 | 25% |
-| Homework 3 | 25% |
-| Final project presentation | 25% |
+| Quizzes (12, lowest dropped†, averaged) | 10% |
+| Homework 1 | 10% |
+| Homework 2 | 10% |
+| Homework 3 | 10% |
+| Homework 4 | 10% |
+| Homework 5 | 10% |
+| Homework 6 | 10% |
+| Final project presentation | 30% |
 
+† See [quiz policy](#quiz-policy) below.
+
+### Quiz policy {#quiz-policy}
+
+A short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week's material and are graded on correctness. Your **lowest quiz score is dropped** before averaging, so a single missed or rough week doesn't disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.
 
 ### Homework policy
 
-Three homework assignments — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
+Six homework assignments, each covering roughly two consecutive lecture topics — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
 
 Late homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.
 

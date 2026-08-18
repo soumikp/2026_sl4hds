@@ -90,9 +90,9 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Nov 13</td>
+<td><strong>Multiple hypothesis testing</strong> — controlling error rates across many simultaneous tests</td>
 <td><em>TBD</em></td>
-<td>—</td>
-<td>—</td>
+<td><em>TBD</em></td>
 </tr>
 
 <tr>

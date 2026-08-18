@@ -16,6 +16,7 @@ project:
     - "!lectures/09-pca/**"
     - "!lectures/10-trees/**"
     - "!lectures/11-ensemble/**"
+    - "!lectures/12-hyptest/**"
   resources:
     - "lectures/01-intro/*.pdf"
     - "lectures/01-intro/code/**"
