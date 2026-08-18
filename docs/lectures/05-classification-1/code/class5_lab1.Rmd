@@ -5,7 +5,7 @@ output:
   html_document:
     toc: true
     toc_float: true
-    theme: united
+    theme: cosmo
 ---
 
 ```{=html}
@@ -55,7 +55,7 @@ rm(list = ls())
 pacman::p_unload(pacman::p_loaded())
 pacman::p_load(tidyverse, caret, glmnet, here, MASS, ggsci)
 
-wine_raw <- read_delim(file.path(here(), "class5", "data", "winequality.csv"), delim = ";") |> drop_na()
+wine_raw <- read_delim(file.path(here(), "lectures", "05-classification-1", "data", "winequality.csv"), delim = ";") |> drop_na()
 ```
 
 ### Creating Quality Classes
