@@ -374,7 +374,14 @@ display: none;
 
 <style type="text/css">
 .main-container {
-max-width: 1600px !important; 
+max-width: 90vw !important; 
+width: 90vw !important;
+}
+@media (min-width: 1780px) { 
+.main-container {
+max-width: 1600px !important;
+width: 1600px !important;
+}
 }
 
 .tocify {
@@ -386,17 +393,15 @@ body.toc-left .main-container {
 margin-left: 210px; 
 }
 }
+
 body {
-font-size: 12pt; 
+font-size: 16pt;
 }
-h1,h2,h3,h4,h5,h6{
-font-size: 24pt;
+h1, h2, h3, h4, h5, h6 {
+font-size: 28pt;
 }
-code {
-font-size: 12pt; 
-}
-output {
-font-size: 24pt; 
+code, pre {
+font-size: 14pt;
 }
 </style>
 <div id="lab-pca-and-pcr-using-hitters-data" class="section level2 tabset">
