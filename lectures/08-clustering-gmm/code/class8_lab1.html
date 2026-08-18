@@ -375,7 +375,14 @@ Clustering</h1>
 
 <style type="text/css">
 .main-container {
-max-width: 1600px !important; 
+max-width: 90vw !important; 
+width: 90vw !important;
+}
+@media (min-width: 1780px) { 
+.main-container {
+max-width: 1600px !important;
+width: 1600px !important;
+}
 }
 
 .tocify {
@@ -387,6 +394,16 @@ body.toc-left .main-container {
 margin-left: 210px; 
 }
 }
+
+body {
+font-size: 16pt;
+}
+h1, h2, h3, h4, h5, h6 {
+font-size: 28pt;
+}
+code, pre {
+font-size: 14pt;
+}
 </style>
 <div id="lab-k-means-and-hierarchical-clustering" class="section level2 tabset">
 <h2 class="tabset">Lab: K-Means and Hierarchical Clustering</h2>
@@ -397,9 +414,6 @@ employment percentages in different industries.</p>
 <pre class="r"><code>rm(list = ls())
 pacman::p_unload(pacman::p_loaded())
 pacman::p_load(tidyverse, cluster, factoextra, here, knitr)</code></pre>
-<pre><code>## 
-## The downloaded binary packages are in
-##  /var/folders/62/spcwm5wx22q0yt05sy293qqh0000gn/T//Rtmp2GfBGJ/downloaded_packages</code></pre>
 <hr />
 <div id="data-eda-scaling" class="section level3">
 <h3>Data, EDA, &amp; Scaling</h3>

@@ -11,7 +11,14 @@ output:
 ```{=html}
 <style type="text/css">
     .main-container {
-      max-width: 1600px !important; /* Adjust this value as needed for the main content */
+      max-width: 90vw !important;   /* fills the classroom screen at any resolution */
+      width: 90vw !important;
+    }
+    @media (min-width: 1780px) {    /* cap so it doesn't sprawl on ultrawide displays */
+      .main-container {
+        max-width: 1600px !important;
+        width: 1600px !important;
+      }
     }
 
     /* Optional: Adjust the width of the floating TOC */
@@ -26,6 +33,16 @@ output:
       }
     }
 
+    /* Presentation-friendly sizing for classroom screen casting */
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
 </style>
 ```
 

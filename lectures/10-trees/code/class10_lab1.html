@@ -375,7 +375,14 @@ Random Forests</h1>
 
 <style type="text/css">
 .main-container {
-max-width: 1600px !important; 
+max-width: 90vw !important; 
+width: 90vw !important;
+}
+@media (min-width: 1780px) { 
+.main-container {
+max-width: 1600px !important;
+width: 1600px !important;
+}
 }
 
 .tocify {
@@ -387,17 +394,15 @@ body.toc-left .main-container {
 margin-left: 210px; 
 }
 }
+
 body {
-font-size: 12pt; 
+font-size: 16pt;
 }
-h1,h2,h3,h4,h5,h6{
-font-size: 24pt;
+h1, h2, h3, h4, h5, h6 {
+font-size: 28pt;
 }
-code {
-font-size: 12pt; 
-}
-output {
-font-size: 24pt; 
+code, pre {
+font-size: 14pt;
 }
 </style>
 <div id="lab-tree-based-methods-using-heart-data" class="section level2 tabset">
@@ -413,14 +418,9 @@ are <span class="math inline">\(p=13\)</span> predictors including
 measurement), and other heart and lung function measurements.</p>
 <pre class="r"><code>rm(list = ls())
 pacman::p_unload(pacman::p_loaded())
-pacman::p_load(tidyverse, ISLR2, tree, patchwork, ggsci, caret, randomForest, gbm)</code></pre>
-<pre><code>## 
-## The downloaded binary packages are in
-##  /var/folders/62/spcwm5wx22q0yt05sy293qqh0000gn/T//RtmpBYt3Xf/downloaded_packages</code></pre>
-<pre><code>## 
-## The downloaded binary packages are in
-##  /var/folders/62/spcwm5wx22q0yt05sy293qqh0000gn/T//RtmpBYt3Xf/downloaded_packages</code></pre>
-<pre class="r"><code>### section 1: basic EDA
+pacman::p_load(tidyverse, ISLR2, tree, patchwork, ggsci, caret, randomForest, gbm)
+
+### section 1: basic EDA
 heart &lt;- read_csv(&quot;https://www.statlearning.com/s/Heart.csv&quot;) |&gt; 
   select(-1) |&gt; 
   drop_na() |&gt; 
