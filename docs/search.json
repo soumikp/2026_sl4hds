@@ -172,7 +172,7 @@
     "href": "lectures/01-intro/index.html#slides",
     "title": "Introduction",
     "section": "📊 Slides",
-    "text": "📊 Slides\n\n🖥️ Clean slides\n🖨️ Slides (2-up) (two per page, for printing)"
+    "text": "📊 Slides\n\n🖥️ Clean slides (up before class)\n✏️ Annotated slides (up after class)"
   },
   {
     "objectID": "lectures/01-intro/index.html#readings",
@@ -180,27 +180,6 @@
     "title": "Introduction",
     "section": "📚 Readings",
     "text": "📚 Readings\n\n📄 ISLR (selected pages)\n📄 Breimann (2001)\n📄 Gelman (2020)"
-  },
-  {
-    "objectID": "lectures/01-intro/index.html#code",
-    "href": "lectures/01-intro/index.html#code",
-    "title": "Introduction",
-    "section": "💻 Code",
-    "text": "💻 Code\nFigure scripts — reproduce each figure from the slides:\n\n📈 fig1.R\n📈 fig2.R\n📈 fig3.R\n📈 fig4.R"
-  },
-  {
-    "objectID": "lectures/01-intro/index.html#data",
-    "href": "lectures/01-intro/index.html#data",
-    "title": "Introduction",
-    "section": "🗂️ Data",
-    "text": "🗂️ Data\n\n📊 breast_tumor_measurements.csv\n📊 heart_failure_data.csv\n📊 neonatal_brain_volumes.csv\n📊 sbp_bmi_measurements.csv"
-  },
-  {
-    "objectID": "lectures/01-intro/index.html#extras",
-    "href": "lectures/01-intro/index.html#extras",
-    "title": "Introduction",
-    "section": "⭐ Extras",
-    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Noisy Labels"
   },
   {
     "objectID": "schedule.html",
