@@ -25,8 +25,7 @@ Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as
 In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
 
 - 🧪 [class5 lab1 (HTML)](code/class5_lab1.html){target="_blank"}
-- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
-- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+- 📝 [Lab source (class5_lab1.Rmd)](code/class5_lab1.Rmd)
 
 ## 💻 Code
 

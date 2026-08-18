@@ -5,7 +5,7 @@ output:
   html_document:
     toc: FALSE
     toc_float: true
-    theme: united
+    theme: cosmo
 ---
 
 ```{=html}

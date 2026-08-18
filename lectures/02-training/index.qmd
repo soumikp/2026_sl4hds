@@ -26,8 +26,8 @@ Under- and over-fitting; the training/validation/test split; k-fold cross-valida
 
 In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
 
-- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
-- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+- 🧪 [class2 lab1 (HTML)](code/class2_lab1.html){target="_blank"}
+- 📝 [Lab source (class2_lab1.Rmd)](code/class2_lab1.Rmd)
 
 ## 💻 Code
 

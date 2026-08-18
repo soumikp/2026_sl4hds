@@ -26,8 +26,8 @@ Linear regression as a baseline; best-subset and stepwise selection; ridge regre
 
 In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
 
-- 🧪 [lab1 (HTML)](code/lab1.html){target="_blank"}
-- 📝 [Lab source (lab1.Rmd)](code/lab1.Rmd)
+- 🧪 [class3 lab1 (HTML)](code/class3_lab1.html){target="_blank"}
+- 📝 [Lab source (class3_lab1.Rmd)](code/class3_lab1.Rmd)
 
 ## 💻 Code
 
