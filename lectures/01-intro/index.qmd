@@ -13,8 +13,7 @@ Course overview and the landscape of statistical learning. We distinguish superv
 
 ## 📊 Slides
 
-- 🖥️ [Clean slides](slides_clean.pdf)  *(up before class)*
-- ✏️ [Annotated slides](slides_annotated.pdf)  *(up after class)*
+- 🖥️ [Clean slides](slides_clean.pdf)
 
 ## 📚 Readings
 

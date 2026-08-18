@@ -53,53 +53,53 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><em>TBD</em></td>
 </tr>
 
-<tr>
+<tr class="no-class">
 <td>Oct 9</td>
+<td><em>Fall Break — no class</em></td>
+<td>—</td>
+<td>—</td>
+</tr>
+
+<tr>
+<td>Oct 16</td>
 <td><strong>Clustering I</strong> — k-means, cluster evaluation</td>
 <td>ISLR §10.3</td>
 <td><em>TBD</em></td>
 </tr>
 
 <tr>
-<td>Oct 16</td>
+<td>Oct 23</td>
 <td><strong>Clustering II</strong> — Gaussian mixture models</td>
 <td>PRML §9.1–9.2</td>
 <td><em>TBD</em></td>
 </tr>
 
 <tr>
-<td>Oct 23</td>
+<td>Oct 30</td>
 <td><strong>Dimensionality reduction</strong> — principal component analysis</td>
 <td>ISLR §6.3</td>
 <td><em>TBD</em></td>
 </tr>
 
 <tr>
-<td>Oct 30</td>
+<td>Nov 6</td>
 <td><strong>Decision trees</strong> — CART, regression and classification trees</td>
 <td>ISLR §8.1</td>
 <td><em>TBD</em></td>
 </tr>
 
 <tr>
-<td>Nov 6</td>
+<td>Nov 13</td>
 <td><strong>Ensemble learning</strong> — bagging, random forests, boosting</td>
 <td>ISLR §8.2</td>
 <td><em>TBD</em></td>
 </tr>
 
 <tr>
-<td>Nov 13</td>
+<td>Nov 20</td>
 <td><strong>Multiple hypothesis testing</strong> — controlling error rates across many simultaneous tests</td>
 <td><em>TBD</em></td>
 <td><em>TBD</em></td>
-</tr>
-
-<tr class="no-class">
-<td>Nov 20</td>
-<td><em>No class — prepare for project</em></td>
-<td>—</td>
-<td>—</td>
 </tr>
 
 <tr class="no-class">
