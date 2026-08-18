@@ -1,39 +1,50 @@
 ---
 title: "Class 3/Lab1: Subset Selection and Shrinkage"
-date: "Week 3 (9.11)"
-output:
-  html_document:
-    toc: FALSE
-    toc_float: true
-    theme: cosmo
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Sep 11, 2026"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - stringr
+    - tibble
+    - leaps
+    - glmnet
+    - patchwork
+    - latex2exp
+  resources:
+    - ../data/neonatal_brain_volumes.csv
+    - ../data/insurance.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
 ---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
 
 ```{=html}
 <style type="text/css">
-    .main-container {
-      max-width: 1600px !important; /* Adjust this value as needed for the main content */
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
     }
-
-    /* Optional: Adjust the width of the floating TOC */
-    .tocify {
-      width: 200px; /* Adjust this value to control TOC width */
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
     }
-
-    /* Optional: Ensure content doesn't overlap with TOC on scroll */
-    @media (min-width: 768px) { /* Apply for larger screens where TOC floats */
-      body.toc-left .main-container {
-        margin-left: 210px; /* Adjust this to be slightly more than TOC width */
-      }
+    body {
+      font-size: 16pt;
     }
-
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
 </style>
 ```
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center")
-```
-
-## Introduction {.tabset}
+## Introduction
 
 In this lab, we will:
 
@@ -41,14 +52,7 @@ In this lab, we will:
 2.  Compare best subset, forward stepwise, and backward stepwise selection on the `insurance` dataset.
 3.  Fit ridge and lasso regression, and visualize how their coefficient paths differ as the penalty grows.
 
-```{r load-packages}
-# Clear environment and unload packages
-rm(list = ls())
-pacman::p_unload(pacman::p_loaded())
-
-# Load necessary packages
-pacman::p_load(tidyverse, leaps, glmnet, patchwork, here, latex2exp)
-```
+Every code cell below runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages and data load once when the page opens; give it a few seconds on first load.
 
 ---
 
@@ -56,25 +60,28 @@ pacman::p_load(tidyverse, leaps, glmnet, patchwork, here, latex2exp)
 
 Before comparing selection methods, it's worth fitting the simplest possible model: one predictor, ordinary least squares. We'll use the `neonatal_brain_volumes` dataset to relate gestational age (`GA`) to brain volume.
 
-```{r slr-data}
-brain_data <- read_csv(file.path(here(), "lectures", "03-regression-1", "data", "neonatal_brain_volumes.csv"))
+```{webr}
+library(ggplot2)
+library(dplyr)
+
+brain_data <- read.csv("../data/neonatal_brain_volumes.csv")
 head(brain_data)
 ```
 
-```{r slr-fit}
-slr_fit <- lm(`brain volume` ~ GA, data = brain_data)
+```{webr}
+slr_fit <- lm(brain.volume ~ GA, data = brain_data)
 summary(slr_fit)
 ```
 
-```{r slr-plot, fig.width=6, fig.height=5}
-ggplot(brain_data, aes(x = GA, y = `brain volume`)) +
+```{webr}
+ggplot(brain_data, aes(x = GA, y = brain.volume)) +
   geom_point(alpha = 0.7, color = "steelblue") +
   geom_smooth(method = "lm", color = "#dc3545", fill = "#dc3545", alpha = 0.15) +
   labs(title = "Brain Volume vs. Gestational Age", x = "Gestational Age (weeks)", y = "Brain Volume") +
   theme_minimal(base_size = 14)
 ```
 
-```{r slr-intervals}
+```{webr}
 confint(slr_fit, parm = "GA")
 
 new_ga <- data.frame(GA = mean(brain_data$GA))
@@ -90,12 +97,14 @@ predict(slr_fit, newdata = new_ga, interval = "prediction")
 
 With more than a couple of predictors, we need a systematic way to choose which ones to include. We'll compare three approaches on the `insurance` dataset (predicting `charges` from the other columns).
 
-```{r subset-data}
-insurance <- read_csv(file.path(here(), "lectures", "03-regression-1", "data", "insurance.csv"))
+```{webr}
+library(leaps)
+
+insurance <- read.csv("../data/insurance.csv")
 head(insurance)
 ```
 
-```{r subset-fit}
+```{webr}
 subset_formula <- charges ~ .
 
 fit_best     <- regsubsets(subset_formula, data = insurance, nvmax = ncol(insurance) - 1)
@@ -105,17 +114,25 @@ fit_backward <- regsubsets(subset_formula, data = insurance, nvmax = ncol(insura
 
 #### Which variables enter at each model size?
 
-```{r subset-outmat}
+```{webr}
 summary(fit_best)$outmat
 ```
 
-Each row is a model size; each `*` marks a predictor included at that size. Compare this to `summary(fit_forward)$outmat` and `summary(fit_backward)$outmat` — for a small predictor set like this one, the three methods often agree, but that's not guaranteed in general (forward and backward selection are greedy and can miss the best subset that exhaustive search would find).
+Each row is a model size; each `*` marks a predictor included at that size.
+
+```{webr}
+#| exercise: ex_compare_methods
+# Compare to forward and backward selection -- fill in the blank
+summary(fit_______)$outmat   # try: forward, backward
+```
+
+**Live-coding demo:** for a small predictor set like this one, the three methods often agree, but that's not guaranteed in general (forward and backward selection are greedy and can miss the best subset that exhaustive search would find).
 
 #### Choosing a model size
 
 `regsubsets` reports RSS, adjusted $R^2$, and Mallows' $C_p$ for every model size; we compute BIC ourselves from the selected variables at each step.
 
-```{r subset-criteria}
+```{webr}
 calculate_bic <- function(model_obj, data) {
   s <- summary(model_obj)
   sapply(seq_len(nrow(s$outmat)), function(i) {
@@ -137,7 +154,9 @@ criteria_df <- data.frame(
 criteria_df
 ```
 
-```{r subset-criteria-plot, fig.width=9, fig.height=6}
+```{webr}
+library(patchwork)
+
 p_adjr2 <- ggplot(criteria_df, aes(num_vars, adjr2)) +
   geom_line(color = "steelblue") + geom_point(color = "steelblue") +
   geom_point(data = criteria_df[which.max(criteria_df$adjr2), ], color = "red", size = 3) +
@@ -170,7 +189,9 @@ p_rss <- ggplot(criteria_df, aes(num_vars, rss)) +
 
 Subset selection chooses a hard in/out for each predictor. Ridge and lasso instead *shrink* coefficients continuously, trading a little bias for a lot less variance. We'll fit both on the same `insurance` data, using `age` and `bmi` as predictors of `charges`.
 
-```{r shrink-data}
+```{webr}
+library(glmnet)
+
 x_vars <- insurance %>% select(age, bmi) %>% scale()
 y_var  <- insurance$charges
 
@@ -178,7 +199,7 @@ ols_fit <- lm(charges ~ age + bmi, data = insurance %>% mutate(age = as.numeric(
 coef(ols_fit)
 ```
 
-```{r shrink-fit}
+```{webr}
 ridge_fit <- glmnet(x_vars, y_var, alpha = 0)
 lasso_fit <- glmnet(x_vars, y_var, alpha = 1)
 ```
@@ -187,7 +208,12 @@ lasso_fit <- glmnet(x_vars, y_var, alpha = 1)
 
 As $\lambda$ grows, ridge coefficients shrink smoothly toward zero but rarely hit it exactly; lasso coefficients can be driven to exactly zero, which is what makes it useful for variable selection.
 
-```{r shrink-path-lambda, fig.width=10, fig.height=5}
+```{webr}
+library(tidyr)
+library(tibble)
+library(stringr)
+library(latex2exp)
+
 tidy_path <- function(fit, model_name) {
   as.matrix(coef(fit)) %>%
     as.data.frame() %>%
@@ -210,7 +236,7 @@ ggplot(path_df, aes(x = Lambda, y = Coefficient, color = Variable)) +
 
 #### Choosing $\lambda$ by cross-validation
 
-```{r shrink-cv, fig.width=10, fig.height=5}
+```{webr}
 set.seed(2155)
 cv_ridge <- cv.glmnet(x_vars, y_var, alpha = 0)
 cv_lasso <- cv.glmnet(x_vars, y_var, alpha = 1)
@@ -221,7 +247,7 @@ plot(cv_lasso); title("Lasso", line = 2.5)
 par(mfrow = c(1, 1))
 ```
 
-```{r shrink-coefs}
+```{webr}
 cat("Ridge coefficients at lambda.min:\n")
 coef(cv_ridge, s = "lambda.min")
 
@@ -233,7 +259,7 @@ coef(cv_lasso, s = "lambda.min")
 
 #### Comparing paths side by side
 
-```{r shrink-compare, fig.width=7, fig.height=6}
+```{webr}
 ridge_coefs <- as.vector(coef(cv_ridge, s = "lambda.min"))[-1]
 lasso_coefs <- as.vector(coef(cv_lasso, s = "lambda.min"))[-1]
 ols_coefs   <- coef(ols_fit)[-1]

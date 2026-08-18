@@ -375,7 +375,14 @@ Mixture Models (GMMs)</h1>
 
 <style type="text/css">
 .main-container {
-max-width: 1600px !important; 
+max-width: 80vw !important; 
+width: 80vw !important;
+}
+@media (min-width: 1780px) { 
+.main-container {
+max-width: 1600px !important;
+width: 1600px !important;
+}
 }
 
 .tocify {
@@ -386,6 +393,16 @@ width: 200px;
 body.toc-left .main-container {
 margin-left: 210px; 
 }
+}
+
+body {
+font-size: 16pt;
+}
+h1, h2, h3, h4, h5, h6 {
+font-size: 28pt;
+}
+code, pre {
+font-size: 14pt;
 }
 </style>
 <div id="introduction" class="section level2 tabset">
@@ -402,9 +419,6 @@ pacman::p_unload(pacman::p_loaded())
 
 # Load necessary packages
 pacman::p_load(mclust, tidyverse, palmerpenguins, patchwork, cluster, here)</code></pre>
-<pre><code>## 
-## The downloaded binary packages are in
-##  /var/folders/62/spcwm5wx22q0yt05sy293qqh0000gn/T//RtmpsYghly/downloaded_packages</code></pre>
 <hr />
 <div id="examine-the-data" class="section level3">
 <h3>Examine the Data</h3>

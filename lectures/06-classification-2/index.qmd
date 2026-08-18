@@ -22,10 +22,9 @@ Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linea
 
 ## 🧪 Lab
 
-In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
 
-- 🧪 [class6 lab1 (HTML)](code/class6_lab1.html){target="_blank"}
-- 📝 [Lab source (class6_lab1.Rmd)](code/class6_lab1.Rmd)
+- 🧪 [Lab 6 (interactive)](code/class6_lab1.html){target="_blank"}
 
 ## 💻 Code
 

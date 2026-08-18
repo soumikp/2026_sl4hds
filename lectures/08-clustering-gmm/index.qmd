@@ -23,10 +23,9 @@ Gaussian mixture models as soft clustering; the EM algorithm; model selection vi
 
 ## 🧪 Lab
 
-In-class walkthrough — open the rendered lab in a new tab. The R Markdown source is provided so you can run the code yourself in RStudio.
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
 
-- 🧪 [class8 lab1 (HTML)](code/class8_lab1.html){target="_blank"}
-- 📝 [Lab source (class8_lab1.Rmd)](code/class8_lab1.Rmd)
+- 🧪 [Lab 8 (interactive)](code/class8_lab1.html){target="_blank"}
 
 ## 💻 Code
 

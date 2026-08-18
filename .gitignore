@@ -1,4 +1,6 @@
 /.quarto/
+_freeze/
+docs/_freeze/
 .Rproj.user/
 .Rhistory
 .RData

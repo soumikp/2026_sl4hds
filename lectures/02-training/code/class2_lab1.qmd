@@ -1,66 +1,74 @@
 ---
 title: "Class 2/Lab1: Training, Evaluating, and Resampling Models"
-date: "Week 2 (9.04)"
-output:
-  html_document:
-    toc: FALSE
-    toc_float: true
-    theme: cosmo
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Sep 4, 2026"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - patchwork
+    - cluster
+    - MASS
+    - scales
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
 ---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
 
 ```{=html}
 <style type="text/css">
-    .main-container {
-      max-width: 1600px !important; /* Adjust this value as needed for the main content */
+    /* Quarto's website layout sizes the body-content grid column, not
+       .main-container (that class belongs to the old html_document
+       theme and doesn't exist on this page) -- override the grid
+       template directly so the content column actually widens.
+       10vw margin on each side => content column is exactly 80vw. */
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
     }
 
-    /* Optional: Adjust the width of the floating TOC */
-    .tocify {
-      width: 200px; /* Adjust this value to control TOC width */
+    body {
+      font-size: 16pt;
     }
-
-    /* Optional: Ensure content doesn't overlap with TOC on scroll */
-    @media (min-width: 768px) { /* Apply for larger screens where TOC floats */
-      body.toc-left .main-container {
-        margin-left: 210px; /* Adjust this to be slightly more than TOC width */
-      }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
     }
-
+    code, pre {
+      font-size: 14pt;
+    }
 </style>
 ```
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center")
-```
+## Introduction
 
-## Introduction {.tabset}
+In this lab, we will build the toolkit for training and evaluating statistical learning models. Every code cell below runs live in your browser via [webR](https://docs.r-wasm.org/webr/latest/) — no local R install needed. Edit any cell and re-run it to see what changes.
 
-In this lab, we will build the toolkit for training and evaluating statistical learning models. Using simulated data, we will:
+Packages load once when the page opens (see the `webr: packages:` list in the YAML front matter above) — give it a few seconds on first load.
+
+Using simulated data, we will:
 
 1.  Calculate common performance metrics (RMSE, Accuracy, Silhouette Score, Explained Variance) by hand, so the formulas behind `caret`/`yardstick` output stop being a black box.
 2.  Fit polynomials of increasing degree to the same data and watch training error keep falling while test error eventually turns back up — the bias-variance tradeoff.
 3.  Use the bootstrap to estimate the standard error and a confidence interval for a statistic without relying on a textbook formula.
 
-```{r load-packages}
-# Clear environment and unload packages
-rm(list = ls())
-pacman::p_unload(pacman::p_loaded())
-
-# Load necessary packages
-pacman::p_load(tidyverse, patchwork, cluster)
-```
-
 ---
 
-### Evaluation Metrics
+### Evaluation Metrics — RMSE (Regression)
 
-#### RMSE (Regression)
-
-RMSE measures the average magnitude of the errors between predicted and actual values — the square root of the average squared difference.
+RMSE measures the average magnitude of the errors between predicted and actual values.
 
 $$RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(predicted_i - actual_i)^2}$$
 
-```{r rmse-setup}
+```{webr}
+library(ggplot2)
+library(dplyr)
+
 set.seed(42)
 rmse_data <- data.frame(
   ID = 1:10,
@@ -70,10 +78,10 @@ rmse_data <- data.frame(
   mutate(Error = Predicted - Actual,
          Squared_Error = Error^2)
 
-knitr::kable(rmse_data, caption = "Toy actual vs. predicted values")
+rmse_data
 ```
 
-```{r rmse-calc}
+```{webr}
 mse <- mean(rmse_data$Squared_Error)
 rmse <- sqrt(mse)
 
@@ -81,7 +89,7 @@ cat("MSE  =", round(mse, 2), "\n")
 cat("RMSE =", round(rmse, 2), "\n")
 ```
 
-```{r rmse-plot, fig.width=6, fig.height=5}
+```{webr}
 ggplot(rmse_data, aes(x = Actual, y = Predicted)) +
   geom_point(color = "blue", size = 4, alpha = 0.7) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "gray50") +
@@ -91,17 +99,17 @@ ggplot(rmse_data, aes(x = Actual, y = Predicted)) +
   coord_equal()
 ```
 
-**Interpretation:** The red segments are the residuals that get squared in the RMSE formula. Points far from the dashed 1:1 line contribute disproportionately to RMSE because the errors are squared before averaging.
+**Try it live:** change `set.seed(42)` to a different number and re-run all three cells above — watch RMSE change.
 
 ---
 
-#### Accuracy (Classification)
+### Accuracy (Classification)
 
 Accuracy is the proportion of correct predictions among all cases evaluated — the most common classification metric, though it can be misleading on imbalanced data.
 
 $$Accuracy = \frac{True\,Positives + True\,Negatives}{Total\,Samples}$$
 
-```{r accuracy-setup}
+```{webr}
 set.seed(42)
 accuracy_data <- data.frame(
   ID = 1:20,
@@ -113,7 +121,7 @@ cm <- table(Actual = accuracy_data$Actual, Predicted = accuracy_data$Predicted)
 cm
 ```
 
-```{r accuracy-plot, fig.width=5, fig.height=4}
+```{webr}
 cm_df <- as.data.frame(cm)
 
 ggplot(cm_df, aes(x = Predicted, y = Actual, fill = Freq)) +
@@ -125,20 +133,23 @@ ggplot(cm_df, aes(x = Predicted, y = Actual, fill = Freq)) +
   theme(legend.position = "none")
 ```
 
-```{r accuracy-calc}
+```{webr}
+#| exercise: ex_accuracy
 tp <- cm[2, 2]
 tn <- cm[1, 1]
 total <- sum(cm)
-acc <- (tp + tn) / total
+acc <- (tp + ______) / total   # class fills: tn
 
 cat("True Positives:", tp, "\n")
 cat("True Negatives:", tn, "\n")
 cat("Accuracy = (", tp, "+", tn, ") /", total, "=", round(acc, 3), "\n")
 ```
 
+**Live-coding demo:** the blank marks the one piece of the accuracy formula left to fill in — true negatives, added alongside true positives in the numerator.
+
 ---
 
-#### Silhouette Score (Clustering)
+### Silhouette Score (Clustering)
 
 The silhouette score measures how similar a point is to its own cluster (cohesion) versus the nearest other cluster (separation). It ranges from -1 to +1; higher is better.
 
@@ -146,7 +157,9 @@ $$s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}$$
 
 where $a(i)$ is the average distance from point $i$ to other points in its own cluster, and $b(i)$ is the average distance from $i$ to points in the nearest neighboring cluster.
 
-```{r silhouette-setup, fig.width=6, fig.height=5}
+```{webr}
+library(cluster)
+
 set.seed(42)
 silhouette_data <- data.frame(
   x = c(rnorm(25, 3, 1), rnorm(25, 9, 1)),
@@ -162,7 +175,7 @@ ggplot(silhouette_data, aes(x = x, y = y, color = cluster)) +
   theme_minimal(base_size = 15)
 ```
 
-```{r silhouette-calc, fig.width=6, fig.height=5}
+```{webr}
 dist_matrix <- dist(silhouette_data[, c("x", "y")])
 sil <- silhouette(km$cluster, dist_matrix)
 
@@ -171,13 +184,17 @@ plot(sil, col = 1:2, border = NA, main = "Silhouette Plot")
 cat("Average Silhouette Score =", round(mean(sil[, "sil_width"]), 3), "\n")
 ```
 
+**Try it live:** change `centers = 2` to `centers = 3` or `4` in the first cell and re-run both cells — watch the average silhouette score change as the clustering gets forced into the wrong number of groups.
+
 ---
 
-#### Explained Variance (Dimensionality Reduction)
+### Explained Variance (Dimensionality Reduction)
 
 In PCA, explained variance is the proportion of total variance captured by each principal component — used to decide how many components to keep.
 
-```{r ev-setup, fig.width=6, fig.height=5}
+```{webr}
+library(MASS)
+
 set.seed(42)
 cov_matrix <- matrix(c(5, 4, 4, 5), nrow = 2)
 ev_data <- as.data.frame(MASS::mvrnorm(n = 100, mu = c(0, 0), Sigma = cov_matrix))
@@ -189,7 +206,7 @@ ggplot(ev_data, aes(x = Feature_1, y = Feature_2)) +
   theme_minimal(base_size = 15)
 ```
 
-```{r ev-pca}
+```{webr}
 pca_result <- prcomp(ev_data, scale. = TRUE)
 vars <- pca_result$sdev^2
 props <- vars / sum(vars)
@@ -201,10 +218,12 @@ ev_df <- data.frame(
   Cumulative_Proportion = round(cumsum(props), 3)
 )
 
-knitr::kable(ev_df)
+ev_df
 ```
 
-```{r ev-scree, fig.width=6, fig.height=5}
+```{webr}
+library(scales)
+
 ev_df$Component <- factor(ev_df$Component, levels = ev_df$Component)
 
 ggplot(ev_df, aes(x = Component, y = Proportion_of_Variance)) +
@@ -215,7 +234,7 @@ ggplot(ev_df, aes(x = Component, y = Proportion_of_Variance)) +
   scale_y_continuous(labels = scales::percent, expand = expansion(mult = c(0, 0.15)))
 ```
 
-**Interpretation:** The first principal component explains `r scales::percent(ev_df$Proportion_of_Variance[1])` of the total variance — unsurprising, since we constructed `Feature_1` and `Feature_2` to be strongly correlated.
+**Try it live:** change `cov_matrix <- matrix(c(5, 4, 4, 5), nrow = 2)` to `matrix(c(5, 0, 0, 5), nrow = 2)` (zero covariance) and re-run all three cells — watch the first component's explained variance drop from dominant to about 50%, since the features are no longer correlated.
 
 ---
 
@@ -223,7 +242,9 @@ ggplot(ev_df, aes(x = Component, y = Proportion_of_Variance)) +
 
 Here we generate data from a known nonlinear function, then fit polynomials of increasing degree and track training vs. test error. Low-degree models underfit (high bias); high-degree models overfit (high variance).
 
-```{r bv-generate}
+```{webr}
+library(tidyr)
+
 set.seed(42)
 n <- 100
 noise_sd <- 0.5
@@ -239,9 +260,10 @@ train_data <- df[train_indices, ]
 test_data <- df[-train_indices, ]
 ```
 
-```{r bv-fit-one, fig.width=7, fig.height=5}
+```{webr}
+#| exercise: ex_degree
 # Fit a single low-degree polynomial for illustration
-degree <- 3
+degree <- ______   # try 1, 3, and 10
 fit <- lm(y ~ poly(x, degree = degree, raw = TRUE), data = train_data)
 
 x_curve <- seq(min(train_data$x), max(train_data$x), length.out = 200)
@@ -259,7 +281,9 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
-```{r bv-sweep, fig.width=7, fig.height=5}
+**Live-coding demo:** fill in the blank with a low degree (e.g. `1`) — model underfits. Re-run with a high degree (e.g. `10`) — model overfits. This `#| exercise:` blank is the code-blanks pattern: everything else is given, only the one concept-defining value is left for the class to fill in live.
+
+```{webr}
 max_degree <- 10
 
 error_data <- sapply(1:max_degree, function(d) {
@@ -292,7 +316,7 @@ ggplot(error_data, aes(x = degree, y = mse, color = type, group = type)) +
 
 The bootstrap estimates the sampling distribution of a statistic by resampling the observed data with replacement, without relying on a closed-form formula for its standard error.
 
-```{r boot-setup, fig.width=6, fig.height=5}
+```{webr}
 set.seed(42)
 n_sample <- 50
 original_sample <- rnorm(n_sample, mean = 0, sd = 1)
@@ -304,7 +328,7 @@ ggplot(data.frame(value = original_sample), aes(x = value)) +
   theme_minimal(base_size = 14)
 ```
 
-```{r boot-resample, fig.width=6, fig.height=5}
+```{webr}
 B <- 2000
 statistic_fn <- mean
 
@@ -324,7 +348,7 @@ ggplot(data.frame(statistic = boot_stats), aes(x = statistic)) +
   theme_minimal(base_size = 14)
 ```
 
-```{r boot-summary}
+```{webr}
 boot_se <- sd(boot_stats)
 boot_ci <- quantile(boot_stats, probs = c(0.025, 0.975))
 
@@ -335,20 +359,4 @@ cat("95% CI:             [", round(boot_ci[1], 4), ",", round(boot_ci[2], 4), "]
 
 **Interpretation:** The bootstrap SE and CI closely match what the Central Limit Theorem predicts for the mean of a normal sample ($\sigma/\sqrt{n}$), which is why the bootstrap is trustworthy here — and why it's most useful for statistics (medians, correlations, model coefficients) where no such closed-form formula exists.
 
-#### Trying a different statistic
-
-Swap `statistic_fn` for another summary to see how the bootstrap distribution changes shape — e.g. the standard deviation, which is right-skewed in small samples:
-
-```{r boot-sd, fig.width=6, fig.height=5}
-boot_sd_stats <- replicate(B, {
-  boot_sample <- sample(original_sample, size = n_sample, replace = TRUE)
-  sd(boot_sample)
-})
-
-ggplot(data.frame(statistic = boot_sd_stats), aes(x = statistic)) +
-  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "#6f42c1", color = "white", alpha = 0.8) +
-  geom_density(color = "#dc3545", linewidth = 1.2) +
-  labs(title = "Bootstrap Distribution of the Standard Deviation", subtitle = paste(B, "replications"),
-       x = "Statistic Value", y = "Density") +
-  theme_minimal(base_size = 14)
-```
+**Try it live:** change `statistic_fn <- mean` to `statistic_fn <- sd` or `statistic_fn <- median` and re-run both cells — the whole pipeline updates. The standard deviation's bootstrap distribution is noticeably right-skewed in small samples, unlike the mean's.

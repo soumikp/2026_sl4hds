@@ -2,66 +2,98 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/syllabus.html</loc>
-    <lastmod>2026-08-18T00:31:20.838Z</lastmod>
+    <lastmod>2026-08-17T22:53:29.936Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/project.html</loc>
-    <lastmod>2026-08-18T00:31:20.836Z</lastmod>
+    <lastmod>2026-08-17T22:53:29.935Z</lastmod>
   </url>
   <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/lectures/10-trees/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.788Z</lastmod>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/11-ensemble/code/class11_lab1.html</loc>
+    <lastmod>2026-08-18T01:29:08.409Z</lastmod>
   </url>
   <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/lectures/08-clustering-gmm/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.734Z</lastmod>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/10-trees/code/class10_lab1.html</loc>
+    <lastmod>2026-08-18T01:28:24.693Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/09-pca/code/class9_lab1.html</loc>
+    <lastmod>2026-08-18T01:27:34.681Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/08-clustering-gmm/code/class8_lab1.html</loc>
+    <lastmod>2026-08-18T01:26:51.795Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/lectures/06-classification-2/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.690Z</lastmod>
-  </url>
-  <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/lectures/04-regression-2/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.631Z</lastmod>
-  </url>
-  <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/lectures/02-training/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.511Z</lastmod>
-  </url>
-  <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.458Z</lastmod>
-  </url>
-  <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/assignments/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.036Z</lastmod>
-  </url>
-  <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/lectures/01-intro/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.474Z</lastmod>
-  </url>
-  <url>
-    <loc>https://soumikp.github.io/2026_sl4hds/lectures/03-regression-1/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.575Z</lastmod>
+    <lastmod>2026-08-18T01:30:35.341Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/lectures/05-classification-1/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.670Z</lastmod>
+    <lastmod>2026-08-18T01:30:35.341Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/04-regression-2/index.html</loc>
+    <lastmod>2026-08-17T22:53:29.756Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/03-regression-1/code/class3_lab1.html</loc>
+    <lastmod>2026-08-18T01:22:25.624Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/02-training/code/class2_lab1.html</loc>
+    <lastmod>2026-08-18T01:18:53.414Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/index.html</loc>
+    <lastmod>2026-08-17T23:07:27.802Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/assignments/index.html</loc>
+    <lastmod>2026-08-17T22:53:28.753Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/01-intro/index.html</loc>
+    <lastmod>2026-08-17T22:53:29.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/02-training/index.html</loc>
+    <lastmod>2026-08-18T01:30:35.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/03-regression-1/index.html</loc>
+    <lastmod>2026-08-18T01:30:35.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/05-classification-1/code/class5_lab1.html</loc>
+    <lastmod>2026-08-18T01:23:26.146Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/06-classification-2/code/class6_lab1.html</loc>
+    <lastmod>2026-08-18T01:24:07.090Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/lectures/07-clustering-kmeans/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.706Z</lastmod>
+    <lastmod>2026-08-18T00:30:55.512Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/08-clustering-gmm/index.html</loc>
+    <lastmod>2026-08-18T01:30:35.341Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/lectures/09-pca/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.748Z</lastmod>
+    <lastmod>2026-08-18T01:30:35.341Z</lastmod>
+  </url>
+  <url>
+    <loc>https://soumikp.github.io/2026_sl4hds/lectures/10-trees/index.html</loc>
+    <lastmod>2026-08-18T01:30:35.342Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/lectures/11-ensemble/index.html</loc>
-    <lastmod>2026-08-18T00:31:20.824Z</lastmod>
+    <lastmod>2026-08-18T01:30:35.343Z</lastmod>
   </url>
   <url>
     <loc>https://soumikp.github.io/2026_sl4hds/schedule.html</loc>
-    <lastmod>2026-08-18T00:31:20.838Z</lastmod>
+    <lastmod>2026-08-17T22:53:29.936Z</lastmod>
   </url>
 </urlset>

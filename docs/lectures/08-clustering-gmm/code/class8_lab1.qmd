@@ -1,0 +1,190 @@
+---
+title: "Lab Session: Unsupervised Learning — Clustering"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 16, 2026"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - cluster
+    - factoextra
+    - gridExtra
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Lab: K-Means and Hierarchical Clustering
+
+In this lab, we will explore two common unsupervised clustering methods: Hierarchical Clustering and K-Means. Our goal is to discover natural groupings within a dataset of European countries based on their employment percentages in different industries.
+
+Every code cell below runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages load once when the page opens; give it a few seconds on first load.
+
+---
+
+### Data, EDA, & Scaling
+
+First, we'll load the `Eurojobs` dataset. This dataset contains the percentage of the workforce employed in nine different industries for 26 European countries in 1979. It contains 10 variables:
+
+- `Country`: the name of the country (identifier)
+- `Agr`: % of workforce employed in agriculture
+- `Min`: % in mining
+- `Man`: % in manufacturing
+- `PS`: % in power supplies industries
+- `Con`: % in construction
+- `SI`: % in service industries
+- `Fin`: % in finance
+- `SPS`: % in social and personal services
+- `TC`: % in transportation and communications
+
+We will perform some basic exploratory data analysis (EDA) and then — most importantly — scale the data. Scaling is crucial for distance-based algorithms like K-Means and Hierarchical Clustering, as it ensures that variables with larger ranges (e.g., Agriculture) don't dominate the clustering process over variables with smaller ranges (e.g., Mining).
+
+```{webr}
+library(dplyr)
+
+data_url <- "https://statsandr.com/blog/data/Eurojobs.csv"
+Eurojobs <- read.csv(data_url, row.names = 1)
+summary(Eurojobs)
+```
+
+Now, we scale the data using `scale()`, which standardizes each column to have a mean of 0 and a standard deviation of 1.
+
+```{webr}
+Eurojobs_scaled <- scale(Eurojobs)
+summary(as.data.frame(Eurojobs_scaled))
+```
+
+---
+
+### Hierarchical Clustering
+
+Hierarchical (or agglomerative) clustering builds a "bottom-up" hierarchy of clusters. It starts with each observation as its own cluster and progressively merges the closest pairs of clusters until all observations are in a single cluster.
+
+We will:
+
+1.  Calculate a distance matrix for our scaled data.
+2.  Run the hierarchical clustering algorithm (using "complete" linkage).
+3.  Plot the resulting dendrogram to visualize the cluster hierarchy.
+
+```{webr}
+dist_matrix <- dist(Eurojobs_scaled, method = "euclidean")
+```
+
+```{webr}
+library(factoextra)
+library(ggplot2)
+
+# other methods include "average", "single", and "centroid"
+hc_complete <- hclust(dist_matrix, method = "complete")
+
+fviz_dend(hc_complete,
+          main = "Dendrogram (Complete Linkage)",
+          cex = 0.7,
+          k = 4, # Cut the tree into 4 clusters
+          rect = TRUE,
+          rect_border = "jco",
+          rect_fill = TRUE,
+          palette = "jco",
+          ggtheme = theme_minimal())
+```
+
+Looking at the dendrogram, we can decide where to "cut" the tree to form clusters. For example, a cut at a height of ~5.0 would give us 4 distinct clusters. We can get the cluster assignments for each country using the `cutree()` function.
+
+```{webr}
+#| exercise: ex_hc_k
+# cut the tree to get a chosen number of clusters
+k_hc <- ______   # try 2, 4, and 6
+clusters_hc <- cutree(hc_complete, k = k_hc)
+
+Eurojobs_clustered_hc <- Eurojobs %>%
+  mutate(Cluster = as.factor(clusters_hc))
+
+cat("\n--- Countries by Cluster (Hierarchical) ---\n")
+for (i in 1:k_hc) {
+  cat(paste("\nCluster", i, ":\n"))
+  print(rownames(Eurojobs_clustered_hc[Eurojobs_clustered_hc$Cluster == i, ]))
+}
+```
+
+**Live-coding demo:** fill in `k_hc` to try different numbers of clusters and see how the country groupings change — a low `k` lumps very different economies together; a high `k` starts splitting apart countries that are genuinely similar.
+
+---
+
+### K-Means & Gap Statistic
+
+K-Means clustering is a "top-down" approach where we must specify the number of clusters, `k`, in advance. The algorithm then partitions the data into `k` clusters, minimizing the within-cluster sum of squares.
+
+The main challenge is choosing the right `k`. We use two methods to find the optimal `k`:
+
+1.  **Silhouette Method:** Measures how similar an observation is to its own cluster compared to other clusters. We look for the `k` with the highest average silhouette score.
+2.  **Gap Statistic:** Compares the WSS of our data to the WSS of randomly generated "null" reference datasets. We pick the `k` that maximizes this "gap."
+
+```{webr}
+library(gridExtra)
+
+set.seed(42)
+
+p2 <- fviz_nbclust(Eurojobs_scaled, kmeans, method = "silhouette") +
+  labs(subtitle = "Silhouette Method")
+
+# nboot = 50 keeps this fast enough to run live; a real analysis would use 500+
+p3 <- fviz_nbclust(Eurojobs_scaled, kmeans,
+                   method = "gap_stat",
+                   nboot = 50) +
+  labs(subtitle = "Gap Statistic")
+
+grid.arrange(p2, p3, nrow = 1)
+```
+
+```{webr}
+best_k_silhouette <- which.max(p2$data$y)
+best_k_gap <- which.max(p3$data$gap)
+
+cat("Silhouette method suggests k =", best_k_silhouette, "\n")
+cat("Gap statistic peaks at k =", best_k_gap, "\n")
+```
+
+Now, let's run our final K-Means algorithm using the gap statistic's suggested `k`.
+
+```{webr}
+set.seed(42)
+km_final <- kmeans(Eurojobs_scaled, centers = best_k_gap)
+```
+
+We can inspect which countries were assigned to which cluster.
+
+```{webr}
+Eurojobs_clustered_km <- Eurojobs %>%
+  mutate(Cluster = as.factor(km_final$cluster))
+
+cat("\n--- Countries by Cluster (K-Means) ---\n")
+for (i in 1:best_k_gap) {
+  cat(paste("\nCluster", i, ":\n"))
+  print(rownames(Eurojobs_clustered_km[Eurojobs_clustered_km$Cluster == i, ]))
+}
+```
+
+**Try it live:** change `centers = best_k_gap` to a fixed number like `3` or `5` and re-run — compare the resulting country groupings to what the gap statistic recommended, and to the hierarchical clustering result above.

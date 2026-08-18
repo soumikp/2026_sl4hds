@@ -1,0 +1,166 @@
+---
+title: "Lab Session: Trees, Boosting, Bagging, and Random Forests"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 30, 2026"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - readr
+    - ISLR2
+    - tree
+    - caret
+    - randomForest
+    - gbm
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Lab: Tree-based Methods using Heart Data
+
+In this lab, we will explore tree-based methods for classification. We'll use the `Heart` dataset, which contains a binary outcome `AHD` for 303 patients who presented with chest pain. An outcome value of `Yes` indicates the presence of heart disease based on an angiographic test, while `No` means no heart disease. There are $p=13$ predictors including `Age`, `Sex`, `Chol` (a cholesterol measurement), and other heart and lung function measurements.
+
+Every code cell below runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages load once when the page opens; give it a few seconds on first load. The boosting cell fits 1000 trees and is the slowest cell in this lab.
+
+```{webr}
+library(dplyr)
+library(tidyr)
+library(readr)
+
+heart <- read_csv("https://www.statlearning.com/s/Heart.csv") |>
+  select(-1) |>
+  drop_na() |>
+  mutate(across(where(is.character), as.factor))
+```
+
+---
+
+### Data, EDA, & Preprocessing
+
+```{webr}
+str(heart)
+summary(heart)
+```
+
+#### Train/Test Split
+
+We need to evaluate model performance on unseen data. We'll split the data into a training set (4/5) and a test set (1/5).
+
+```{webr}
+set.seed(42)
+train_index <- sample(1:nrow(heart), replace = FALSE)[1:round(0.8 * nrow(heart))]
+test_index <- (1:nrow(heart))[-train_index]
+cat("Training set size:", length(train_index), "\n")
+cat("Test set size:", length(test_index), "\n")
+```
+
+---
+
+### Basic Tree Building and Pruning
+
+```{webr}
+library(tree)
+
+model <- tree(AHD ~ ., data = heart[train_index, ])
+plot(model)
+text(model, pretty = 0)
+
+set.seed(42)
+cv_results <- cv.tree(model, FUN = prune.misclass)
+best <- cv_results$size[which.min(cv_results$dev)]
+
+pruned_model <- prune.misclass(model, best = best)
+plot(pruned_model)
+text(pruned_model, pretty = 0)
+```
+
+```{webr}
+library(caret)
+
+caret::confusionMatrix(data = predict(model, newdata = heart[test_index, ], type = "class"),
+                       reference = heart[test_index, ]$AHD)
+```
+
+```{webr}
+caret::confusionMatrix(data = predict(pruned_model, newdata = heart[test_index, ], type = "class"),
+                       reference = heart[test_index, ]$AHD)
+```
+
+**Interpretation:** Compare the two confusion matrices above — pruning trades a small amount of training fit for a simpler, more interpretable tree. Whether it costs test accuracy is exactly what these two matrices let you check directly.
+
+---
+
+### Bagging
+
+Bagging is a random forest where `mtry` equals the total number of predictors — every tree in the ensemble considers all predictors at each split, so the only randomness comes from bootstrap resampling the training rows.
+
+```{webr}
+library(randomForest)
+
+set.seed(42)
+model_bagged <- randomForest::randomForest(AHD ~ ., data = heart[train_index, ], mtry = ncol(heart) - 1)
+caret::confusionMatrix(data = predict(model_bagged, newdata = heart[test_index, ], type = "class"),
+                       reference = heart[test_index, ]$AHD)
+importance(model_bagged, type = 1)
+```
+
+---
+
+### Boosting
+
+```{webr}
+library(gbm)
+
+set.seed(42)
+model_boosted <- gbm(AHD ~ ., data = heart[train_index, ] |> mutate(AHD = case_when(AHD == "Yes" ~ 1, .default = 0)),
+                     distribution = "bernoulli", interaction.depth = 4, n.trees = 1000, shrinkage = 0.2,
+                     verbose = FALSE)
+caret::confusionMatrix(data = as.factor(ifelse(predict(model_boosted, newdata = heart[test_index, ], type = "response") <= 0.5,
+                                     "No", "Yes")),
+                       reference = heart[test_index, ]$AHD)
+summary(model_boosted, plotit = FALSE)
+```
+
+---
+
+### Random Forest
+
+Unlike bagging, a genuine random forest restricts each split to a random subset of predictors (`mtry` = $\sqrt{p}$ by convention for classification), which decorrelates the trees in the ensemble.
+
+```{webr}
+#| exercise: ex_mtry
+# Try different mtry values -- sqrt(p) is the classification default
+model_rf <- randomForest::randomForest(AHD ~ ., data = heart[train_index, ], mtry = ______, importance = TRUE)   # try: sqrt(ncol(heart) - 1), ncol(heart) - 1, or a fixed number
+caret::confusionMatrix(data = predict(model_rf, newdata = heart[test_index, ], type = "class"),
+                       reference = heart[test_index, ]$AHD)
+importance(model_rf, type = 1)
+```
+
+**Live-coding demo:** fill in `mtry` with `sqrt(ncol(heart) - 1)` (the random forest default) first, then re-run with `ncol(heart) - 1` (equivalent to bagging) — compare accuracy and the importance rankings between the two.
+
+**Try it live:** across all four models above (single tree, bagged, boosted, random forest), which has the highest test accuracy? Which is easiest to explain to a non-technical audience? These often aren't the same model.

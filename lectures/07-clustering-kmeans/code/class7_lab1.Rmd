@@ -11,8 +11,8 @@ output:
 ```{=html}
 <style type="text/css">
     .main-container {
-      max-width: 90vw !important;   /* fills the classroom screen at any resolution */
-      width: 90vw !important;
+      max-width: 80vw !important;   /* matches the width used across the live webR labs */
+      width: 80vw !important;
     }
     @media (min-width: 1780px) {    /* cap so it doesn't sprawl on ultrawide displays */
       .main-container {
