@@ -95,9 +95,9 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><em>TBD</em></td>
 </tr>
 
-<tr>
+<tr class="no-class">
 <td>Nov 20</td>
-<td><em>TBD</em></td>
+<td><em>No class — prepare for project</em></td>
 <td>—</td>
 <td>—</td>
 </tr>
