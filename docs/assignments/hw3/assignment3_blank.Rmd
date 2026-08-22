@@ -1,152 +1,171 @@
 ---
 title: 'BIOST 2155: Assignment 3'
 author: 'YOUR NAME HERE (YOUR PITT EMAIL HERE)'
-date: "**Released**: 2025-11-14. **Due by**: 2025-12-07, 11:59 PM"
+date: "**Released**: 2026-10-02. **Due by**: 2026-10-16, 11:59 PM"
 output: pdf_document
 header-includes: |
   \usepackage{fancyhdr}
   \pagestyle{fancy}
-  \fancyhead[L]{BIOST 2155, Fall 2025}
+  \fancyhead[L]{BIOST 2155, Fall 2026}
   \fancyhead[R]{Assignment 3}
   \fancyfoot[C]{Page \thepage}
   \renewcommand{\headrulewidth}{0.4pt}
   \renewcommand{\footrulewidth}{0.4pt}
   \fancypagestyle{plain}{%
-    \fancyhead[L]{BIOST 2155, Fall 2025}%
+    \fancyhead[L]{BIOST 2155, Fall 2026}%
     \fancyhead[R]{Assignment 3}%
     \fancyfoot[C]{Page \thepage}%
     \renewcommand{\headrulewidth}{0.4pt}%
     \renewcommand{\footrulewidth}{0.4pt}%
   }
-urlcolor: blue  
+  \usepackage{xcolor}
+  \definecolor{shadecolor}{rgb}{0.85, 0.90, 0.98}
+urlcolor: blue
 ---
-
 
 \hrule
 
 ## Instructions
 
-
 * This file serves as a template for your assignment. \textcolor{red}{Remember to set eval = TRUE below when compiling the report.}
 ```{r setup}
 pacman::p_load(formatR)
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE, 
-                      fig.height = 4, fig.width = 6, fig.align = "center", 
-                      message=FALSE, tidy.opts = list(width.cutoff = 70), tidy = TRUE, 
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE,
+                      fig.height = 4, fig.width = 6, fig.align = "center",
+                      message=FALSE, tidy.opts = list(width.cutoff = 70), tidy = TRUE,
                       class.output  = "shadebox",
                       class.message = "shadebox",
                       class.warning = "shadebox",
                       class.error   = "shadebox")
 ```
-* Use comments to annotate and explain your code whenever possible. 
-* This assignment uses one data set: `Wisconsin Breast Cancer data` and is saved as `assign3_Data.csv`
+* Use comments to annotate and explain your code whenever possible.
+* This assignment covers **Classification II** (support vector machines) and **Clustering I** (k-means, cluster evaluation). It uses two data sets: `Wisconsin Breast Cancer` (`assign3_data.csv`) for Part A, and `Palmer Penguins` (`penguins.csv`) for Part B.
 \newline
 \hrule
 
-\definecolor{shadecolor}{RGB}{185, 210, 250}
+## Theory (12 points)
 
-## Theory (10 points)
+### T1. The k-means objective and Lloyd's algorithm (7 + 5 = 12 points)
 
-In decision trees for classification, we need to select an impurity function to determine the best split to construct the tree. Gini index and entropy are two most common choices. Show that the Gini index, defined as $G = 1 - \sum_{k=1}^K p_k^2 = \sum_{k=1}^K p_k (1 - p_k)$ takes the maximum value when $p_1 = p_2 = \ldots = p_K = 1/K$ (the most impure). For simplicity, you may investigate with $K=2$ ($p_1=p$, $p_2=1-p$) and express the indices in terms of just $p$. For full credit, your proof must be for general $K \geq 2$.
+This problem involves the K-means clustering algorithm. Let $C_1,\ldots,C_K$ be a clustering of $n$ data points. The objective function of K-means is given by
+$$\min_{C_1, \ldots, C_K} \left\{ \sum_{k=1}^K n(C_k)^{-1} \sum_{j, j' \in C_k} \sum_{i = 1}^p   \left( {x}_{ji} - {x}_{j'i}\right)^2\right\},$$
+where $n(C_k)$ is the number of data points in $C_k$.
 
-**Hint: For $K \geq 2$, note that we have the constraint $\sum_{k=1}^K p_k = 1$. In order to find maximum of $G$ with the given constraint, you may consider using the [Lagrangian multiplier method](https://en.wikipedia.org/wiki/Lagrange_multiplier) for a calculus-based proof, or the [Cauchy-Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy–Schwarz_inequality) for an algebraic proof.**
- 
+(a) (7 points) Given that the center of $C_k$ is $\boldsymbol{\mu}_{k} = n(C_k)^{-1} \sum_{j \in C_k} \boldsymbol{x}_j$, prove that the objective function above is equivalent to
+$$\min _{\left(C_1, \ldots, C_K\right)} \sum_{k=1}^K\left\{2 \cdot \sum_{j \in C_k} \sum_{i=1}^p\left(x_{ji}-\mu_{k i}\right)^2\right\}.$$
 
-## Application (5 + 35 points = 40 points)
+(b) (5 points) On the basis of the identity proved in (a), argue that Lloyd's clustering algorithm decreases the above objective function at each iteration.
 
-You are tasked with analyzing a classical dataset on breast cancer. The dataset contains `n = 569` observations and 31 features. We will be using 10 features for this problem. Features are computed from a digitized image of a fine needle aspirate (FNA) of a breast mass. They describe characteristics of the cell nuclei present in the image. The target labels (`M: malignant`/`B: benign`) indicate that the person's tumor is malignant (cancerous) or benign (noncancerous). Your goal is to explore this data, build predictive models to classify tumor type, and investigate the underlying structure of the data. **Please set a random seed (`set.seed(42)`) before any step involving data splitting or randomization to ensure your results are reproducible.**
+Show your working — you may upload handwritten answers for this problem.
 
-  
-```{r}
+## Application, Part A: Classification II — Support Vector Machines (44 points)
+Dataset: `Wisconsin Breast Cancer`, saved as `assign3_data.csv`.
+
+The dataset contains `n = 569` observations on breast tumors, with 10 features computed from a digitized image of a fine needle aspirate (FNA) of a breast mass. These describe characteristics of the cell nuclei present in the image. The target label `diagnosis` (`M`: malignant / `B`: benign) indicates whether the tumor is malignant or benign. Your goal is to build a support vector classifier to distinguish malignant from benign tumors. **Please set a random seed (`set.seed(42)`) before any step involving data splitting or randomization.**
+
+```{r, echo = TRUE, eval = TRUE, message=FALSE}
 rm(list = ls())
-pacman::p_load(tidyverse, caret, rpart, rpart.plot, randomForest, gbm, pROC, ggsci, here, tableone)
-data <- read_csv(file.path(here(), "assign3_data.csv")) |> dplyr::select(-1)
+pacman::p_load(tidyverse, caret, e1071, pROC)
+set.seed(42)
+data <- read_csv("assign3_data.csv") |> dplyr::select(-1) |> drop_na()
+data$diagnosis <- factor(data$diagnosis, levels = c("B", "M"))
 ```
 
-### Question 1: Initial Data Exploration and Preparation (4 + 1 = 5 Points)
+### A1. Data Preparation (4 + 4 = 8 points)
 
-#### Part A (4 points)
-
-Before building any models, it's crucial to understand the data. Create a table 1 that summarizes the ten features, stratified by `diagnosis`. You may use the `tableone` package for this. Please report and interpret mean $\pm$ standard deviation for all continuous variables and a column for the overall p-value to test for differences between the two groups. 
+1. Split the data into a training set (75%) and a test set (25%), stratified by `diagnosis`.
 ```{r}
-### table1 ###
+# your code here
 ```
 
-#### Part B (1 points)
-
-Split the data into a training set (80%) and a test set (20%). 
-
+2. Support vector classifiers are sensitive to feature scale. Center and scale the 10 predictors in both the training and test sets (fit the scaling on the training set only, then apply it to the test set).
 ```{r}
-### split into train and test ###
+# your code here
 ```
 
+### A2. Linear Support Vector Classifier (8 + 6 = 14 points)
 
-
-### Question 2: PCA, PCR, Random Forest, and Ensemble building (2 + 5 + 5 + 5 + 10 + 5 + 3 = 35 points)
-
-#### Part A (2 points)
-
-Explain why scaling (standardizing) features is a critical preprocessing step before applying Principal Component Analysis (PCA). In the space below, add code to standardize the ten features in both training and test sets.
-
+1. Using `e1071::tune()` (or `caret::train` with `method = "svmLinear"`), perform 10-fold cross-validation to select the optimal cost parameter `C` over a grid of your choice (e.g. `c(0.01, 0.1, 1, 5, 10, 100)`). Report the chosen `C` and the number of support vectors in the final model.
 ```{r}
-### centering and scaling ###
+# your code here
 ```
 
-#### Part B (5 points)
-
-Perform PCA on the standardized training data. Plot two graphs: 1. The Proportion of Variance Explained (PVE) by each component (a "scree plot"). 2. The Cumulative PVE. Looking at your Cumulative PVE plot, how many components (`M`) are required to explain at least 75% of the variance?
-
+2. Generate predictions on the test set and report the confusion matrix and test accuracy.
 ```{r}
-### scree (ew) plots ###
+# your code here
 ```
 
+### A3. Non-linear (Radial) Kernel SVM (8 + 6 = 14 points)
 
-#### Part C (5 points)
-
-Create a scatterplot showing the first two principal component (PC1 vs. PC2) scores for your training data. Color the data points based on their diagnosis (`Malignant` or `Benign`). Do these first two components alone appear to provide good separation between the two classes?
-
+1. Fit a support vector machine with a radial basis function kernel. Use 10-fold CV to jointly tune `cost` and `gamma` over grids of your choice. Report the chosen parameters.
 ```{r}
-### scatterplot ###
+# your code here
 ```
 
-#### Part D (5 points)
-
-Create a biplot showing the first two principal component (PC1 vs. PC2) scores for your training data. Examine the loading vectors (the arrows). Which original features contribute most heavily to PC1? Which contribute most to PC2?
-
-```{r, fig.height=6}
-## biplot here ###
-```
-```{r, echo = FALSE}
-### following features load more heavily on PC1 ... ###
-### following features load more heavily on PC2 ... ###
-```
-
-
-#### Part E (10 points)
-
-Using the first two principal components, create your new feature set for both the training and test sets. Fit a Logistic Regression model using the first two PCs as your predictors. Use `caret::confusionMatrix` to report model performance on the test set.
-
+2. Generate predictions on the test set, report the confusion matrix and test accuracy, and compare to the linear SVC from A2. Did the non-linear kernel improve performance? Given what you know about the geometry of this problem, is that what you'd expect?
 ```{r}
-### PCR ###
+# your code here
 ```
 
-#### Part F (5 points)
+### A4. Sensitivity and the Cost of Errors (5 + 3 = 8 points)
 
-Fit a `RandomForestClassifier` on the training data with `n.trees = 100`. Use `caret::confusionMatrix` to report model performance on the test set. Plot the variable importances from the trained model and list the top 5 important features. 
-
+1. From a clinical perspective, a false negative (a malignant tumor classified as benign) is far more costly than a false positive. Report the sensitivity (recall for the malignant class) of both the linear and radial SVMs from A2/A3.
 ```{r}
-### random forest ###
+# your code here
 ```
 
-#### Part G (3 points)
+2. *Interpretation: Which model would you recommend for clinical deployment, and why — accuracy alone, or should sensitivity change your recommendation? Suggest one practical way to make an SVM more sensitive to the malignant class (e.g. adjusting the decision threshold or class weights).*
 
-We will consider two models for malignant/benign classification: the PCR model and the random forest model, with the intention of making an ensemble model. 
-Consider a 2-by-2 table with test set predictions from both models. Is there any disagreement between the two models? In case of disagreement, which model would you trust more? 
+## Application, Part B: Clustering I — k-means and Cluster Evaluation (44 points)
+Dataset: `Palmer Penguins`, saved as `penguins.csv`.
 
+This dataset contains morphological measurements for `n = 344` penguins across three species (Adelie, Chinstrap, Gentoo) observed on islands in the Palmer Archipelago, Antarctica. We will ignore the species labels during clustering and use them only afterward, to evaluate how well unsupervised clustering recovers the true species groupings.
 
+- `species`: penguin species (Adelie, Chinstrap, Gentoo) — **label, do not use as a predictor**
+- `island`: island of observation
+- `bill_length_mm`, `bill_depth_mm`: bill dimensions in mm
+- `flipper_length_mm`: flipper length in mm
+- `body_mass_g`: body mass in grams
+- `sex`: sex of the penguin
+
+```{r, echo = TRUE, eval = TRUE, message=FALSE}
+pacman::p_load(tidyverse, cluster, factoextra)
+set.seed(42)
+penguins <- read_csv("penguins.csv") |> drop_na()
+features <- penguins |>
+  dplyr::select(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g)
+features_scaled <- scale(features)
+```
+
+### B1. Choosing k (8 + 6 = 14 points)
+
+1. Using the four scaled morphological predictors, produce both a silhouette plot and a gap statistic plot (`factoextra::fviz_nbclust`) to help choose the number of clusters `k`. Report the value of `k` each method recommends.
 ```{r}
-### agreement between PCR and RF ###
+# your code here
 ```
 
+2. There are three known species in this data. Do the silhouette and gap statistic recommendations agree with this, or with each other? Briefly comment on why an unsupervised method might not recover the "true" number of groups.
+```{r}
+# your code here
+```
 
-**Hint: go back to the confusion matrices from both models and check specificity and sensitivity. Since we want to minimize false negatives (instances where a patient with a malignant tumor was falsely classified as having a benign tumor), which metric should we consider when comparing the two models?**
+### B2. K-Means Clustering (6 + 6 = 12 points)
+
+1. Perform k-means clustering with `centers = 3` on the scaled features (use `nstart = 25`). Create a cross-tabulation (`table()`) comparing the true `species` labels to the cluster assignments.
+```{r}
+# your code here
+```
+
+2. Make a scatterplot of `bill_length_mm` vs. `flipper_length_mm`, colored by cluster assignment and faceted (or shaped) by true species. Does k-means recover the species groups well? Which species, if any, gets confused with another?
+```{r}
+# your code here
+```
+
+### B3. Hierarchical Clustering & Comparison (10 + 8 = 18 points)
+
+1. Perform hierarchical clustering on the scaled features using complete linkage on a Euclidean distance matrix, and cut the dendrogram into `k = 3` clusters. Create a cross-tabulation comparing true species to these cluster assignments.
+```{r}
+# your code here
+```
+
+2. *Interpretation: Compare the k-means and hierarchical clustering solutions using their cross-tabulations against the true species labels — which method recovered the species structure more accurately? Given that k-means assumes roughly spherical, equal-variance clusters, does that assumption seem reasonable for this data? What does this exercise suggest about the general risk of trusting unsupervised cluster labels as if they were ground truth?*

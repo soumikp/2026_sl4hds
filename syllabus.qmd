@@ -42,12 +42,11 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 | Component | Weight |
 |-----------|-------:|
 | Quizzes (12, lowest two dropped†, averaged) | 10% |
-| Homework 1 | 10% |
-| Homework 2 | 10% |
-| Homework 3 | 10% |
-| Homework 4 | 10% |
-| Homework 5 | 10% |
-| Homework 6 | 10% |
+| Homework 1 | 12% |
+| Homework 2 | 12% |
+| Homework 3 | 12% |
+| Homework 4 | 12% |
+| Homework 5 | 12% |
 | Final project presentation | 30% |
 
 † See [quiz policy](#quiz-policy) below.
@@ -58,7 +57,7 @@ A short 5-question quiz follows each of the 12 lecture topics, released on Canva
 
 ### Homework policy
 
-Six homework assignments, each covering roughly two consecutive lecture topics — a mix of theory, simulation, and applied data analysis in R. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
+Five homework assignments, each covering two consecutive lecture topics (modules 2–11) — a mix of theory, simulation, and applied data analysis in R. Each is scoped to about 5 hours of work, released the day of the first covered lecture and due after the second. Multiple hypothesis testing (module 12) has no homework, only its quiz. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
 
 Late homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.
 

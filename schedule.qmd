@@ -7,7 +7,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <table class="schedule">
 <thead>
-<tr><th>Date</th><th>Topic</th><th>Reading</th><th>Materials</th></tr>
+<tr><th>Date</th><th>Topic</th><th>Reading</th><th>Materials</th><th>Quiz</th><th>Assignment</th></tr>
 </thead>
 <tbody>
 
@@ -16,6 +16,8 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong><a href="lectures/01-intro/index.html">Introduction</a></strong> — supervised vs.&nbsp;unsupervised; regression, classification, clustering, dimensionality reduction</td>
 <td>ISLR ch. 2</td>
 <td><a href="lectures/01-intro/slides_clean.pdf">slides</a></td>
+<td>Rel: Aug 28, 11:00 AM<br>Due: Sep 4, 8:59 AM</td>
+<td>—</td>
 </tr>
 
 <tr>
@@ -23,6 +25,8 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Training models</strong> — bias-variance, training/validation/testing, resampling</td>
 <td>ISLR §2.2, ch. 5</td>
 <td><em>TBD</em></td>
+<td>Rel: Sep 4, 11:00 AM<br>Due: Sep 11, 8:59 AM</td>
+<td rowspan="2"><a href="assignments/hw1.qmd">HW1</a><br>Rel: Sep 4, 11:00 AM<br>Due: Sep 18, 11:59 PM</td>
 </tr>
 
 <tr>
@@ -30,6 +34,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Regression I</strong> — subset selection, ridge, lasso</td>
 <td>ISLR ch. 3, 6</td>
 <td><em>TBD</em></td>
+<td>Rel: Sep 11, 11:00 AM<br>Due: Sep 18, 8:59 AM</td>
 </tr>
 
 <tr>
@@ -37,6 +42,8 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Regression II</strong> — non-linear regression, splines, kernel trick</td>
 <td>ISLR ch. 7</td>
 <td><em>TBD</em></td>
+<td>Rel: Sep 18, 11:00 AM<br>Due: Sep 25, 8:59 AM</td>
+<td rowspan="2"><a href="assignments/hw2.qmd">HW2</a><br>Rel: Sep 18, 11:00 AM<br>Due: Oct 2, 11:59 PM</td>
 </tr>
 
 <tr>
@@ -44,6 +51,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Classification I</strong> — logistic regression, generative models</td>
 <td>ISLR ch. 4</td>
 <td><em>TBD</em></td>
+<td>Rel: Sep 25, 11:00 AM<br>Due: Oct 2, 8:59 AM</td>
 </tr>
 
 <tr>
@@ -51,11 +59,14 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Classification II</strong> — support vector machines</td>
 <td>ISLR ch. 9</td>
 <td><em>TBD</em></td>
+<td>Rel: Oct 2, 11:00 AM<br>Due: Oct 9, 8:59 AM</td>
+<td rowspan="3"><a href="assignments/hw3.qmd">HW3</a><br>Rel: Oct 2, 11:00 AM<br>Due: Oct 16, 11:59 PM</td>
 </tr>
 
 <tr class="no-class">
 <td>Oct 9</td>
 <td><em>Fall Break — no class</em></td>
+<td>—</td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -65,6 +76,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Clustering I</strong> — k-means, cluster evaluation</td>
 <td>ISLR §10.3</td>
 <td><em>TBD</em></td>
+<td>Rel: Oct 16, 11:00 AM<br>Due: Oct 23, 8:59 AM</td>
 </tr>
 
 <tr>
@@ -72,6 +84,8 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Clustering II</strong> — Gaussian mixture models</td>
 <td>PRML §9.1–9.2</td>
 <td><em>TBD</em></td>
+<td>Rel: Oct 23, 11:00 AM<br>Due: Oct 30, 8:59 AM</td>
+<td rowspan="2"><a href="assignments/hw4.qmd">HW4</a><br>Rel: Oct 23, 11:00 AM<br>Due: Oct 30, 11:59 PM</td>
 </tr>
 
 <tr>
@@ -79,6 +93,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Dimensionality reduction</strong> — principal component analysis</td>
 <td>ISLR §6.3</td>
 <td><em>TBD</em></td>
+<td>Rel: Oct 30, 11:00 AM<br>Due: Nov 6, 8:59 AM</td>
 </tr>
 
 <tr>
@@ -86,6 +101,8 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Decision trees</strong> — CART, regression and classification trees</td>
 <td>ISLR §8.1</td>
 <td><em>TBD</em></td>
+<td>Rel: Nov 6, 11:00 AM<br>Due: Nov 13, 8:59 AM</td>
+<td rowspan="2"><a href="assignments/hw5.qmd">HW5</a><br>Rel: Oct 30, 11:00 AM<br>Due: Nov 27, 11:59 PM</td>
 </tr>
 
 <tr>
@@ -93,6 +110,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Ensemble learning</strong> — bagging, random forests, boosting</td>
 <td>ISLR §8.2</td>
 <td><em>TBD</em></td>
+<td>Rel: Nov 13, 11:00 AM<br>Due: Nov 20, 8:59 AM</td>
 </tr>
 
 <tr>
@@ -100,11 +118,15 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong>Multiple hypothesis testing</strong> — controlling error rates across many simultaneous tests</td>
 <td><em>TBD</em></td>
 <td><em>TBD</em></td>
+<td>Rel: Nov 20, 11:00 AM<br>Due: Nov 27, 8:59 AM</td>
+<td>—</td>
 </tr>
 
 <tr class="no-class">
 <td>Nov 27</td>
 <td><em>Thanksgiving — no class</em></td>
+<td>—</td>
+<td>—</td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -114,19 +136,21 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><em>In-class final project presentations</em></td>
 <td>—</td>
 <td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 
 </tbody>
 </table>
 
 ::: {.callout-note}
-**Reading codes**: 
+**Reading codes**:
 
-*ISLR* — James, Witten, Hastie, Tibshirani, *An Introduction to Statistical Learning* (Springer, 2013). 
+*ISLR* — James, Witten, Hastie, Tibshirani, *An Introduction to Statistical Learning* (Springer, 2013).
 
-*ESL* — Hastie, Tibshirani, Friedman, *The Elements of Statistical Learning* (Springer, 2009). 
+*ESL* — Hastie, Tibshirani, Friedman, *The Elements of Statistical Learning* (Springer, 2009).
 
-*PRML* — Bishop, *Pattern Recognition and Machine Learning* (Springer, 2006). 
+*PRML* — Bishop, *Pattern Recognition and Machine Learning* (Springer, 2006).
 
 *UDL* — Prince, *Understanding Deep Learning* (MIT, 2024).
 :::

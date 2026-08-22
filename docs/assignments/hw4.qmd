@@ -1,14 +1,14 @@
 ---
-title: "Homework 3"
-subtitle: "Classification II; Clustering I"
+title: "Homework 4"
+subtitle: "Clustering II; Dimensionality reduction"
 ---
 
 ## Materials
 
-- 📄 [Assignment (PDF)](hw3/assignment3_blank.pdf)
-- 📝 [Template (R Markdown)](hw3/assignment3_blank.Rmd)
-- 📊 [Data: `assign3_data.csv`](hw3/assign3_data.csv) (Part A)
-- 📊 [Data: `penguins.csv`](hw3/penguins.csv) (Part B)
+- 📄 [Assignment (PDF)](hw4/assignment4_blank.pdf)
+- 📝 [Template (R Markdown)](hw4/assignment4_blank.Rmd)
+- 📊 [Data: `penguins.csv`](hw4/penguins.csv) (Part A, continued from Assignment 3)
+- 📊 [Data: `assign3_data.csv`](hw4/assign3_data.csv) (Part B, continued from Assignment 3)
 
 ## Instructions
 
@@ -24,6 +24,6 @@ SOLUTIONS — uncomment after the deadline to publish answer key:
 
 ## Solutions
 
-- 📄 [Solutions (PDF)](_solutions/hw3/assignment3_answers.pdf)
-- 📝 [Solutions (R Markdown)](_solutions/hw3/assignment3_answers.Rmd)
+- 📄 [Solutions (PDF)](_solutions/hw4/assignment4_answers.pdf)
+- 📝 [Solutions (R Markdown)](_solutions/hw4/assignment4_answers.Rmd)
 -->

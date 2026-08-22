@@ -1,0 +1,127 @@
+---
+title: 'BIOST 2155: Assignment 5'
+author: 'YOUR NAME HERE (YOUR PITT EMAIL HERE)'
+date: "**Released**: 2026-10-30. **Due by**: 2026-11-27, 11:59 PM"
+output: pdf_document
+header-includes: |
+  \usepackage{fancyhdr}
+  \pagestyle{fancy}
+  \fancyhead[L]{BIOST 2155, Fall 2026}
+  \fancyhead[R]{Assignment 5}
+  \fancyfoot[C]{Page \thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancypagestyle{plain}{%
+    \fancyhead[L]{BIOST 2155, Fall 2026}%
+    \fancyhead[R]{Assignment 5}%
+    \fancyfoot[C]{Page \thepage}%
+    \renewcommand{\headrulewidth}{0.4pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+  }
+  \usepackage{xcolor}
+  \definecolor{shadecolor}{rgb}{0.85, 0.90, 0.98}
+urlcolor: blue
+---
+
+\hrule
+
+## Instructions
+
+* This file serves as a template for your assignment. \textcolor{red}{Remember to set eval = TRUE below when compiling the report.}
+```{r setup}
+pacman::p_load(formatR)
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE,
+                      fig.height = 4, fig.width = 6, fig.align = "center",
+                      message=FALSE, tidy.opts = list(width.cutoff = 70), tidy = TRUE,
+                      class.output  = "shadebox",
+                      class.message = "shadebox",
+                      class.warning = "shadebox",
+                      class.error   = "shadebox")
+```
+* Use comments to annotate and explain your code whenever possible.
+* This assignment covers **Decision Trees** (CART, regression and classification trees) and **Ensemble Learning** (bagging, random forests, boosting). It uses one data set: `Wisconsin Breast Cancer` (`assign3_data.csv`, continued from Assignments 3-4).
+\newline
+\hrule
+
+## Theory (12 points)
+
+### T1. The Gini index is maximized at maximal impurity (12 points)
+
+In decision trees for classification, we need to select an impurity function to determine the best split to construct the tree. Gini index and entropy are two most common choices. Show that the Gini index, defined as $G = 1 - \sum_{k=1}^K p_k^2 = \sum_{k=1}^K p_k (1 - p_k)$ takes the maximum value when $p_1 = p_2 = \ldots = p_K = 1/K$ (the most impure). For simplicity, you may investigate with $K=2$ ($p_1=p$, $p_2=1-p$) and express the indices in terms of just $p$. For full credit, your proof must be for general $K \geq 2$.
+
+**Hint: For $K \geq 2$, note that we have the constraint $\sum_{k=1}^K p_k = 1$. In order to find maximum of $G$ with the given constraint, you may consider using the [Lagrangian multiplier method](https://en.wikipedia.org/wiki/Lagrange_multiplier) for a calculus-based proof, or the [Cauchy-Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy–Schwarz_inequality) for an algebraic proof.**
+
+## Application (76 points)
+Dataset: `Wisconsin Breast Cancer`, saved as `assign3_data.csv` (same data as Assignments 3-4).
+
+We return one final time to the breast cancer dataset. Having tried SVMs (Assignment 3) and PCA + logistic regression (Assignment 4) for this classification problem, we now build tree-based models: a single interpretable CART tree, and two ensembles (random forest and boosting) that trade some interpretability for predictive performance. **Please set a random seed (`set.seed(42)`) before any step involving data splitting or randomization.**
+
+```{r, echo = TRUE, eval = TRUE, message=FALSE}
+rm(list = ls())
+pacman::p_load(tidyverse, caret, rpart, rpart.plot, randomForest, gbm, pROC)
+set.seed(42)
+data <- read_csv("assign3_data.csv") |> dplyr::select(-1) |> drop_na()
+data$diagnosis <- factor(data$diagnosis, levels = c("B", "M"))
+
+train_index <- createDataPartition(data$diagnosis, p = 0.75, list = FALSE)
+train <- data[train_index, ]
+test  <- data[-train_index, ]
+```
+
+### Q1. A Single Classification Tree (10 + 8 + 6 = 24 points)
+
+1. Fit a classification tree (`rpart`) predicting `diagnosis` from all 10 predictors on the training data, using the default complexity parameter. Plot the tree (`rpart.plot`) and briefly describe the first (root) split: which feature and threshold does it use, and does that make clinical sense given what these features measure?
+```{r}
+# your code here
+```
+
+2. Use `printcp()` / `plotcp()` to examine the cross-validated error across complexity parameter (`cp`) values. Prune the tree to the `cp` value that minimizes cross-validated error, and re-plot the pruned tree. Is the pruned tree smaller than the original?
+```{r}
+# your code here
+```
+
+3. Report the test set confusion matrix and accuracy for the pruned tree.
+```{r}
+# your code here
+```
+
+### Q2. Random Forest (6 + 8 + 8 = 22 points)
+
+1. Fit a random forest classifier (`randomForest`) on the training data with `ntree = 500`. Report the out-of-bag (OOB) error estimate.
+```{r}
+# your code here
+```
+
+2. Report the test set confusion matrix and accuracy. Plot the variable importance (`varImpPlot` or `importance()`) and list the top 5 most important features. Do these match the feature(s) used in the root split of your single tree from Q1?
+```{r}
+# your code here
+```
+
+3. Compare the test accuracy of the random forest to the single pruned tree from Q1. Briefly explain, in terms of bagging and decorrelation of trees, *why* we generally expect a random forest to outperform a single tree.
+```{r}
+# your code here
+```
+
+### Q3. Boosting (8 + 6 = 14 points)
+
+1. Fit a boosted tree ensemble (`gbm`, `distribution = "bernoulli"`) on the training data with `n.trees = 1000`, `interaction.depth = 2`, and `shrinkage = 0.01`. Use `gbm.perf` (or cross-validation) to select the optimal number of trees, and report the test set accuracy at that number of trees.
+```{r}
+# your code here
+```
+
+2. Boosting fits trees sequentially, each one correcting the errors of the ensemble so far, whereas random forests fit trees independently in parallel. Given your results in Q2 and Q3, does boosting outperform the random forest here? Name one practical risk of boosting (relative to random forests) that motivated the use of a small `shrinkage` value.
+```{r}
+# your code here
+```
+
+### Q4. Model Comparison and Ensemble Agreement (10 + 6 = 16 points)
+
+1. Using ROC/AUC, compare all three models (pruned tree, random forest, boosted trees) on the test set. Plot all three ROC curves on one figure and report the AUC for each.
+```{r}
+# your code here
+```
+
+2. Build a 2-by-2 table comparing the test set predictions of the random forest and the boosted model. Is there disagreement between the two? For observations where they disagree, which model would you trust more, and what metric (recall Assignment 3's discussion of sensitivity for the malignant class) would you use to decide?
+```{r}
+# your code here
+```
