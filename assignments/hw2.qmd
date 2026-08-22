@@ -3,15 +3,9 @@ title: "Homework 2"
 subtitle: "Regression II; Classification I"
 ---
 
-::: {.callout-warning}
-Materials below are being updated to match this assignment's new topic pairing (Regression II; Classification I). The PDF/template currently linked still cover the prior version's topics (clustering theory and LDA/QDA/kNN classification) — do not start working from them yet.
-:::
-
 ## Materials
 
-- 📄 [Assignment (PDF)](hw2/assignment2_blank.pdf)
-- 📝 [Template (R Markdown)](hw2/assignment2_blank.Rmd)
-- 📊 [Data: `assign2_classData.csv`](hw2/assign2_classData.csv)
+*Materials TBD.*
 
 ## Instructions
 
@@ -21,12 +15,3 @@ Open the R Markdown template, knit it once to confirm your environment is set up
 ## Reproducibility
 Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(2155)` (or any fixed integer).
 :::
-
-<!--
-SOLUTIONS — uncomment after the deadline to publish answer key:
-
-## Solutions
-
-- 📄 [Solutions (PDF)](_solutions/hw2/assignment2_answers.pdf)
-- 📝 [Solutions (R Markdown)](_solutions/hw2/assignment2_answers.Rmd)
--->

@@ -3,7 +3,6 @@ project:
   output-dir: docs
   render:
     - "**/*.qmd"
-    - "!assignments/hw*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
     - "!lectures/02-training/**"
@@ -21,9 +20,6 @@ project:
     - "lectures/01-intro/slides_clean.pdf"
     - "lectures/01-intro/slides_annotated.pdf"
     - "lectures/01-intro/readings/**"
-    - "assignments/**/*.Rmd"
-    - "assignments/**/*.pdf"
-    - "assignments/**/*.csv"
     - "project/*.pdf"
     - "project/*.Rmd"
 
