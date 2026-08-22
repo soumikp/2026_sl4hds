@@ -41,7 +41,7 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 
 | Component | Weight |
 |-----------|-------:|
-| Quizzes (12, lowest dropped†, averaged) | 10% |
+| Quizzes (12, lowest two dropped†, averaged) | 10% |
 | Homework 1 | 10% |
 | Homework 2 | 10% |
 | Homework 3 | 10% |
@@ -54,7 +54,7 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 
 ### Quiz policy {#quiz-policy}
 
-A short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week's material and are graded on correctness. Your **lowest quiz score is dropped** before averaging, so a single missed or rough week doesn't disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.
+A short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week's material and are graded on correctness. Your **lowest two quiz scores are dropped** before averaging, so a couple of missed or rough weeks don't disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.
 
 ### Homework policy
 
