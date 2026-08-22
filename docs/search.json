@@ -144,7 +144,7 @@
     "href": "assignments/hw5.html#instructions",
     "title": "Homework 5",
     "section": "Instructions",
-    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nImportant\n\n\n\nRemember to set eval = TRUE below when compiling the report.\n\n\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
   },
   {
     "objectID": "assignments/hw3.html",
@@ -165,7 +165,7 @@
     "href": "assignments/hw3.html#instructions",
     "title": "Homework 3",
     "section": "Instructions",
-    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nImportant\n\n\n\nRemember to set eval = TRUE below when compiling the report.\n\n\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
   },
   {
     "objectID": "assignments/hw1.html",
@@ -186,7 +186,7 @@
     "href": "assignments/hw1.html#instructions",
     "title": "Homework 1",
     "section": "Instructions",
-    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nImportant\n\n\n\nRemember to set eval = TRUE below when compiling the report.\n\n\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
   },
   {
     "objectID": "assignments/hw2.html",
@@ -207,7 +207,7 @@
     "href": "assignments/hw2.html#instructions",
     "title": "Homework 2",
     "section": "Instructions",
-    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nImportant\n\n\n\nRemember to set eval = TRUE below when compiling the report.\n\n\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
   },
   {
     "objectID": "assignments/hw4.html",
@@ -228,7 +228,7 @@
     "href": "assignments/hw4.html#instructions",
     "title": "Homework 4",
     "section": "Instructions",
-    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
+    "text": "Instructions\nOpen the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the .Rmd source) via Canvas before the deadline.\n\n\n\n\n\n\nImportant\n\n\n\nRemember to set eval = TRUE below when compiling the report.\n\n\n\n\n\n\n\n\nTipReproducibility\n\n\n\nSet a random seed at the top of your .Rmd so your simulation results don’t change between knits. Use set.seed(2155) (or any fixed integer)."
   },
   {
     "objectID": "assignments/index.html",
