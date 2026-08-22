@@ -22,3 +22,16 @@ _solutions/
 /CLAUDE_SESSION_HANDOFF.md
 /build_lecture_pages.py
 /2026_sl4hds.Rproj
+
+# Unreleased lectures — remove the line for a lecture when it's ready to publish
+/lectures/02-training/
+/lectures/03-regression-1/
+/lectures/04-regression-2/
+/lectures/05-classification-1/
+/lectures/06-classification-2/
+/lectures/07-clustering-kmeans/
+/lectures/08-clustering-gmm/
+/lectures/09-pca/
+/lectures/10-trees/
+/lectures/11-ensemble/
+/lectures/12-hyptest/
