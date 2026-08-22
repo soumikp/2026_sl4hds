@@ -1,14 +1,13 @@
 ---
 title: "Homework 3"
-subtitle: "Classification II; Clustering I"
+subtitle: "Clustering and dimensionality reduction"
 ---
 
 ## Materials
 
 - 📄 [Assignment (PDF)](hw3/assignment3_blank.pdf)
 - 📝 [Template (R Markdown)](hw3/assignment3_blank.Rmd)
-- 📊 [Data: `assign3_data.csv`](hw3/assign3_data.csv) (Part A)
-- 📊 [Data: `penguins.csv`](hw3/penguins.csv) (Part B)
+- 📊 [Data: `assign3_data.csv`](hw3/assign3_data.csv)
 
 ## Instructions
 

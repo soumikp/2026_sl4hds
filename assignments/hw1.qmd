@@ -1,6 +1,6 @@
 ---
 title: "Homework 1"
-subtitle: "Training models; Regression I"
+subtitle: "Regression and regularization"
 ---
 
 ## Materials

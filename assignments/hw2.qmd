@@ -1,14 +1,13 @@
 ---
 title: "Homework 2"
-subtitle: "Regression II; Classification I"
+subtitle: "Classification"
 ---
 
 ## Materials
 
 - 📄 [Assignment (PDF)](hw2/assignment2_blank.pdf)
 - 📝 [Template (R Markdown)](hw2/assignment2_blank.Rmd)
-- 📊 [Data: `assign1_regData.csv`](hw2/assign1_regData.csv) (Part A, continued from Assignment 1)
-- 📊 [Data: `assign2_diabetes.csv`](hw2/assign2_diabetes.csv) (Part B)
+- 📊 [Data: `assign2_classData.csv`](hw2/assign2_classData.csv)
 
 ## Instructions
 
