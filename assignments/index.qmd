@@ -4,13 +4,13 @@ title: "Assignments"
 
 Five homework assignments, each worth 12% of the course grade. Submit electronic copies via Canvas.
 
-| # | Topic | Released | Due | Materials |
-|---|-------|----------|-----|-----------|
-| 1 | Training models; Regression I | Sep 4, 11:00 AM | Sep 18, 11:59 PM | TBD |
-| 2 | Regression II; Classification I | Sep 18, 11:00 AM | Oct 2, 11:59 PM | TBD |
-| 3 | Classification II; Clustering I | Oct 2, 11:00 AM | Oct 16, 11:59 PM | TBD |
-| 4 | Clustering II; Dimensionality reduction | Oct 16, 11:00 AM | Oct 30, 11:59 PM | TBD |
-| 5 | Decision trees; Ensemble learning | Oct 30, 11:00 AM | Nov 27, 11:59 PM | TBD |
+| # | Topic | Released | Due |
+|---|-------|----------|-----|
+| 1 | [Training models; Regression I](hw1.qmd) | Sep 4, 11:00 AM | Sep 18, 11:59 PM |
+| 2 | [Regression II; Classification I](hw2.qmd) | Sep 18, 11:00 AM | Oct 2, 11:59 PM |
+| 3 | [Classification II; Clustering I](hw3.qmd) | Oct 2, 11:00 AM | Oct 16, 11:59 PM |
+| 4 | [Clustering II; Dimensionality reduction](hw4.qmd) | Oct 16, 11:00 AM | Oct 30, 11:59 PM |
+| 5 | [Decision trees; Ensemble learning](hw5.qmd) | Oct 30, 11:00 AM | Nov 27, 11:59 PM |
 
 ## Submission and grading
 
