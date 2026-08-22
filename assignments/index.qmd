@@ -2,16 +2,15 @@
 title: "Assignments"
 ---
 
-Six homework assignments, each worth 10% of the course grade. Submit electronic copies via Canvas.
+Five homework assignments, each worth 12% of the course grade. Submit electronic copies via Canvas.
 
 | # | Topic | Released | Due | Materials |
 |---|-------|----------|-----|-----------|
-| 1 | Training models; Regression I | TBD | TBD | TBD |
-| 2 | Regression II; Classification I | TBD | TBD | TBD |
-| 3 | Classification II; Clustering I | TBD | TBD | TBD |
-| 4 | Clustering II; Dimensionality reduction | TBD | TBD | TBD |
-| 5 | Decision trees; Ensemble learning | TBD | TBD | TBD |
-| 6 | Multiple hypothesis testing | TBD | TBD | TBD |
+| 1 | Training models; Regression I | Sep 4, 11:00 AM | Sep 18, 11:59 PM | TBD |
+| 2 | Regression II; Classification I | Sep 18, 11:00 AM | Oct 2, 11:59 PM | TBD |
+| 3 | Classification II; Clustering I | Oct 2, 11:00 AM | Oct 16, 11:59 PM | TBD |
+| 4 | Clustering II; Dimensionality reduction | Oct 16, 11:00 AM | Oct 30, 11:59 PM | TBD |
+| 5 | Decision trees; Ensemble learning | Oct 30, 11:00 AM | Nov 27, 11:59 PM | TBD |
 
 ## Submission and grading
 
@@ -36,4 +35,4 @@ Discussion among students is allowed and encouraged. Each student must independe
 
 ## Quizzes
 
-A 5-question quiz follows each of the 12 lecture topics (10% of the course grade total, all 12 averaged with your lowest score dropped). Released on Canvas the same day as lecture, due before the next lecture. See the [syllabus](../syllabus.qmd#quiz-policy) for details.
+A 5-question quiz follows each of the 12 lecture topics (10% of the course grade total, all 12 averaged with your lowest two scores dropped). Released on Canvas the same day as lecture, due before the next lecture. See the [syllabus](../syllabus.qmd#quiz-policy) for details.

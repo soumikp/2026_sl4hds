@@ -46,6 +46,12 @@ table.schedule tr.no-class td {
   background: #fafbfc;
 }
 table.schedule tr.no-class a { color: #8c959f; }
+table.schedule .quiz-dates {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: #57606a;
+}
 
 // Slide embed
 .slide-embed {
