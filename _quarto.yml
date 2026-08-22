@@ -20,8 +20,6 @@ project:
     - "lectures/01-intro/slides_clean.pdf"
     - "lectures/01-intro/slides_annotated.pdf"
     - "lectures/01-intro/readings/**"
-    - "project/*.pdf"
-    - "project/*.Rmd"
 
 website:
   title: "BIOST 2155"

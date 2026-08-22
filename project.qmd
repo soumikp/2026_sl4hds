@@ -2,7 +2,7 @@
 title: "Final Project"
 ---
 
-The final project is **25%** of the course grade. Each student presents individual work in a **5-minute talk on the last day of class** (12/05). You may choose either an applied analysis of a real dataset or a review of a methodological paper.
+The final project is **30%** of the course grade. Each student presents individual work in a **5-minute talk on the last day of class** (12/04). You may choose either an applied analysis of a real dataset or a review of a methodological paper.
 
 ## Key dates
 
