@@ -14,6 +14,20 @@ __MACOSX/
 
 _archive/
 
+# Quizzes — local only; never publish (contains answer keys)
+quizzes/
+
+# Session handoff notes — local only
+/QUIZ_REDESIGN_HANDOFF.md
+
+# Homework materials + instructor setup sheet — local until released
+/assignments/hw1/
+/assignments/hw2/
+/assignments/hw3/
+/assignments/hw4/
+/assignments/hw5/
+/assignments/canvas-setup.md
+
 /README.md
 
 _solutions/

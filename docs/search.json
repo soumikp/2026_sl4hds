@@ -60,7 +60,7 @@
     "href": "syllabus.html#grading",
     "title": "Syllabus",
     "section": "Grading",
-    "text": "Grading\nLetter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F &lt; 60%. Plus/minus assigned by thirds within each band.\n\n\n\nComponent\nWeight\n\n\n\n\nQuizzes (12, lowest two dropped†, averaged)\n10%\n\n\nHomework 1\n12%\n\n\nHomework 2\n12%\n\n\nHomework 3\n12%\n\n\nHomework 4\n12%\n\n\nHomework 5\n12%\n\n\nFinal project presentation\n30%\n\n\n\n† See quiz policy below.\n\nQuiz policy\nA short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week’s material and are graded on correctness. Your lowest two quiz scores are dropped before averaging, so a couple of missed or rough weeks don’t disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.\n\n\nHomework policy\nFive homework assignments, each covering two consecutive lecture topics (modules 2–11) — a mix of theory, simulation, and applied data analysis in R. Each is scoped to about 5 hours of work, released the day of the first covered lecture and due after the second. Multiple hypothesis testing (module 12) has no homework, only its quiz. Submissions are electronic via Canvas. Discussion of homework with classmates is allowed, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.\nLate homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.\n\n\nFinal project\nBy 11/06, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On 12/04, each student gives a 5-minute presentation summarizing their work. See the project page for details."
+    "text": "Grading\nLetter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F &lt; 60%. Plus/minus assigned by thirds within each band.\n\n\n\nComponent\nWeight\n\n\n\n\nQuizzes (12, lowest two dropped†, averaged)\n10%\n\n\nHomework 1\n12%\n\n\nHomework 2\n12%\n\n\nHomework 3\n12%\n\n\nHomework 4\n12%\n\n\nHomework 5\n12%\n\n\nFinal project presentation\n30%\n\n\n\n† See quiz policy below.\n\nQuiz policy\nA short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week’s material and are graded on correctness. Your lowest two quiz scores are dropped before averaging, so a couple of missed or rough weeks don’t disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.\n\n\nHomework policy\nFive homework assignments, each covering two consecutive lecture topics (modules 2–11) — a mix of theory, simulation, and applied data analysis in R. Each is scoped to about 5 hours of work, released once both of its covered lectures have been taught and due two weeks later. Multiple hypothesis testing (module 12) has no homework, only its quiz. Submissions are electronic via Canvas. Discussion of homework with classmates is allowed, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.\nLate homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.\n\n\nFinal project\nBy 11/06, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On 12/04, each student gives a 5-minute presentation summarizing their work. See the project page for details."
   },
   {
     "objectID": "syllabus.html#academic-integrity",
@@ -352,9 +352,9 @@
   {
     "objectID": "schedule.html",
     "href": "schedule.html",
-    "title": "Schedule",
+    "title": "Assignments",
     "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nTBD\n\n\nHW1Rel: Sep 4, 11:00 AMDue: Sep 18, 11:59 PM\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nTBD\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, kernel trickQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nTBD\n\n\nHW2Rel: Sep 18, 11:00 AMDue: Oct 2, 11:59 PM\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nTBD\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nTBD\n\n\nHW3Rel: Oct 2, 11:00 AMDue: Oct 16, 11:59 PM\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nTBD\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nTBD\n\n\nHW4Rel: Oct 23, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nHW5Rel: Oct 30, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab."
   },
   {
     "objectID": "syllabus.html#use-of-generative-ai",
@@ -362,5 +362,166 @@
     "title": "Syllabus",
     "section": "Use of generative AI",
     "text": "Use of generative AI\nIntellectual integrity is vital to an academic community and for my fair evaluation of your work. All work completed and/or submitted in this course must be your own, completed in accordance with the University’s Guidelines on Academic Integrity. You may not engage in unauthorized collaboration or make use of ChatGPT or any other generative AI applications at any time."
+  },
+  {
+    "objectID": "schedule.html#course-information",
+    "href": "schedule.html#course-information",
+    "title": "Assignments",
+    "section": "Course information",
+    "text": "Course information\n\n\n\n\n\n\n\nCourse\nBIOST 2155 — Introductory Statistical Learning for Health Sciences\n\n\nMeeting day/time\nFridays, 9:00–10:50 AM\n\n\nLocation\n2121C Public Health\n\n\nCredit hours\n2\n\n\nTerm\nFall 2026"
+  },
+  {
+    "objectID": "schedule.html#instructor",
+    "href": "schedule.html#instructor",
+    "title": "Assignments",
+    "section": "Instructor",
+    "text": "Instructor\n\n\n\nName\nSoumik Purkayastha, PhD, Assistant Professor of Biostatistics and Health Data Science\n\n\nEmail\nsoumik@pitt.edu\n\n\nPhone\n(412) 624-0336\n\n\nOffice\nA740 Public Health\n\n\nOffice hours\nFridays, 11:00 AM–12:00 PM (or by appointment)"
+  },
+  {
+    "objectID": "schedule.html#course-description",
+    "href": "schedule.html#course-description",
+    "title": "Assignments",
+    "section": "Course description",
+    "text": "Course description\nThis 2-credit course introduces basic concepts and methods for statistical learning, with an emphasis on modern health science applications. Topics include linear regression with regularization, supervised classification, unsupervised clustering, and dimensionality reduction. The target audience is second-year Biostatistics master’s students or early PhD students with interests in statistical learning techniques for health science data. Students will be trained with hands-on materials to understand the methods, implement the algorithms, and interpret results in real applications."
+  },
+  {
+    "objectID": "schedule.html#prerequisites",
+    "href": "schedule.html#prerequisites",
+    "title": "Assignments",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nBIOST 2141, 2142, and 3011. Students are expected to have programming experience in R, or in a low-level language such as C, C++, Java, or Fortran. Prerequisites can be met with other relevant coursework or experience with consent from the instructor."
+  },
+  {
+    "objectID": "schedule.html#learning-objectives",
+    "href": "schedule.html#learning-objectives",
+    "title": "Assignments",
+    "section": "Learning objectives",
+    "text": "Learning objectives\nBy the end of this course, students will be able to:\n\nExplain the motivation and intuition behind the statistical learning methods covered in class.\nDemonstrate basic theory proofs for selected fundamental concepts and methods.\nImplement methods on real datasets in health sciences.\nProduce an analysis pipeline and interpret the results in a real application."
+  },
+  {
+    "objectID": "schedule.html#textbook",
+    "href": "schedule.html#textbook",
+    "title": "Assignments",
+    "section": "Textbook",
+    "text": "Textbook\nPrimary textbook (highly recommended; free PDF):\n\nJames, Witten, Hastie & Tibshirani. An Introduction to Statistical Learning: with Applications in R. Springer, 2013. https://www.statlearning.com/\n\nOptional references:\n\nHastie, Tibshirani & Friedman. The Elements of Statistical Learning. Springer, 2009.\nPrince. Understanding Deep Learning. MIT Press, 2024.\nBishop. Pattern Recognition and Machine Learning. Springer, 2006."
+  },
+  {
+    "objectID": "schedule.html#computing",
+    "href": "schedule.html#computing",
+    "title": "Assignments",
+    "section": "Computing",
+    "text": "Computing\nWe will use R as our main programming language. RStudio with R Markdown is recommended for homework. Templates are provided."
+  },
+  {
+    "objectID": "schedule.html#grading",
+    "href": "schedule.html#grading",
+    "title": "Assignments",
+    "section": "Grading",
+    "text": "Grading\nLetter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F &lt; 60%. Plus/minus assigned by thirds within each band.\n\n\n\nComponent\nWeight\n\n\n\n\nQuizzes (12, lowest two dropped†, averaged)\n10%\n\n\nHomework 1\n12%\n\n\nHomework 2\n12%\n\n\nHomework 3\n12%\n\n\nHomework 4\n12%\n\n\nHomework 5\n12%\n\n\nFinal project presentation\n30%\n\n\n\n† See quiz policy below.\n\nQuiz policy\nA short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week’s material and are graded on correctness. Your lowest two quiz scores are dropped before averaging, so a couple of missed or rough weeks don’t disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.\n\n\nHomework policy\nFive homework assignments, each covering two consecutive lecture topics (modules 2–11) — a mix of theory, simulation, and applied data analysis in R. Each is scoped to about 5 hours of work, released once both of its covered lectures have been taught and due two weeks later. Multiple hypothesis testing (module 12) has no homework, only its quiz. Submissions are electronic via Canvas. Discussion of homework with classmates is allowed, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.\nLate homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.\n\n\nFinal project\nBy 11/06, students submit a one-page proposal identifying either a dataset to analyze or a methodological paper to review. On 12/04, each student gives a 5-minute presentation summarizing their work. See the project page for details."
+  },
+  {
+    "objectID": "schedule.html#academic-integrity",
+    "href": "schedule.html#academic-integrity",
+    "title": "Assignments",
+    "section": "Academic integrity",
+    "text": "Academic integrity\nStudents in this course will be expected to comply with the University of Pittsburgh’s Policy on Academic Integrity. Any student suspected of violating this obligation for any reason during the semester will be required to participate in the procedural process, initiated at the instructor level, as outlined in the University Guidelines on Academic Integrity. To learn more about Academic Integrity, visit the Academic Integrity Guide for an overview of the topic.\nFor hands-on practice, complete the Academic Integrity Modules."
+  },
+  {
+    "objectID": "schedule.html#use-of-generative-ai",
+    "href": "schedule.html#use-of-generative-ai",
+    "title": "Assignments",
+    "section": "Use of generative AI",
+    "text": "Use of generative AI\nIntellectual integrity is vital to an academic community and for my fair evaluation of your work. All work completed and/or submitted in this course must be your own, completed in accordance with the University’s Guidelines on Academic Integrity. You may not engage in unauthorized collaboration or make use of ChatGPT or any other generative AI applications at any time."
+  },
+  {
+    "objectID": "schedule.html#disability-services",
+    "href": "schedule.html#disability-services",
+    "title": "Assignments",
+    "section": "Disability services",
+    "text": "Disability services\nThe University of Pittsburgh is committed to inclusive and accessible education experiences for all students. If you have a disability for which you are, or may be, requesting an accommodation, you are encouraged to contact Disability Resources and Services (DRS), 140 William Pitt Union, (412) 648-7890, drsrecep@pitt.edu, as early as possible in the term. DRS will engage in a review process with you to determine eligibility and reasonable accommodations. If you are already registered with DRS, please complete the necessary steps on the DRS Student Portal to utilize your accommodations this term."
+  },
+  {
+    "objectID": "schedule.html#accessibility",
+    "href": "schedule.html#accessibility",
+    "title": "Assignments",
+    "section": "Accessibility",
+    "text": "Accessibility\nThe University of Pittsburgh is committed to providing equal access by making all electronic and information technology accessible to all users. This includes instructional materials and the Canvas LMS platform.\n\nIf you experience accessibility issues regarding course-specific material, please reach out to the instructor.\nIf you experience a University-wide or other large-scale accessibility issue, please report the digital accessibility barrier to the Digital Accessibility Coordinator.\nIf you are registered with Disability Resources and Services and experience issues with approved accommodations, you may contact Disability Resources and Services (DRS), 140 William Pitt Union, 412-648-7890, drsrecep@pitt.edu."
+  },
+  {
+    "objectID": "schedule.html#religious-observances",
+    "href": "schedule.html#religious-observances",
+    "title": "Assignments",
+    "section": "Religious observances",
+    "text": "Religious observances\nThe University of Pittsburgh strives to foster a supportive environment and to respect the beliefs and values of all community members. Accordingly, recognizing that certain students may observe religious holidays (activities observed by a religious group of which a student is a member) and cultural practices that conflict with scheduled class activities, instructors will work with students to try to make reasonable accommodations in the event of such a conflict.\nAt the beginning of the semester, you should review the course requirements to identify foreseeable conflicts with assignments, exams, or other required attendance. If you identify a conflict, please contact your instructor (or your course coordinator/s), ideally within the first two weeks of the first class meeting, to allow time to discuss and attempt to make fair and reasonable adjustments to the schedule and/or tasks."
+  },
+  {
+    "objectID": "schedule.html#copyright-notice",
+    "href": "schedule.html#copyright-notice",
+    "title": "Assignments",
+    "section": "Copyright notice",
+    "text": "Copyright notice\nThese materials may be protected by copyright. United States copyright law, 17 USC section 101, et seq., in addition to University policy and procedures, prohibit unauthorized duplication or retransmission of course materials.\nSee Library of Congress Copyright Office and the University Copyright Policy."
+  },
+  {
+    "objectID": "schedule.html#classroom-recording",
+    "href": "schedule.html#classroom-recording",
+    "title": "Assignments",
+    "section": "Classroom recording",
+    "text": "Classroom recording\nTo ensure the free and open discussion of ideas, students may not record classroom lectures, discussion and/or activities without the advance written permission of the instructor, and any such recording properly approved in advance can be used solely for the student’s own private use."
+  },
+  {
+    "objectID": "schedule.html#title-ix-sexual-misconduct",
+    "href": "schedule.html#title-ix-sexual-misconduct",
+    "title": "Assignments",
+    "section": "Title IX & sexual misconduct",
+    "text": "Title IX & sexual misconduct\nUniversity faculty are required to report instances of sexual misconduct, including harassment and sexual violence, to the Office of Civil Rights and Title IX. To make a confidential report, the University Counseling Center is available at 412-648-7930 (8:30 AM – 5 PM M–F) and 412-648-7856 (after hours). Pittsburgh Action Against Rape: 1-866-363-7273 (24/7). For an immediate safety concern, contact the University of Pittsburgh Police: 412-624-2121.\nAn exception to the reporting requirement applies to disclosures shared as a relevant part of an academic project, classroom discussion, or course assignment."
+  },
+  {
+    "objectID": "schedule.html#student-wellness",
+    "href": "schedule.html#student-wellness",
+    "title": "Assignments",
+    "section": "Student wellness",
+    "text": "Student wellness\nYour well-being plays an important role in your ability to learn, engage, and succeed academically, and seeking support when needed is a normal and healthy part of the academic experience. Visit the Student Wellness resources site to learn more about available resources, schedule appointments, and connect with support services. Mental health support is also available 24/7 through the University Counseling Center at 412-648-7930. You can also call or text 988 to reach the Suicide & Crisis Lifeline, or text HOME to 741741 to connect with the Crisis Text Line. If there is a risk of harm to yourself or others, contact University of Pittsburgh Police at 412-624-2121 or dial 911.\nStatement provided by the Office of the Provost, April 17, 2026."
+  },
+  {
+    "objectID": "schedule.html#class-meeting-in-event-of-building-closures",
+    "href": "schedule.html#class-meeting-in-event-of-building-closures",
+    "title": "Assignments",
+    "section": "Class meeting in event of building closures",
+    "text": "Class meeting in event of building closures\nIt is the policy of the University of Pittsburgh to remain open other than during University holidays. In rare instances, circumstances beyond the University’s control may necessitate a closure of University buildings. Such circumstances may include severe weather, power outage, water main issues, and the like.\nIf feasible during such a closure, I intend for our class to meet remotely at its regularly scheduled time. Refer to our class attendance policy if you are unable to attend."
+  },
+  {
+    "objectID": "schedule.html#health-sciences-library",
+    "href": "schedule.html#health-sciences-library",
+    "title": "Assignments",
+    "section": "Health Sciences Library",
+    "text": "Health Sciences Library\nRecommended for research-intensive courses: the Health Sciences Library and the school’s dedicated librarian, Candise Branum, are available for research support.\nFive homework assignments, each worth 12% of the course grade. Submit electronic copies via Canvas.\n\n\n\n#\nTopic\nReleased\nDue\n\n\n\n\n1\nTraining models; Regression I\nSep 11, 11:00 AM\nSep 25, 11:59 PM\n\n\n2\nRegression II; Classification I\nSep 25, 11:00 AM\nOct 9, 11:59 PM\n\n\n3\nClassification II; Clustering I\nOct 16, 11:00 AM\nOct 30, 11:59 PM\n\n\n4\nClustering II; Dimensionality reduction\nOct 30, 11:00 AM\nNov 13, 11:59 PM\n\n\n5\nDecision trees; Ensemble learning\nNov 13, 11:00 AM\nNov 27, 11:59 PM"
+  },
+  {
+    "objectID": "schedule.html#submission-and-grading",
+    "href": "schedule.html#submission-and-grading",
+    "title": "Assignments",
+    "section": "Submission and grading",
+    "text": "Submission and grading\n\nSubmissions go through Canvas as a knitted PDF (and optionally the .Rmd source).\nSolutions are graded on both correctness and clarity — use whitespace, write clear comments, and label your output.\nPartial credit is given for identifying gaps in an argument when a complete solution cannot be derived."
+  },
+  {
+    "objectID": "schedule.html#late-policy",
+    "href": "schedule.html#late-policy",
+    "title": "Assignments",
+    "section": "Late policy",
+    "text": "Late policy\nExceptions for sickness or emergency require the instructor be informed in advance.\n\n\n\nDays late\nCredit\n\n\n\n\n0–1\n80%\n\n\n1–2\n50%\n\n\n&gt; 2\n0%"
+  },
+  {
+    "objectID": "schedule.html#collaboration",
+    "href": "schedule.html#collaboration",
+    "title": "Assignments",
+    "section": "Collaboration",
+    "text": "Collaboration\nDiscussion among students is allowed and encouraged. Each student must independently write and implement their own solution. Cite any external sources you consulted."
+  },
+  {
+    "objectID": "schedule.html#quizzes",
+    "href": "schedule.html#quizzes",
+    "title": "Assignments",
+    "section": "Quizzes",
+    "text": "Quizzes\nA 5-question quiz follows each of the 12 lecture topics (10% of the course grade total, all 12 averaged with your lowest two scores dropped). Released on Canvas the same day as lecture, due before the next lecture. See the syllabus for details."
   }
 ]
