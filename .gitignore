@@ -42,6 +42,18 @@ _solutions/
 /build_lecture_pages.py
 /2026_sl4hds.Rproj
 
+# Lecture 2 is published, but only clean slides + lab go on the site.
+# Keep these parts local (2-up slides, readings, figure/helper scripts, extras).
+/lectures/02-training/slides_split.pdf
+/lectures/02-training/readings/
+/lectures/02-training/figures/
+/lectures/02-training/extras/
+/lectures/02-training/code/fig1.R
+/lectures/02-training/code/fig2.R
+/lectures/02-training/code/fig3.R
+/lectures/02-training/code/fig4.R
+/lectures/02-training/code/helper.R
+
 # Unreleased lectures — remove the line for a lecture when it's ready to publish
 /lectures/03-regression-1/
 /lectures/04-regression-2/
