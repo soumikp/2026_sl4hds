@@ -5,7 +5,6 @@ project:
     - "**/*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
-    - "!lectures/02-training/**"
     - "!lectures/03-regression-1/**"
     - "!lectures/04-regression-2/**"
     - "!lectures/05-classification-1/**"
@@ -20,6 +19,11 @@ project:
     - "lectures/01-intro/slides_clean.pdf"
     - "lectures/01-intro/slides_annotated.pdf"
     - "lectures/01-intro/readings/**"
+    - "lectures/02-training/slides_clean.pdf"
+    - "lectures/02-training/slides_split.pdf"
+    - "lectures/02-training/readings/**"
+    - "lectures/02-training/code/*.R"
+    - "lectures/02-training/extras/**"
 
 website:
   title: "BIOST 2155"

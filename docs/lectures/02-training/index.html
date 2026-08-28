@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-09-04">
 
-<title>Schedule – BIOST 2155</title>
+<title>Training statistical learning models – BIOST 2155</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,23 +27,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-2a68ad304352929e0840351cbf49be22.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2a68ad304352929e0840351cbf49be22.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -75,14 +76,14 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">BIOST 2155</span>
     </a>
   </div>
@@ -93,23 +94,23 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./schedule.html" aria-current="page"> 
+    <a class="nav-link" href="../../schedule.html"> 
 <span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus.html"> 
+    <a class="nav-link" href="../../syllabus.html"> 
 <span class="menu-text">Syllabus</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./assignments/index.html"> 
+    <a class="nav-link" href="../../assignments/index.html"> 
 <span class="menu-text">Assignments</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./project.html"> 
+    <a class="nav-link" href="../../project.html"> 
 <span class="menu-text">Project</span></a>
   </li>  
 </ul>
@@ -123,13 +124,26 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#slides" id="toc-slides" class="nav-link active" data-scroll-target="#slides">📊 Slides</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link" data-scroll-target="#readings">📚 Readings</a></li>
+  <li><a href="#lab" id="toc-lab" class="nav-link" data-scroll-target="#lab">🧪 Lab</a></li>
+  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code">💻 Code</a></li>
+  <li><a href="#extras" id="toc-extras" class="nav-link" data-scroll-target="#extras">⭐ Extras</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Schedule</h1>
+<h1 class="title">Training statistical learning models</h1>
+<p class="subtitle lead">Bias-variance, validation, resampling</p>
 </div>
 
 
@@ -137,6 +151,12 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 4, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -146,337 +166,55 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.</p>
-<table class="schedule">
-<thead>
-<tr>
-<th>
-Date
-</th>
-<th>
-Topic
-</th>
-<th>
-Reading
-</th>
-<th>
-Materials
-</th>
-<th>
-Labs
-</th>
-<th>
-Assignment
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-Aug 28
-</td>
-<td>
-<strong><a href="lectures/01-intro/index.html">Introduction</a></strong> — supervised vs.&nbsp;unsupervised; regression, classification, clustering, dimensionality reduction<br><span class="quiz-dates">Quiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.</span>
-</td>
-<td>
-ISLR ch.&nbsp;2
-</td>
-<td>
-<a href="lectures/01-intro/slides_clean.pdf">slides</a>
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-Sep 4
-</td>
-<td>
-<strong><a href="lectures/02-training/index.html">Training models</a></strong> — bias-variance, training/validation/testing, resampling<br><span class="quiz-dates">Quiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.</span>
-</td>
-<td>
-ISLR §2.2, ch.&nbsp;5
-</td>
-<td>
-<a href="lectures/02-training/slides_clean.pdf">slides</a>
-</td>
-<td>
-<a href="lectures/02-training/code/class2_lab1.html">Lab 2</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-Sep 11
-</td>
-<td>
-<strong>Regression I</strong> — subset selection, ridge, lasso<br><span class="quiz-dates">Quiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.</span>
-</td>
-<td>
-ISLR ch.&nbsp;3, 6
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td rowspan="2">
-<a href="./assignments/hw1.html">HW1</a><br>Rel: Sep 11, 11:00 AM<br>Due: Sep 25, 11:59 PM
-</td>
-</tr>
-<tr>
-<td>
-Sep 18
-</td>
-<td>
-<strong>Regression II</strong> — non-linear regression, splines, kernel trick<br><span class="quiz-dates">Quiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.</span>
-</td>
-<td>
-ISLR ch.&nbsp;7
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-</tr>
-<tr>
-<td>
-Sep 25
-</td>
-<td>
-<strong>Classification I</strong> — logistic regression, generative models<br><span class="quiz-dates">Quiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.</span>
-</td>
-<td>
-ISLR ch.&nbsp;4
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td rowspan="2">
-<a href="./assignments/hw2.html">HW2</a><br>Rel: Sep 25, 11:00 AM<br>Due: Oct 9, 11:59 PM
-</td>
-</tr>
-<tr>
-<td>
-Oct 2
-</td>
-<td>
-<strong>Classification II</strong> — support vector machines<br><span class="quiz-dates">Quiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.</span>
-</td>
-<td>
-ISLR ch.&nbsp;9
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-</tr>
-<tr class="no-class">
-<td>
-Oct 9
-</td>
-<td>
-<em>Fall Break — no class</em>
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-Oct 16
-</td>
-<td>
-<strong>Clustering I</strong> — k-means, cluster evaluation<br><span class="quiz-dates">Quiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.</span>
-</td>
-<td>
-ISLR §10.3
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td rowspan="2">
-<a href="./assignments/hw3.html">HW3</a><br>Rel: Oct 16, 11:00 AM<br>Due: Oct 30, 11:59 PM
-</td>
-</tr>
-<tr>
-<td>
-Oct 23
-</td>
-<td>
-<strong>Clustering II</strong> — Gaussian mixture models<br><span class="quiz-dates">Quiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.</span>
-</td>
-<td>
-PRML §9.1–9.2
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-</tr>
-<tr>
-<td>
-Oct 30
-</td>
-<td>
-<strong>Dimensionality reduction</strong> — principal component analysis<br><span class="quiz-dates">Quiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.</span>
-</td>
-<td>
-ISLR §6.3
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td rowspan="2">
-<a href="./assignments/hw4.html">HW4</a><br>Rel: Oct 30, 11:00 AM<br>Due: Nov 13, 11:59 PM
-</td>
-</tr>
-<tr>
-<td>
-Nov 6
-</td>
-<td>
-<strong>Decision trees</strong> — CART, regression and classification trees<br><span class="quiz-dates">Quiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.</span>
-</td>
-<td>
-ISLR §8.1
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-</tr>
-<tr>
-<td>
-Nov 13
-</td>
-<td>
-<strong>Ensemble learning</strong> — bagging, random forests, boosting<br><span class="quiz-dates">Quiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.</span>
-</td>
-<td>
-ISLR §8.2
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td rowspan="2">
-<a href="./assignments/hw5.html">HW5</a><br>Rel: Nov 13, 11:00 AM<br>Due: Nov 27, 11:59 PM
-</td>
-</tr>
-<tr>
-<td>
-Nov 20
-</td>
-<td>
-<strong>Multiple hypothesis testing</strong> — controlling error rates across many simultaneous tests<br><span class="quiz-dates">Quiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.</span>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-<td>
-<em>TBD</em>
-</td>
-</tr>
-<tr class="no-class">
-<td>
-Nov 27
-</td>
-<td>
-<em>Thanksgiving — no class</em>
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-Dec 4
-</td>
-<td>
-<em>In-class final project presentations</em>
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-<td>
-—
-</td>
-</tr>
-</tbody>
-</table>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Reading codes</strong>:</p>
-<p><em>ISLR</em> — James, Witten, Hastie, Tibshirani, <em>An Introduction to Statistical Learning</em> (Springer, 2013).</p>
-<p><em>ESL</em> — Hastie, Tibshirani, Friedman, <em>The Elements of Statistical Learning</em> (Springer, 2009).</p>
-<p><em>PRML</em> — Bishop, <em>Pattern Recognition and Machine Learning</em> (Springer, 2006).</p>
-<p><em>UDL</em> — Prince, <em>Understanding Deep Learning</em> (MIT, 2024).</p>
-</div>
-</div>
+<p>Under- and over-fitting; the training/validation/test split; k-fold cross-validation and the bootstrap. Foundations for every method we’ll see later in the course.</p>
+<p>📖 <strong>Assigned reading:</strong> ISLR §2.2, ch.&nbsp;5</p>
+<hr>
+<section id="slides" class="level2">
+<h2 class="anchored" data-anchor-id="slides">📊 Slides</h2>
+<ul>
+<li>🖥️ <a href="slides_clean.pdf">Clean slides</a></li>
+<li>🖨️ <a href="slides_split.pdf">Slides (2-up)</a> <em>(two per page, for printing)</em></li>
+</ul>
+</section>
+<section id="readings" class="level2">
+<h2 class="anchored" data-anchor-id="readings">📚 Readings</h2>
+<ul>
+<li>📄 <a href="readings/reading1_efron1983.pdf">Efron (1983)</a></li>
+<li>📄 <a href="readings/reading2_efron1981.pdf">Efron (1981)</a></li>
+<li>📄 <a href="readings/reading3_bates2024.pdf">Bates (2024)</a></li>
+</ul>
+</section>
+<section id="lab" class="level2">
+<h2 class="anchored" data-anchor-id="lab">🧪 Lab</h2>
+<p>Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.</p>
+<ul>
+<li>🧪 <a href="code/class2_lab1.html" target="_blank">Lab 2 (interactive)</a></li>
+</ul>
+</section>
+<section id="code" class="level2">
+<h2 class="anchored" data-anchor-id="code">💻 Code</h2>
+<p><strong>Figure scripts</strong> — reproduce each figure from the slides:</p>
+<ul>
+<li>📈 <a href="code/fig1.R">fig1.R</a></li>
+<li>📈 <a href="code/fig2.R">fig2.R</a></li>
+<li>📈 <a href="code/fig3.R">fig3.R</a></li>
+<li>📈 <a href="code/fig4.R">fig4.R</a></li>
+</ul>
+<p><strong>Other scripts:</strong></p>
+<ul>
+<li>📜 <a href="code/helper.R">helper.R</a></li>
+</ul>
+</section>
+<section id="extras" class="level2">
+<h2 class="anchored" data-anchor-id="extras">⭐ Extras</h2>
+<p>Optional supplementary material:</p>
+<ul>
+<li>📄 <a href="extras/Extra_kFold_vs_moving_CV.pdf">K Fold Vs Moving CV</a></li>
+<li>📜 <a href="extras/Extra_kFold_vs_moving_CV.R">K Fold Vs Moving CV</a></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -902,5 +640,5 @@ Note
 
 
 
-<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

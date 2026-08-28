@@ -14,6 +14,9 @@ __MACOSX/
 
 _archive/
 
+# Backup of a .git dir that OneDrive corrupted — local only, never commit
+/.git_broken_backup_*/
+
 # Quizzes — local only; never publish (contains answer keys)
 quizzes/
 
@@ -40,7 +43,6 @@ _solutions/
 /2026_sl4hds.Rproj
 
 # Unreleased lectures — remove the line for a lecture when it's ready to publish
-/lectures/02-training/
 /lectures/03-regression-1/
 /lectures/04-regression-2/
 /lectures/05-classification-1/
