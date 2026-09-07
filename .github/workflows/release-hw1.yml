@@ -1,12 +1,14 @@
 name: Release HW1
 
-# Publishes Homework 1 materials at 11:00 AM EDT on Thu, Sep 11, 2026.
-# EDT = UTC-4 in September, so 11:00 EDT == 15:00 UTC.
+# Publishes Homework 1 materials at 11:00 AM EDT on Fri, Sep 11, 2026
+# (the day of lecture 3). EDT = UTC-4 in September, so 11:00 EDT == 15:00 UTC.
 # GitHub cron is best-effort and may run a few minutes late — that's expected.
 # You can also trigger it manually from the Actions tab (workflow_dispatch).
 on:
   schedule:
-    - cron: '0 15 11 9 *'   # 15:00 UTC on Sep 11 (any weekday) = 11:00 EDT
+    # Fields: min hour day-of-month month day-of-week. The day-of-week is '*'
+    # (any), so this fires on the DATE Sep 11 — which in 2026 is a Friday.
+    - cron: '0 15 11 9 *'   # 15:00 UTC on Sep 11 = 11:00 EDT (Friday)
   workflow_dispatch:         # manual "Run workflow" button as a fallback
 
 # Only one release run at a time; don't cancel an in-flight publish.
