@@ -54,8 +54,22 @@ _solutions/
 /lectures/02-training/code/fig4.R
 /lectures/02-training/code/helper.R
 
+# Lecture 3 is published, but only clean slides + lab go on the site.
+# Keep these parts local (annotated/2-up slides, readings, figures, code
+# scripts, page-level data). The lab's own data (code/data/) IS shipped.
+/lectures/03-regression-1/slides_annotated.pdf
+/lectures/03-regression-1/slides_split.pdf
+/lectures/03-regression-1/readings/
+/lectures/03-regression-1/figures/
+/lectures/03-regression-1/data/
+/lectures/03-regression-1/code/fig1.R
+/lectures/03-regression-1/code/fig2.R
+/lectures/03-regression-1/code/fig3.R
+/lectures/03-regression-1/code/fig4.R
+/lectures/03-regression-1/code/helper.R
+/lectures/03-regression-1/code/model1.R
+
 # Unreleased lectures — remove the line for a lecture when it's ready to publish
-/lectures/03-regression-1/
 /lectures/04-regression-2/
 /lectures/05-classification-1/
 /lectures/06-classification-2/

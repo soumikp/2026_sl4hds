@@ -31,10 +31,10 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Sep 11</td>
-<td><strong>Regression I</strong> — subset selection, ridge, lasso<br><span class="quiz-dates">Quiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.</span></td>
+<td><strong><a href="lectures/03-regression-1/index.html">Regression I</a></strong> — subset selection, ridge, lasso<br><span class="quiz-dates">Quiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.</span></td>
 <td>ISLR ch. 3, 6</td>
-<td><em>TBD</em></td>
-<td><em>TBD</em></td>
+<td><a href="lectures/03-regression-1/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/03-regression-1/code/class3_lab1.html">Lab 3</a></td>
 <td rowspan="2"><a href="assignments/hw1.qmd">HW1</a><br>Rel: Sep 11, 11:00 AM<br>Due: Sep 25, 11:59 PM</td>
 </tr>
 

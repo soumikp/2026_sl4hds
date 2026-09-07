@@ -1,0 +1,22 @@
+---
+title: "Regression I"
+subtitle: "Subset selection and shrinkage"
+date: "Sep 11, 2026"
+date-format: long
+---
+
+Linear regression as a baseline; best-subset and stepwise selection; ridge regression and the lasso as principled alternatives when p is large or predictors are correlated.
+
+📖 **Assigned reading:** ISLR ch. 3, 6
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
+
+- 🧪 [Lab 3 (interactive)](code/class3_lab1.html){target="_blank"}
