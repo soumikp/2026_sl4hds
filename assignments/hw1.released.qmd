@@ -1,0 +1,23 @@
+---
+title: "Homework 1"
+subtitle: "Training models; Regression I"
+---
+
+## Materials
+
+- 📝 [Template (.Rmd)](hw1/assignment1_blank.Rmd) — start here; fill in each section
+- 📄 [Assignment (PDF)](hw1/assignment1_blank.pdf) — readable version of the questions
+- 📊 [Data (assign1_regData.csv)](hw1/assign1_regData.csv)
+
+## Instructions
+
+Open the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the `.Rmd` source) via Canvas before the deadline.
+
+::: {.callout-important}
+Remember to set `eval = TRUE` below when compiling the report.
+:::
+
+::: {.callout-tip}
+## Reproducibility
+Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(2155)` (or any fixed integer).
+:::

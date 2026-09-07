@@ -1,0 +1,94 @@
+name: Release HW1
+
+# Publishes Homework 1 materials at 11:00 AM EDT on Thu, Sep 11, 2026.
+# EDT = UTC-4 in September, so 11:00 EDT == 15:00 UTC.
+# GitHub cron is best-effort and may run a few minutes late — that's expected.
+# You can also trigger it manually from the Actions tab (workflow_dispatch).
+on:
+  schedule:
+    - cron: '0 15 11 9 *'   # 15:00 UTC on Sep 11 (any weekday) = 11:00 EDT
+  workflow_dispatch:         # manual "Run workflow" button as a fallback
+
+# Only one release run at a time; don't cancel an in-flight publish.
+concurrency:
+  group: release-hw1
+  cancel-in-progress: false
+
+permissions:
+  contents: write            # needed to commit the rebuilt site back to main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Guard — only run on/after the release date
+        run: |
+          # cron fires once on Sep 11; this guards manual dispatches from
+          # publishing early. Compare against 2026-09-11 15:00 UTC.
+          now=$(date -u +%s)
+          target=$(date -u -d '2026-09-11 15:00:00' +%s)
+          if [ "$now" -lt "$target" ]; then
+            echo "::error::Too early — HW1 releases at 2026-09-11 15:00 UTC (11:00 EDT). Now=$(date -u). Aborting."
+            exit 1
+          fi
+          echo "OK to release (now=$(date -u))."
+
+      - name: Install Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Un-hide HW1 materials
+        run: |
+          set -euo pipefail
+          # Drop the gitignore line that hides the HW1 materials folder.
+          sed -i '\#^/assignments/hw1/$#d' .gitignore
+          # Swap in the released landing page (adds the Materials download links).
+          mv assignments/hw1.released.qmd assignments/hw1.qmd
+          echo "Materials un-hidden and hw1.qmd updated."
+
+      - name: Render the two assignment pages (Quarto only — no R needed)
+        run: |
+          set -euo pipefail
+          # These pages are pure markdown; render just them so we don't
+          # rebuild (or need R for) the rest of the site.
+          quarto render assignments/hw1.qmd
+          quarto render assignments/index.qmd
+
+      - name: Copy HW1 material files into the built site
+        run: |
+          set -euo pipefail
+          # The .qmd links to hw1/assignment1_blank.Rmd etc. (relative paths).
+          # _quarto.yml doesn't list these as resources, so copy them explicitly
+          # so the download links resolve on the published site.
+          mkdir -p docs/assignments/hw1
+          cp assignments/hw1/assignment1_blank.Rmd \
+             assignments/hw1/assignment1_blank.pdf \
+             assignments/hw1/assign1_regData.csv \
+             docs/assignments/hw1/
+          echo "Copied HW1 materials into docs/assignments/hw1/:"
+          ls -la docs/assignments/hw1/
+
+      - name: Commit and push the release
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A -- \
+            .gitignore \
+            assignments/hw1.qmd \
+            assignments/hw1/ \
+            docs/assignments/hw1.html \
+            docs/assignments/index.html \
+            docs/assignments/hw1/ \
+            docs/search.json docs/sitemap.xml
+          if git diff --cached --quiet; then
+            echo "Nothing to commit — HW1 may already be released."
+            exit 0
+          fi
+          git commit -m "Release HW1 materials (scheduled, 2026-09-11 11:00 EDT)"
+          git push origin main
