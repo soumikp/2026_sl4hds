@@ -5,6 +5,10 @@ project:
     - "**/*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
+    # The released HW1 landing page is a staged file: the release-hw1 workflow
+    # renames it over hw1.qmd at release time. Rendering it here would publish
+    # the material download links (and copy the files into docs/) early.
+    - "!assignments/hw1.released.qmd"
     - "!lectures/04-regression-2/**"
     - "!lectures/05-classification-1/**"
     - "!lectures/06-classification-2/**"
