@@ -23,7 +23,10 @@ project:
     - "lectures/01-intro/slides_annotated.pdf"
     - "lectures/01-intro/readings/**"
     - "lectures/02-training/slides_clean.pdf"
+    - "lectures/02-training/extras/bootstrap.pdf"
+    - "lectures/02-training/extras/permutation_test.pdf"
     - "lectures/03-regression-1/slides_clean.pdf"
+    - "lectures/03-regression-1/extras/model_selection.pdf"
     - "lectures/03-regression-1/code/data/**"
 
 website:

@@ -20,3 +20,9 @@ Linear regression as a baseline; best-subset and stepwise selection; ridge regre
 Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
 
 - 🧪 [Lab 3 (interactive)](code/class3_lab1.html){target="_blank"}
+
+## ⭐ Extras
+
+Optional supplementary material:
+
+- 📄 [Model Selection](extras/model_selection.pdf)

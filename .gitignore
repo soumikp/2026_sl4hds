@@ -42,12 +42,18 @@ _solutions/
 /build_lecture_pages.py
 /2026_sl4hds.Rproj
 
-# Lecture 2 is published, but only clean slides + lab go on the site.
-# Keep these parts local (2-up slides, readings, figure/helper scripts, extras).
+# Speaker notes — local only, never publish
+**/speaker_notes.md
+
+# Lecture 2 is published: clean slides, lab, and the two handout PDFs in
+# extras/ go on the site. Keep the rest local (2-up slides, readings,
+# figure/helper scripts, and the k-fold vs moving-CV extras).
 /lectures/02-training/slides_split.pdf
 /lectures/02-training/readings/
 /lectures/02-training/figures/
-/lectures/02-training/extras/
+/lectures/02-training/extras/**
+!/lectures/02-training/extras/bootstrap.pdf
+!/lectures/02-training/extras/permutation_test.pdf
 /lectures/02-training/code/fig1.R
 /lectures/02-training/code/fig2.R
 /lectures/02-training/code/fig3.R
