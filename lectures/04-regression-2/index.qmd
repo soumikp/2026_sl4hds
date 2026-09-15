@@ -20,3 +20,9 @@ Polynomials, step functions, regression splines, natural splines, local regressi
 Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
 
 - 🧪 [Lab 4 (interactive)](code/class4_lab1.html){target="_blank"}
+
+## ⭐ Extras
+
+Optional supplementary material:
+
+- 📄 [Nonlinear Methods](extras/nonlinear_methods.pdf)

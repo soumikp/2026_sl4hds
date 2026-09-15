@@ -26,6 +26,7 @@ project:
     - "lectures/03-regression-1/extras/partial_least_squares.pdf"
     - "lectures/03-regression-1/code/data/**"
     - "lectures/04-regression-2/slides_clean.pdf"
+    - "lectures/04-regression-2/extras/nonlinear_methods.pdf"
     - "lectures/04-regression-2/code/data/**"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"

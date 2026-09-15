@@ -19,12 +19,31 @@ h1, h2, h3 {
   letter-spacing: -0.01em;
 }
 
+// Schedule page: widen the content column so the 7-column table has room.
+// Quarto sizes the body-content grid column, so the container has to be
+// widened there -- setting width on the table alone does nothing.
+body.schedule-wide {
+  .page-columns {
+    grid-template-columns:
+      [screen-start] 1fr
+      [body-content-start] minmax(0, 1400px)
+      [body-content-end] 1fr [screen-end] !important;
+  }
+  .page-columns > main.content {
+    grid-column: body-content-start / body-content-end !important;
+  }
+}
+
 // Schedule table styling
 table.schedule {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
+  font-size: 0.95rem;
 }
+// Keep the narrow columns from stealing space from Topic.
+table.schedule th:first-child,
+table.schedule td:first-child { white-space: nowrap; }
 table.schedule th {
   background: #f5f7fb;
   text-align: left;
