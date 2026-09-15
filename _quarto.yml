@@ -5,7 +5,6 @@ project:
     - "**/*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
-    - "!lectures/04-regression-2/**"
     - "!lectures/05-classification-1/**"
     - "!lectures/06-classification-2/**"
     - "!lectures/07-clustering-kmeans/**"
@@ -24,6 +23,8 @@ project:
     - "lectures/03-regression-1/slides_clean.pdf"
     - "lectures/03-regression-1/extras/model_selection.pdf"
     - "lectures/03-regression-1/code/data/**"
+    - "lectures/04-regression-2/slides_clean.pdf"
+    - "lectures/04-regression-2/code/data/**"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"
 

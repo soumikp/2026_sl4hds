@@ -40,10 +40,10 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Sep 18</td>
-<td><strong>Regression II</strong> — non-linear regression, splines, kernel trick<br><span class="quiz-dates">Quiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.</span></td>
+<td><strong><a href="lectures/04-regression-2/index.html">Regression II</a></strong> — non-linear regression, splines, GAMs<br><span class="quiz-dates">Quiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.</span></td>
 <td>ISLR ch. 7</td>
-<td><em>TBD</em></td>
-<td><em>TBD</em></td>
+<td><a href="lectures/04-regression-2/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/04-regression-2/code/class4_lab1.html">Lab 4</a></td>
 </tr>
 
 <tr>

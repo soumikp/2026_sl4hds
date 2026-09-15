@@ -74,8 +74,26 @@ _solutions/
 /lectures/03-regression-1/code/helper.R
 /lectures/03-regression-1/code/model1.R
 
+# Lecture 4 is published, but only clean slides + lab go on the site.
+# Keep these parts local (annotated/2-up slides, readings, figures, figure
+# and scratch scripts, page-level data). The lab's own data (code/data/) IS
+# shipped. lab1.R/lab2.R are instructor scratch scripts superseded by the
+# webR lab (code/class4_lab1.qmd).
+/lectures/04-regression-2/slides_annotated.pdf
+/lectures/04-regression-2/slides_split.pdf
+/lectures/04-regression-2/readings/
+/lectures/04-regression-2/figures/
+/lectures/04-regression-2/data/
+/lectures/04-regression-2/code/fig1.R
+/lectures/04-regression-2/code/fig2.R
+/lectures/04-regression-2/code/fig3.R
+/lectures/04-regression-2/code/fig4.R
+/lectures/04-regression-2/code/fig5.R
+/lectures/04-regression-2/code/helper.R
+/lectures/04-regression-2/code/lab1.R
+/lectures/04-regression-2/code/lab2.R
+
 # Unreleased lectures — remove the line for a lecture when it's ready to publish
-/lectures/04-regression-2/
 /lectures/05-classification-1/
 /lectures/06-classification-2/
 /lectures/07-clustering-kmeans/

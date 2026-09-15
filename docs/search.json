@@ -161,6 +161,83 @@
     "text": "Tips on choosing a project\n\nFor applied projects: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well.\nFor methodology reviews: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.\nScope honestly: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole."
   },
   {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html",
+    "href": "lectures/04-regression-2/code/class4_lab1.html",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "",
+    "text": "In this lab, we will:\n\nSee where a linear model fails, and why.\nFit polynomial regression and observe its behavior at the boundaries.\nFit step functions, piecewise polynomials, and splines, adding one constraint at a time.\nCompare natural and cubic splines at the edges of the data.\nFit local regression (LOESS) and tune the span.\nFit a generalized additive model with several predictors.\n\nEvery code cell below runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages and data load once when the page opens; give it a few seconds on first load.\n\n\n\n\n\n\nNoteA note on caret\n\n\n\nIn Lab 3 every model went through caret::train() with one shared interface. This lab uses lm(), loess(), and gam() directly instead.\nThe reason is that in this lecture the basis construction is the content. Writing ns(age, df = 4) and seeing it produce a design matrix is the thing we are trying to understand — wrapping it inside train() would hide exactly the step worth looking at. (caret also does not accept an inline poly() or ns() in a model formula; the basis has to be built into the data frame first, which adds noise without adding clarity.)\ncaret remains the right tool when you are comparing many tuned models on equal footing, as in Lab 3. Use the interface that makes the idea visible."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#introduction",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#introduction",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "",
+    "text": "In this lab, we will:\n\nSee where a linear model fails, and why.\nFit polynomial regression and observe its behavior at the boundaries.\nFit step functions, piecewise polynomials, and splines, adding one constraint at a time.\nCompare natural and cubic splines at the edges of the data.\nFit local regression (LOESS) and tune the span.\nFit a generalized additive model with several predictors.\n\nEvery code cell below runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages and data load once when the page opens; give it a few seconds on first load.\n\n\n\n\n\n\nNoteA note on caret\n\n\n\nIn Lab 3 every model went through caret::train() with one shared interface. This lab uses lm(), loess(), and gam() directly instead.\nThe reason is that in this lecture the basis construction is the content. Writing ns(age, df = 4) and seeing it produce a design matrix is the thing we are trying to understand — wrapping it inside train() would hide exactly the step worth looking at. (caret also does not accept an inline poly() or ns() in a model formula; the basis has to be built into the data frame first, which adds noise without adding clarity.)\ncaret remains the right tool when you are comparing many tuned models on equal footing, as in Lab 3. Use the interface that makes the idea visible."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#the-data-wages",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#the-data-wages",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "The data: wages",
+    "text": "The data: wages\nWe use the Wage dataset — 3,000 male workers from the Mid-Atlantic region, surveyed between 2003 and 2009. These are the same data behind the figures in today’s slides.\nThe question is one about labor economics: how does wage vary with age? We expect earnings to rise through early career, plateau in middle age, and decline near retirement. That shape is not a straight line, which makes this a natural place to relax the linearity assumption.\n\n\n\n\n\n\n\nVariable\nMeaning\n\n\n\n\nwage\nwage in thousands of dollars per year (the outcome)\n\n\nlogwage\nlog of wage\n\n\nage\nworker age in years, 18 to 80\n\n\nyear\nyear the wage was recorded, 2003–2009\n\n\neducation\n5 ordered levels, &lt; HS Grad through Advanced Degree\n\n\nmaritl\nmarital status, 5 levels\n\n\nrace\n4 levels\n\n\njobclass\nIndustrial or Information\n\n\nhealth\nself-reported health, 2 levels\n\n\nhealth_ins\nhas health insurance, yes or no\n\n\nregion\ncensus region\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTwo features of these data are worth noting before we model them.\n\n\n\n\n\n\n\n\nregion has a single level — every worker is from the Middle Atlantic region. It carries no information and cannot be used as a predictor. This is common in real survey extracts, and it is worth checking before you put a variable into a model.\n\n\n\n\n\n\n\n\nThere is a small group of very high earners. They show up as a separate cloud in the scatterplot below, and they are the reason the fitted curve sits below the visual “middle” of the points at some ages."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-1-where-the-linear-model-fails",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-1-where-the-linear-model-fails",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 1: Where the linear model fails",
+    "text": "Part 1: Where the linear model fails\nFit a straight line and look at what it misses.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nInterpretation: the linear fit slopes gently upward across the whole age range. The LOESS curve shows what is actually happening: wages rise steeply from 18 to about 40, flatten through middle age, and fall after 60. The straight line splits the difference and describes none of the three phases.\nThe slope coefficient is statistically significant, so a purely mechanical reading of the output would call this a good model. The plot says otherwise. Everything that follows is a way of giving the model enough flexibility to follow that shape."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-2-polynomial-regression",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-2-polynomial-regression",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 2: Polynomial regression",
+    "text": "Part 2: Polynomial regression\nThe first idea from the slides: add powers of the predictor and keep using linear regression.\n\\[y_i = \\beta_0 + \\beta_1 x_i + \\beta_2 x_i^2 + \\cdots + \\beta_d x_i^d + \\epsilon_i\\]\n\n\n\n\n\n\n\n\nInterpretation: the jump from linear to quadratic is highly significant — the curvature is real. The cubic term adds a little. The fourth-degree term adds almost nothing. This matches the guidance on the slides that \\(d \\leq 4\\) is usually enough.\n\n\n\n\n\n\n\n\n\nThe tail problem\nThe slides warn that polynomials have “notorious tail behavior.” Here is what that means concretely. We ask the model to predict past the edge of the data, where nobody is older than 80.\n\n\n\n\n\n\n\n\nInterpretation: the predicted wage falls off a cliff past age 80. The polynomial has no information out there, and a degree-4 curve that bends to fit the middle of the data must keep bending at the ends. This is the single biggest practical objection to polynomial regression, and it motivates everything in the next two sections."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-3-step-functions",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-3-step-functions",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 3: Step functions",
+    "text": "Part 3: Step functions\nA different idea: stop assuming any global shape. Cut the range of age into bins and fit a separate mean in each.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEach coefficient is the difference in mean wage between that bin and the first (youngest) bin.\n\n\n\n\n\n\n\n\nInterpretation: the fit is now completely local — no global shape is imposed. But it is flat inside each bin and jumps at the boundaries. Wages do not actually jump by several thousand dollars on a worker’s 33rd birthday. As the slides put it, unless there are natural breakpoints in the predictor, piecewise-constant functions miss the trend.\nThis suggests the obvious fix, which is also the slides’ question: what if we fit local polynomials within bins instead of local means?"
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-4-from-piecewise-polynomials-to-splines",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-4-from-piecewise-polynomials-to-splines",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 4: From piecewise polynomials to splines",
+    "text": "Part 4: From piecewise polynomials to splines\nFitting a separate cubic in each region gives flexibility, but nothing forces the pieces to meet. The result is discontinuous — and, as the slides note, hard to explain to anyone who has to act on the prediction.\nSplines solve this by adding constraints at the knots: continuity of the function, then of its first derivative, then of its second. Each constraint costs flexibility and buys smoothness.\n\n\n\n\n\n\n\n\nThe basis has 6 columns: a cubic spline with \\(K\\) knots uses \\(K + 3\\) basis functions, plus the intercept. This is the key idea from the slides — once the basis is built, we are doing ordinary linear regression on transformed columns.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nInterpretation: the curve passes through the knots with no visible kink. The continuity constraints are doing their job — the fit is flexible where the data demand it and smooth everywhere."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-5-natural-splines-and-the-boundary",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-5-natural-splines-and-the-boundary",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 5: Natural splines and the boundary",
+    "text": "Part 5: Natural splines and the boundary\nA cubic spline is still a cubic near the edges, so it can swing just as badly as a polynomial there. A natural spline adds one more constraint: the function must be linear beyond the boundary knots.\n\n\n\n\n\n\n\n\n\nComparing confidence intervals at the edges\nThe slides claim natural splines give narrower confidence intervals at the boundary. Check it directly.\n\n\n\n\n\n\n\n\nInterpretation: in the middle of the data the two are comparable. At age 80 the cubic spline’s interval is roughly twice as wide. The linearity constraint at the boundary is what buys that precision — the natural spline is not free to curve wildly where the data are thin, so its predictions there are more stable.\nThis is the same lesson as the polynomial tail problem, now with a principled fix rather than a warning."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-6-local-regression-loess",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-6-local-regression-loess",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 6: Local regression (LOESS)",
+    "text": "Part 6: Local regression (LOESS)\nSplines fix knots in advance. Local regression takes a different route: for each target point, fit a weighted regression using only nearby observations. The tuning parameter is span, the fraction of the data counted as “near.”\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nInterpretation: enp is the equivalent number of parameters — how many degrees of freedom the fit effectively spends. A span of 0.1 spends about 33; a span of 0.8 spends under 5. That is the bias-variance tradeoff from the slides in one number. The small-span curve chases local noise (low bias, high variance); the large-span curve is smooth and may miss real structure (higher bias, lower variance).\nNote also the pitfall the slides raise: LOESS needs observations near every target point, so it degrades quickly once you have more than about four predictors. With one predictor and 3,000 observations we are in a comfortable regime."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-7-generalized-additive-models",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-7-generalized-additive-models",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 7: Generalized additive models",
+    "text": "Part 7: Generalized additive models\nEverything so far used a single predictor. GAMs extend the idea to many, modeling the outcome as a sum of smooth functions:\n\\[y_i = \\beta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \\cdots + f_p(x_{ip}) + \\epsilon_i\\]\nEach \\(f_j\\) can be a spline, a LOESS fit, or anything smooth. The model is fit by backfitting: cycle through the predictors, updating each function against the partial residuals from the others, until nothing changes.\n\n\n\n\n\n\n\n\n\nReading the output\n\n\n\n\n\n\n\n\nThis table is the most useful thing in the lab. The edf column is the effective degrees of freedom for each smooth term, and it tells you how non-linear each relationship turned out to be:\n\ns(age) has edf near 5 — strongly curved, exactly the rise-plateau-decline shape we have been chasing all along.\ns(year) has edf equal to 1 — the smoother collapsed to a straight line on its own. Wages drifted up linearly over 2003–2009, and the model discovered that no flexibility was needed.\n\nAn edf of 1 means “a line was enough.” You did not have to decide in advance which predictors needed curvature; the fit worked it out. That is the practical payoff of GAMs over manually choosing a polynomial degree or knot placement for every variable.\n\n\n\n\n\n\n\n\nInterpretation: each panel shows one predictor’s contribution with the others held fixed. The age panel reproduces the familiar career arc. The year panel is a straight line with a gentle upward slope, consistent with its edf of 1.\nThe parametric terms are read as ordinary regression coefficients:\n\n\n\n\n\n\n\n\nEducation shows a clear gradient — each step up the ladder adds to expected wage, with the largest jump at an advanced degree. Information-sector jobs pay more than industrial ones. These are interpretable in exactly the way a linear model’s coefficients are, which is the balance the slides describe: flexibility where it is needed, interpretability where it is not."
+  },
+  {
+    "objectID": "lectures/04-regression-2/code/class4_lab1.html#part-8-putting-it-together",
+    "href": "lectures/04-regression-2/code/class4_lab1.html#part-8-putting-it-together",
+    "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
+    "section": "Part 8: Putting it together",
+    "text": "Part 8: Putting it together\nCompare every method on the same data. Because these are not all nested models, we compare them on cross-validated error rather than by hypothesis test.\n\n\n\n\n\n\n\n\nInterpretation. Three things stand out.\nFirst, every non-linear method beats the straight line, confirming what the opening plot showed.\nSecond, among the single-predictor methods the differences are small. Polynomial, spline, and natural spline all land close together. They are different ways of buying the same flexibility, and on this dataset they buy about the same amount. The step function trails because it cannot follow a trend inside a bin.\nThird, the GAM is clearly ahead — but that is not a fair fight on flexibility alone. It wins because it uses education, jobclass, and year in addition to age. Age is genuinely informative, and so is the rest of the model.\nThe methods differ in more than accuracy:\n\n\n\n\n\n\n\n\n\nMethod\nFlexible?\nStable at boundaries?\nEasy to explain?\n\n\n\n\nLinear\nno\nyes\nyes — one slope\n\n\nPolynomial\nyes\nno — tails diverge\nmoderately\n\n\nStep function\nlocally\nyes\nyes — bin means\n\n\nCubic spline\nyes\nno\nneeds the basis idea\n\n\nNatural spline\nyes\nyes\nneeds the basis idea\n\n\nLOESS\nvery\nno prediction outside data\nhard — no equation\n\n\nGAM\nyes, per predictor\ndepends on basis\nyes — one panel per predictor\n\n\n\nAs the slides conclude: more flexibility in predictive performance can cost you interpretability or inference. The natural spline and the GAM are attractive because they buy flexibility while giving most of that back.\n\n\n\n\n\n\nImportantThings worth remembering\n\n\n\n\nFit a curve, then look at it. The linear model here had a significant slope and was still the wrong shape. A significance test does not tell you the functional form is right.\nAsk what happens past the edge of the data. Polynomials fail badly there; natural splines are built to fail gracefully.\nLet the model tell you how much flexibility it needs. The edf from a GAM is more honest than a degree you guessed in advance.\n\n\n\n\nExercise"
+  },
+  {
     "objectID": "lectures/03-regression-1/code/class3_lab1.html",
     "href": "lectures/03-regression-1/code/class3_lab1.html",
     "title": "Class 3/Lab1: Subset Selection and Shrinkage",
@@ -448,6 +525,13 @@
     "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.\n\n🧪 Lab 2 (interactive)"
   },
   {
+    "objectID": "lectures/02-training/index.html#extras",
+    "href": "lectures/02-training/index.html#extras",
+    "title": "Training statistical learning models",
+    "section": "⭐ Extras",
+    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Bootstrap\n📄 Permutation Test"
+  },
+  {
     "objectID": "lectures/03-regression-1/index.html",
     "href": "lectures/03-regression-1/index.html",
     "title": "Regression I",
@@ -469,45 +553,38 @@
     "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.\n\n🧪 Lab 3 (interactive)"
   },
   {
-    "objectID": "schedule.html",
-    "href": "schedule.html",
-    "title": "Schedule",
-    "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslidesbootstrappermutation test\n\n\nLab 2\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslidesmodel selection\n\n\nLab 3\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, kernel trickQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nTBD\n\n\nTBD\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nTBD\n\n\nTBD\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nTBD\n\n\nTBD\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nTBD\n\n\nTBD\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nTBD\n\n\nTBD\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\nTBD\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
-  },
-  {
-    "objectID": "schedule.html#slides",
-    "href": "schedule.html#slides",
-    "title": "Regression I",
-    "section": "📊 Slides",
-    "text": "📊 Slides\n\n🖥️ Clean slides"
-  },
-  {
-    "objectID": "schedule.html#lab",
-    "href": "schedule.html#lab",
-    "title": "Regression I",
-    "section": "🧪 Lab",
-    "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.\n\n🧪 Lab 3 (interactive)"
-  },
-  {
-    "objectID": "schedule.html#extras",
-    "href": "schedule.html#extras",
-    "title": "Regression I",
-    "section": "⭐ Extras",
-    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Model Selection"
-  },
-  {
-    "objectID": "lectures/02-training/index.html#extras",
-    "href": "lectures/02-training/index.html#extras",
-    "title": "Training statistical learning models",
-    "section": "⭐ Extras",
-    "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Bootstrap\n📄 Permutation Test"
-  },
-  {
     "objectID": "lectures/03-regression-1/index.html#extras",
     "href": "lectures/03-regression-1/index.html#extras",
     "title": "Regression I",
     "section": "⭐ Extras",
     "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Model Selection"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html",
+    "href": "lectures/04-regression-2/index.html",
+    "title": "Regression II",
+    "section": "",
+    "text": "Polynomials, step functions, regression splines, natural splines, local regression, and generalized additive models — relaxing the linearity assumption while keeping the regression framework and its interpretability.\n📖 Assigned reading: ISLR ch. 7"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#slides",
+    "href": "lectures/04-regression-2/index.html#slides",
+    "title": "Regression II",
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides"
+  },
+  {
+    "objectID": "lectures/04-regression-2/index.html#lab",
+    "href": "lectures/04-regression-2/index.html#lab",
+    "title": "Regression II",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.\n\n🧪 Lab 4 (interactive)"
+  },
+  {
+    "objectID": "schedule.html",
+    "href": "schedule.html",
+    "title": "Schedule",
+    "section": "",
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslidesbootstrappermutation test\n\n\nLab 2\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslidesmodel selection\n\n\nLab 3\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nTBD\n\n\nTBD\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nTBD\n\n\nTBD\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nTBD\n\n\nTBD\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nTBD\n\n\nTBD\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\nTBD\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
   }
 ]

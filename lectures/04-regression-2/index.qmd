@@ -1,0 +1,22 @@
+---
+title: "Regression II"
+subtitle: "Non-linear regression, splines, and GAMs"
+date: "Sep 18, 2026"
+date-format: long
+---
+
+Polynomials, step functions, regression splines, natural splines, local regression, and generalized additive models — relaxing the linearity assumption while keeping the regression framework and its interpretability.
+
+📖 **Assigned reading:** ISLR ch. 7
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
+
+- 🧪 [Lab 4 (interactive)](code/class4_lab1.html){target="_blank"}

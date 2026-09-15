@@ -1,0 +1,503 @@
+---
+title: "Class 4/Lab1: Non-linear Regression, Splines, and GAMs"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Sep 18, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - splines
+    - mgcv
+    - patchwork
+  resources:
+    - data/wages.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+In this lab, we will:
+
+1.  See where a linear model fails, and why.
+2.  Fit polynomial regression and observe its behavior at the boundaries.
+3.  Fit step functions, piecewise polynomials, and splines, adding one constraint at a time.
+4.  Compare natural and cubic splines at the edges of the data.
+5.  Fit local regression (LOESS) and tune the `span`.
+6.  Fit a generalized additive model with several predictors.
+
+Every code cell below runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages and data load once when the page opens; give it a few seconds on first load.
+
+::: {.callout-note}
+## A note on `caret`
+
+In [Lab 3](../../03-regression-1/code/class3_lab1.html) every model went through `caret::train()` with one shared interface. This lab uses `lm()`, `loess()`, and `gam()` directly instead.
+
+The reason is that in this lecture **the basis construction is the content.** Writing `ns(age, df = 4)` and seeing it produce a design matrix is the thing we are trying to understand — wrapping it inside `train()` would hide exactly the step worth looking at. (`caret` also does not accept an inline `poly()` or `ns()` in a model formula; the basis has to be built into the data frame first, which adds noise without adding clarity.)
+
+`caret` remains the right tool when you are comparing many tuned models on equal footing, as in Lab 3. Use the interface that makes the idea visible.
+:::
+
+---
+
+## The data: wages
+
+We use the `Wage` dataset — 3,000 male workers from the Mid-Atlantic region, surveyed between 2003 and 2009. These are the same data behind the figures in today's slides.
+
+The question is one about labor economics: **how does wage vary with age?** We expect earnings to rise through early career, plateau in middle age, and decline near retirement. That shape is not a straight line, which makes this a natural place to relax the linearity assumption.
+
+| Variable | Meaning |
+|----------|---------|
+| `wage`       | wage in thousands of dollars per year (the outcome) |
+| `logwage`    | log of `wage` |
+| `age`        | worker age in years, 18 to 80 |
+| `year`       | year the wage was recorded, 2003–2009 |
+| `education`  | 5 ordered levels, `< HS Grad` through `Advanced Degree` |
+| `maritl`     | marital status, 5 levels |
+| `race`       | 4 levels |
+| `jobclass`   | `Industrial` or `Information` |
+| `health`     | self-reported health, 2 levels |
+| `health_ins` | has health insurance, yes or no |
+| `region`     | census region |
+
+```{webr}
+library(ggplot2)
+library(dplyr)
+
+wages <- read.csv("data/wages.csv")
+str(wages)
+```
+
+```{webr}
+summary(wages[, c("wage", "age", "year")])
+```
+
+Two features of these data are worth noting before we model them.
+
+```{webr}
+table(wages$region)
+```
+
+`region` has a single level — every worker is from the Middle Atlantic region. It carries no information and cannot be used as a predictor. This is common in real survey extracts, and it is worth checking before you put a variable into a model.
+
+```{webr}
+sum(wages$wage > 250)
+```
+
+There is a small group of very high earners. They show up as a separate cloud in the scatterplot below, and they are the reason the fitted curve sits below the visual "middle" of the points at some ages.
+
+```{webr}
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.15, color = "steelblue") +
+  labs(title = "Wage vs. Age", x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+---
+
+## Part 1: Where the linear model fails
+
+Fit a straight line and look at what it misses.
+
+```{webr}
+fit_linear <- lm(wage ~ age, data = wages)
+summary(fit_linear)
+```
+
+```{webr}
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.12, color = "steelblue") +
+  geom_smooth(method = "lm", color = "#dc3545", se = TRUE) +
+  geom_smooth(method = "loess", color = "darkgreen", se = FALSE, linetype = "dashed") +
+  labs(title = "Linear fit (red) vs. LOESS (green dashed)",
+       x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+**Interpretation:** the linear fit slopes gently upward across the whole age range. The LOESS curve shows what is actually happening: wages rise steeply from 18 to about 40, flatten through middle age, and fall after 60. The straight line splits the difference and describes none of the three phases.
+
+The slope coefficient is statistically significant, so a purely mechanical reading of the output would call this a good model. The plot says otherwise. Everything that follows is a way of giving the model enough flexibility to follow that shape.
+
+---
+
+## Part 2: Polynomial regression
+
+The first idea from the slides: add powers of the predictor and keep using linear regression.
+
+$$y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_d x_i^d + \epsilon_i$$
+
+```{webr}
+fit_poly2 <- lm(wage ~ poly(age, 2), data = wages)
+fit_poly3 <- lm(wage ~ poly(age, 3), data = wages)
+fit_poly4 <- lm(wage ~ poly(age, 4), data = wages)
+
+anova(fit_linear, fit_poly2, fit_poly3, fit_poly4)
+```
+
+**Interpretation:** the jump from linear to quadratic is highly significant — the curvature is real. The cubic term adds a little. The fourth-degree term adds almost nothing. This matches the guidance on the slides that $d \leq 4$ is usually enough.
+
+```{webr}
+age_grid <- data.frame(age = seq(18, 80, length.out = 200))
+age_grid$pred <- predict(fit_poly4, newdata = age_grid)
+
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.12, color = "steelblue") +
+  geom_line(data = age_grid, aes(y = pred), color = "#dc3545", linewidth = 1.2) +
+  labs(title = "Degree-4 polynomial", x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+### The tail problem
+
+The slides warn that polynomials have "notorious tail behavior." Here is what that means concretely. We ask the model to predict past the edge of the data, where nobody is older than 80.
+
+```{webr}
+extrap <- data.frame(age = c(18, 40, 65, 80, 85, 90))
+extrap$poly_deg4 <- predict(fit_poly4, newdata = extrap)
+extrap
+```
+
+**Interpretation:** the predicted wage falls off a cliff past age 80. The polynomial has no information out there, and a degree-4 curve that bends to fit the middle of the data must keep bending at the ends. This is the single biggest practical objection to polynomial regression, and it motivates everything in the next two sections.
+
+```{webr}
+#| exercise: ex_poly_degree
+# Try a higher degree and re-check the extrapolation.
+# Does the tail behavior get better or worse?
+fit_poly_big <- lm(wage ~ poly(age, ____), data = wages)   # try 6, or 10
+predict(fit_poly_big, newdata = data.frame(age = c(80, 85, 90)))
+```
+
+---
+
+## Part 3: Step functions
+
+A different idea: stop assuming any global shape. Cut the range of `age` into bins and fit a separate mean in each.
+
+```{webr}
+wages$age_bin <- cut(wages$age, breaks = 4)
+table(wages$age_bin)
+```
+
+```{webr}
+fit_step <- lm(wage ~ age_bin, data = wages)
+summary(fit_step)$coefficients %>% round(3)
+```
+
+Each coefficient is the difference in mean wage between that bin and the first (youngest) bin.
+
+```{webr}
+step_grid <- data.frame(age = seq(18, 80, length.out = 400))
+step_grid$age_bin <- cut(step_grid$age, breaks = c(17.9, 33.5, 49, 64.5, 80.1),
+                         labels = levels(wages$age_bin))
+step_grid$pred <- predict(fit_step, newdata = step_grid)
+
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.12, color = "steelblue") +
+  geom_line(data = step_grid, aes(y = pred), color = "#dc3545", linewidth = 1.2) +
+  labs(title = "Step function, 4 bins", x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+**Interpretation:** the fit is now completely local — no global shape is imposed. But it is flat inside each bin and jumps at the boundaries. Wages do not actually jump by several thousand dollars on a worker's 33rd birthday. As the slides put it, unless there are natural breakpoints in the predictor, piecewise-constant functions miss the trend.
+
+This suggests the obvious fix, which is also the slides' question: **what if we fit local polynomials within bins instead of local means?**
+
+---
+
+## Part 4: From piecewise polynomials to splines
+
+Fitting a separate cubic in each region gives flexibility, but nothing forces the pieces to meet. The result is discontinuous — and, as the slides note, hard to explain to anyone who has to act on the prediction.
+
+Splines solve this by adding constraints at the knots: continuity of the function, then of its first derivative, then of its second. Each constraint costs flexibility and buys smoothness.
+
+```{webr}
+library(splines)
+
+# A cubic spline with 3 interior knots. bs() builds the basis matrix;
+# the model is still ordinary least squares on those columns.
+fit_bs <- lm(wage ~ bs(age, knots = c(30, 45, 60)), data = wages)
+
+dim(bs(wages$age, knots = c(30, 45, 60)))
+```
+
+The basis has 6 columns: a cubic spline with $K$ knots uses $K + 3$ basis functions, plus the intercept. This is the key idea from the slides — once the basis is built, we are doing ordinary linear regression on transformed columns.
+
+```{webr}
+head(round(bs(wages$age, knots = c(30, 45, 60)), 3))
+```
+
+```{webr}
+grid_bs <- data.frame(age = seq(18, 80, length.out = 300))
+grid_bs$pred <- predict(fit_bs, newdata = grid_bs)
+
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.12, color = "steelblue") +
+  geom_vline(xintercept = c(30, 45, 60), linetype = "dotted", color = "gray40") +
+  geom_line(data = grid_bs, aes(y = pred), color = "#dc3545", linewidth = 1.2) +
+  labs(title = "Cubic spline, knots at 30 / 45 / 60 (dotted)",
+       x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+**Interpretation:** the curve passes through the knots with no visible kink. The continuity constraints are doing their job — the fit is flexible where the data demand it and smooth everywhere.
+
+---
+
+## Part 5: Natural splines and the boundary
+
+A cubic spline is still a cubic near the edges, so it can swing just as badly as a polynomial there. A **natural** spline adds one more constraint: the function must be linear beyond the boundary knots.
+
+```{webr}
+fit_ns <- lm(wage ~ ns(age, df = 4), data = wages)
+
+grid_cmp <- data.frame(age = seq(18, 80, length.out = 300))
+grid_cmp$Natural <- predict(fit_ns, newdata = grid_cmp)
+grid_cmp$Cubic   <- predict(lm(wage ~ bs(age, df = 6), data = wages), newdata = grid_cmp)
+
+grid_long <- tidyr::pivot_longer(grid_cmp, c("Natural", "Cubic"),
+                                 names_to = "Spline", values_to = "pred")
+
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.10, color = "steelblue") +
+  geom_line(data = grid_long, aes(y = pred, color = Spline), linewidth = 1.2) +
+  scale_color_manual(values = c(Natural = "#dc3545", Cubic = "darkgreen")) +
+  labs(title = "Natural vs. cubic spline", x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+### Comparing confidence intervals at the edges
+
+The slides claim natural splines give narrower confidence intervals at the boundary. Check it directly.
+
+```{webr}
+fit_bs6 <- lm(wage ~ bs(age, df = 6), data = wages)
+
+ci_width <- function(model, a) {
+  p <- predict(model, newdata = data.frame(age = a), interval = "confidence")
+  p[, "upr"] - p[, "lwr"]
+}
+
+data.frame(
+  age            = c(20, 50, 80),
+  natural_spline = round(sapply(c(20, 50, 80), \(a) ci_width(fit_ns,  a)), 2),
+  cubic_spline   = round(sapply(c(20, 50, 80), \(a) ci_width(fit_bs6, a)), 2)
+)
+```
+
+**Interpretation:** in the middle of the data the two are comparable. At age 80 the cubic spline's interval is roughly twice as wide. The linearity constraint at the boundary is what buys that precision — the natural spline is not free to curve wildly where the data are thin, so its predictions there are more stable.
+
+This is the same lesson as the polynomial tail problem, now with a principled fix rather than a warning.
+
+```{webr}
+#| exercise: ex_extrapolate
+# Compare how the two splines and the polynomial behave past the data.
+# Fill in the model name to see which one stays sensible.
+newdat <- data.frame(age = c(75, 80, 85, 90))
+data.frame(
+  age        = newdat$age,
+  polynomial = predict(fit_poly4, newdata = newdat),
+  natural    = predict(________, newdata = newdat)   # try: fit_ns
+) |> round(1)
+```
+
+---
+
+## Part 6: Local regression (LOESS)
+
+Splines fix knots in advance. Local regression takes a different route: for each target point, fit a weighted regression using only nearby observations. The tuning parameter is `span`, the fraction of the data counted as "near."
+
+```{webr}
+spans <- c(0.1, 0.3, 0.5, 0.8)
+
+loess_preds <- lapply(spans, function(s) {
+  m <- loess(wage ~ age, data = wages, span = s)
+  data.frame(age = grid_cmp$age,
+             pred = predict(m, newdata = data.frame(age = grid_cmp$age)),
+             span = factor(s))
+})
+loess_df <- do.call(rbind, loess_preds)
+
+ggplot(wages, aes(x = age, y = wage)) +
+  geom_point(alpha = 0.10, color = "steelblue") +
+  geom_line(data = loess_df, aes(y = pred, color = span), linewidth = 1.1) +
+  labs(title = "LOESS at four spans", x = "Age (years)", y = "Wage ($1000s)") +
+  theme_minimal(base_size = 14)
+```
+
+```{webr}
+data.frame(
+  span = spans,
+  equivalent_parameters = round(sapply(spans, \(s) loess(wage ~ age, data = wages, span = s)$enp), 1)
+)
+```
+
+**Interpretation:** `enp` is the equivalent number of parameters — how many degrees of freedom the fit effectively spends. A span of 0.1 spends about 33; a span of 0.8 spends under 5. That is the bias-variance tradeoff from the slides in one number. The small-span curve chases local noise (low bias, high variance); the large-span curve is smooth and may miss real structure (higher bias, lower variance).
+
+Note also the pitfall the slides raise: LOESS needs observations near every target point, so it degrades quickly once you have more than about four predictors. With one predictor and 3,000 observations we are in a comfortable regime.
+
+---
+
+## Part 7: Generalized additive models
+
+Everything so far used a single predictor. GAMs extend the idea to many, modeling the outcome as a sum of smooth functions:
+
+$$y_i = \beta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \cdots + f_p(x_{ip}) + \epsilon_i$$
+
+Each $f_j$ can be a spline, a LOESS fit, or anything smooth. The model is fit by backfitting: cycle through the predictors, updating each function against the partial residuals from the others, until nothing changes.
+
+```{webr}
+library(mgcv)
+
+wages$education <- factor(wages$education)
+wages$jobclass  <- factor(wages$jobclass)
+
+fit_gam <- gam(wage ~ s(age) + s(year, k = 5) + education + jobclass,
+               data = wages)
+
+summary(fit_gam)
+```
+
+### Reading the output
+
+```{webr}
+summary(fit_gam)$s.table %>% round(3)
+```
+
+**This table is the most useful thing in the lab.** The `edf` column is the effective degrees of freedom for each smooth term, and it tells you how non-linear each relationship turned out to be:
+
+- `s(age)` has **edf near 5** — strongly curved, exactly the rise-plateau-decline shape we have been chasing all along.
+- `s(year)` has **edf equal to 1** — the smoother collapsed to a straight line on its own. Wages drifted up linearly over 2003–2009, and the model discovered that no flexibility was needed.
+
+An `edf` of 1 means "a line was enough." You did not have to decide in advance which predictors needed curvature; the fit worked it out. That is the practical payoff of GAMs over manually choosing a polynomial degree or knot placement for every variable.
+
+```{webr}
+par(mfrow = c(1, 2))
+plot(fit_gam, select = 1, shade = TRUE, seWithMean = TRUE,
+     xlab = "Age (years)", ylab = "Partial effect on wage")
+plot(fit_gam, select = 2, shade = TRUE, seWithMean = TRUE,
+     xlab = "Year", ylab = "Partial effect on wage")
+par(mfrow = c(1, 1))
+```
+
+**Interpretation:** each panel shows one predictor's contribution with the others held fixed. The age panel reproduces the familiar career arc. The year panel is a straight line with a gentle upward slope, consistent with its `edf` of 1.
+
+The parametric terms are read as ordinary regression coefficients:
+
+```{webr}
+summary(fit_gam)$p.table %>% round(3)
+```
+
+Education shows a clear gradient — each step up the ladder adds to expected wage, with the largest jump at an advanced degree. Information-sector jobs pay more than industrial ones. These are interpretable in exactly the way a linear model's coefficients are, which is the balance the slides describe: flexibility where it is needed, interpretability where it is not.
+
+```{webr}
+#| exercise: ex_gam_terms
+# Add health insurance to the model. Does it matter?
+# Also check: does the edf for age change once you add it?
+fit_gam2 <- gam(wage ~ s(age) + s(year, k = 5) + education + jobclass + __________,
+                data = wages)   # try: health_ins
+summary(fit_gam2)$s.table
+```
+
+---
+
+## Part 8: Putting it together
+
+Compare every method on the same data. Because these are not all nested models, we compare them on cross-validated error rather than by hypothesis test.
+
+```{webr}
+set.seed(2155)
+folds <- sample(rep(1:10, length.out = nrow(wages)))
+
+cv_rmse <- function(fit_fun) {
+  errs <- sapply(1:10, function(k) {
+    train <- wages[folds != k, ]
+    test  <- wages[folds == k, ]
+    m <- fit_fun(train)
+    sqrt(mean((test$wage - predict(m, newdata = test))^2, na.rm = TRUE))
+  })
+  mean(errs)
+}
+
+results <- data.frame(
+  method = c("linear", "poly (d=4)", "step (4 bins)",
+             "cubic spline (df=6)", "natural spline (df=4)", "GAM"),
+  cv_rmse = c(
+    cv_rmse(\(d) lm(wage ~ age, data = d)),
+    cv_rmse(\(d) lm(wage ~ poly(age, 4), data = d)),
+    cv_rmse(\(d) lm(wage ~ cut(age, breaks = c(17, 33, 49, 65, 81)), data = d)),
+    cv_rmse(\(d) lm(wage ~ bs(age, df = 6), data = d)),
+    cv_rmse(\(d) lm(wage ~ ns(age, df = 4), data = d)),
+    cv_rmse(\(d) gam(wage ~ s(age) + s(year, k = 5) + education + jobclass, data = d))
+  )
+)
+
+results[order(results$cv_rmse), ] |> mutate(cv_rmse = round(cv_rmse, 3))
+```
+
+**Interpretation.** Three things stand out.
+
+First, every non-linear method beats the straight line, confirming what the opening plot showed.
+
+Second, among the single-predictor methods the differences are small. Polynomial, spline, and natural spline all land close together. They are different ways of buying the same flexibility, and on this dataset they buy about the same amount. The step function trails because it cannot follow a trend inside a bin.
+
+Third, the GAM is clearly ahead — but that is not a fair fight on flexibility alone. It wins because it uses `education`, `jobclass`, and `year` in addition to `age`. Age is genuinely informative, and so is the rest of the model.
+
+The methods differ in more than accuracy:
+
+| Method | Flexible? | Stable at boundaries? | Easy to explain? |
+|--------|-----------|----------------------|------------------|
+| Linear | no | yes | yes — one slope |
+| Polynomial | yes | **no** — tails diverge | moderately |
+| Step function | locally | yes | yes — bin means |
+| Cubic spline | yes | no | needs the basis idea |
+| Natural spline | yes | **yes** | needs the basis idea |
+| LOESS | very | no prediction outside data | hard — no equation |
+| GAM | yes, per predictor | depends on basis | yes — one panel per predictor |
+
+As the slides conclude: more flexibility in predictive performance can cost you interpretability or inference. The natural spline and the GAM are attractive because they buy flexibility while giving most of that back.
+
+::: {.callout-important}
+## Things worth remembering
+
+- **Fit a curve, then look at it.** The linear model here had a significant slope and was still the wrong shape. A significance test does not tell you the functional form is right.
+- **Ask what happens past the edge of the data.** Polynomials fail badly there; natural splines are built to fail gracefully.
+- **Let the model tell you how much flexibility it needs.** The `edf` from a GAM is more honest than a degree you guessed in advance.
+:::
+
+### Exercise
+
+```{webr}
+#| exercise: ex_final
+# The GAM above used wage. Try modeling logwage instead.
+# Wages are right-skewed, so this is a common transformation.
+# Does the edf for age change? Does the education gradient look different?
+fit_gam_log <- gam(________ ~ s(age) + s(year, k = 5) + education + jobclass,
+                   data = wages)
+summary(fit_gam_log)
+```
