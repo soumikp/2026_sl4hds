@@ -22,6 +22,8 @@ project:
     - "lectures/02-training/extras/permutation_test.pdf"
     - "lectures/03-regression-1/slides_clean.pdf"
     - "lectures/03-regression-1/extras/model_selection.pdf"
+    - "lectures/03-regression-1/extras/shrinkage_methods.pdf"
+    - "lectures/03-regression-1/extras/partial_least_squares.pdf"
     - "lectures/03-regression-1/code/data/**"
     - "lectures/04-regression-2/slides_clean.pdf"
     - "lectures/04-regression-2/code/data/**"

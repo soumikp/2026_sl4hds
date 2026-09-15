@@ -26,3 +26,5 @@ Live, in-browser R lab — runs entirely in your browser via webR, no local R in
 Optional supplementary material:
 
 - 📄 [Model Selection](extras/model_selection.pdf)
+- 📄 [Shrinkage Methods](extras/shrinkage_methods.pdf)
+- 📄 [Partial Least Squares](extras/partial_least_squares.pdf)
