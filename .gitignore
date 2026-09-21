@@ -101,7 +101,8 @@ _solutions/
 /lectures/05-classification-1/readings/
 /lectures/05-classification-1/figures/
 /lectures/05-classification-1/data/
-/lectures/05-classification-1/extras/
+/lectures/05-classification-1/extras/**
+!/lectures/05-classification-1/extras/classification_summarized.pdf
 /lectures/05-classification-1/code/fig1.R
 /lectures/05-classification-1/code/fig2.R
 /lectures/05-classification-1/code/fig3.R
