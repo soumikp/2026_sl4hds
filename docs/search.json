@@ -161,6 +161,69 @@
     "text": "Tips on choosing a project\n\nFor applied projects: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well.\nFor methodology reviews: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.\nScope honestly: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole."
   },
   {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html",
+    "href": "lectures/05-classification-1/code/class5_lab1.html",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "",
+    "text": "In class we learnt about four classifiers: LDA, QDA, naive Bayes, and k-nearest neighbors. Three of them are generative Gaussian methods that differ only in what they assume about the covariance; k-NN is the non-parametric alternative. This lab fits all four to the same medical diagnosis problem and compares them the way the slides told us to — with the confusion matrix, sensitivity, specificity, and the ROC curve.\nEvery code cell runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages and data load once when the page opens; give it a few seconds on first load. The k-NN cross-validation step is the heaviest cell and may take a little longer."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#introduction",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#introduction",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "",
+    "text": "In class we learnt about four classifiers: LDA, QDA, naive Bayes, and k-nearest neighbors. Three of them are generative Gaussian methods that differ only in what they assume about the covariance; k-NN is the non-parametric alternative. This lab fits all four to the same medical diagnosis problem and compares them the way the slides told us to — with the confusion matrix, sensitivity, specificity, and the ROC curve.\nEvery code cell runs live in your browser via webR — no local R install needed. Edit any cell and re-run it. Packages and data load once when the page opens; give it a few seconds on first load. The k-NN cross-validation step is the heaviest cell and may take a little longer."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#a-note-on-caret",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#a-note-on-caret",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "A note on caret",
+    "text": "A note on caret\nFollowing Lab 3, every model goes through caret::train() with one shared interface. We change the method argument and nothing else: \"lda\", \"qda\", \"nb\", \"knn\". The same cross-validation settings and the same centering/scaling apply to all four, so a difference in the results is a difference between the methods, not between how we called them."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#the-data-wisconsin-breast-tumors",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#the-data-wisconsin-breast-tumors",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "The data: Wisconsin breast tumors",
+    "text": "The data: Wisconsin breast tumors\nThe Wisconsin Diagnostic Breast Cancer (WDBC) dataset records 569 tumors from fine-needle-aspirate images. Each tumor is labeled Benign or Malignant — a binary outcome, so the ROC curve and AUC work directly. Ten features are measured (radius, texture, smoothness, and so on); for each feature the data gives its mean, standard error, and “worst” value across the image, for 30 columns in all.\n\n\n\n\n\n\n\n\nAbout 63% of the tumors are benign and 37% malignant — imbalanced, but not severely. Keep that split in mind: a classifier that called everything benign would already be 63% accurate while catching zero cancers (so accuracy alone will not be enough to track performance, we need to look at other metrics).\n\nChoosing the features\nThe full 30 features separate the two classes almost perfectly (test AUC near 0.98 - take my word for it although you are free to check :)). Every method would look great and we would learn nothing about their differences; so we deliberately keep a harder subset: four features, each in its mean and standard-error form.\n\n\n\n\n\n\n\n\n\n\nTrain / test split\n\n\n\n\n\n\n\n\ncreateDataPartition keeps the benign/malignant ratio the same in both parts. We tune and fit on the 427 training tumors and judge every model on the same 142 held-out test tumors."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#fitting-the-four-models",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#fitting-the-four-models",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "Fitting the four models",
+    "text": "Fitting the four models\nThe shared control object below asks for 10-fold cross-validation and, because we will want predicted probabilities for the ROC curve, class probabilities.\n\n\n\n\n\n\n\n\n\nLDA and QDA\nLDA assumes a single shared covariance matrix across classes (linear boundary); QDA gives each class its own (quadratic boundary). Same call, one argument apart.\n\n\n\n\n\n\n\n\n\n\nNaive Bayes\nNaive Bayes keeps the generative recipe but assumes the features are independent within each class — a diagonal covariance. Here we use the Gaussian version (usekernel = FALSE), matching the density in the slides (but remember, Naive Bayes is the ONLY generative model that allows for mixed data types!)\nThe suppressWarnings() wrapper hides a harmless “numerical 0 probability” message: on a few outlying tumors the Gaussian density underflows to zero. It does not affect the fit. Note that technically Naive Bayes could have other distributions to support feature space as well!\n\n\n\n\n\n\n\n\n\n\nk-Nearest Neighbors\nk-NN is non-parametric — no distribution assumed. We let cross-validation pick k from the odd numbers 1 to 25. This is the heaviest cell; give it a moment.\n\n\n\n\n\n\n\n\nCross-validation chooses k = 15 — not k = 1. That matches the slide’s warning: a very small k overfits (low bias, high variance), so CV pulls us toward a smoother boundary."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#evaluating-on-the-test-set",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#evaluating-on-the-test-set",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "Evaluating on the test set",
+    "text": "Evaluating on the test set\nThe confusion matrix from the slides, in code. We set positive = \"Malignant\" because catching cancer is the outcome we care about, so sensitivity = “of the true malignant tumors, how many did we catch?” and specificity = “of the true benign tumors, how many did we correctly clear?”\n\n\n\n\n\n\n\n\nRead the output against the slides: Accuracy is the overall proportion correct, Sensitivity and Specificity are the two class-wise rates, and Youden’s J = Sensitivity + Specificity − 1 summarizes both in one number.\nNow the other three:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPutting the four side by side\n\n\n\n\n\n\n\n\nThree things worth reading off this table:\n\nQDA beats LDA (accuracy 0.838 vs 0.817, Youden’s J 0.650 vs 0.593). The two classes really do have different covariance structure, so letting each class keep its own — the quadratic boundary — pays off. This is the QDA lesson from the slides, made concrete.\nNaive Bayes is the weakest here (accuracy 0.782). Its independence assumption is wrong: these tumor measurements are correlated, and throwing the correlations away costs accuracy. A reminder that “naive” is a real assumption, not a free lunch.\nk-NN and QDA tie on accuracy, but they get there differently: k-NN has the highest specificity (0.910 — best at clearing benign tumors) while QDA has the highest sensitivity (0.774 — best at catching cancer). In a screening setting a missed malignancy is the costly error, which would push you toward QDA even at equal accuracy."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#the-roc-curve",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#the-roc-curve",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "The ROC curve",
+    "text": "The ROC curve\nAccuracy and the confusion matrix fix a single threshold (predict “Malignant” when its probability exceeds 0.5). The ROC curve sweeps every threshold, plotting sensitivity against 1 − specificity, and AUC is the area under it. Let’s draw all four on one plot.\n\n\n\n\n\n\n\n\nA curve closer to the top-left corner is better. LDA and k-NN have the highest AUC (~0.90), even though QDA had the best single-threshold accuracy — a good illustration that “best classifier” depends on whether you care about one threshold or the whole range."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#try-it-yourself",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#try-it-yourself",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "Try it yourself",
+    "text": "Try it yourself\nThe comparison above used set.seed(2155). Does the winner depend on that particular split? Change the seed, re-run the split and the four fits, and see whether the ranking holds.\n\n\n\n\n\n\n\n\nAcross most splits QDA stays ahead of LDA on this feature set — the covariance difference is a property of the data, not an accident of one split.\nFor a second experiment: the lab uses eight features. Add radius_mean and area_mean to the soft vector near the top, re-run everything, and watch every model’s accuracy jump — those two features carry most of the signal, which is exactly why we left them out to keep the comparison interesting."
+  },
+  {
+    "objectID": "lectures/05-classification-1/code/class5_lab1.html#things-worth-remembering",
+    "href": "lectures/05-classification-1/code/class5_lab1.html#things-worth-remembering",
+    "title": "Class 5/Lab 1: Classifying Breast Tumors",
+    "section": "Things worth remembering",
+    "text": "Things worth remembering\n\nOne interface, four methods. train(method = ...) let us swap LDA, QDA, naive Bayes, and k-NN without relearning four APIs.\nThe covariance assumption is the dial. LDA (shared) → QDA (per-class) → naive Bayes (diagonal) are the same generative idea under different restrictions, and on this data QDA’s extra flexibility earned its keep while naive Bayes’ independence assumption cost it.\nAccuracy is not the whole story. Sensitivity, specificity, Youden’s J, and AUC each answer a different question, and for a cancer screen the one that matters most is sensitivity."
+  },
+  {
     "objectID": "lectures/04-regression-2/code/class4_lab1.html",
     "href": "lectures/04-regression-2/code/class4_lab1.html",
     "title": "Class 4/Lab1: Non-linear Regression, Splines, and GAMs",
@@ -588,10 +651,31 @@
     "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Nonlinear Methods"
   },
   {
+    "objectID": "lectures/05-classification-1/index.html",
+    "href": "lectures/05-classification-1/index.html",
+    "title": "Classification I",
+    "section": "",
+    "text": "Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as generative classifiers. Decision boundaries and what each approach assumes about the data.\n📖 Assigned reading: ISLR ch. 4"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#slides",
+    "href": "lectures/05-classification-1/index.html#slides",
+    "title": "Classification I",
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides"
+  },
+  {
+    "objectID": "lectures/05-classification-1/index.html#lab",
+    "href": "lectures/05-classification-1/index.html#lab",
+    "title": "Classification I",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.\n\n🧪 Lab 5 (interactive)"
+  },
+  {
     "objectID": "schedule.html",
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nExtras\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\nLab 2\n\n\nbootstrappermutation test\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\nLab 3\n\n\nmodel selectionshrinkage methodspartial least squares\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\nnonlinear methods\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nExtras\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\nLab 2\n\n\nbootstrappermutation test\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\nLab 3\n\n\nmodel selectionshrinkage methodspartial least squares\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\nnonlinear methods\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nslides\n\n\nLab 5\n\n\n—\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
   }
 ]

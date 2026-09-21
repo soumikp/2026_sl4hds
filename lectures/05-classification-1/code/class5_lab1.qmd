@@ -1,0 +1,354 @@
+---
+title: "Class 5/Lab 1: Classifying Breast Tumors"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Sep 25, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - caret
+    - MASS
+    - klaR
+    - pROC
+    - ggsci
+  resources:
+    - data/wdbc.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+In class we learnt about four classifiers: **LDA**, **QDA**, **naive Bayes**, and
+**k-nearest neighbors**. Three of them are generative Gaussian methods that
+differ only in what they assume about the covariance; k-NN is the
+non-parametric alternative. This lab fits all four to the same medical
+diagnosis problem and compares them the way the slides told us to — with the
+confusion matrix, sensitivity, specificity, and the ROC curve.
+
+Every code cell runs live in your browser via webR — no local R install
+needed. Edit any cell and re-run it. Packages and data load once when the page
+opens; give it a few seconds on first load. **The k-NN cross-validation step is
+the heaviest cell and may take a little longer.**
+
+## A note on `caret`
+
+Following [Lab 3](../../03-regression-1/code/class3_lab1.html), every model
+goes through `caret::train()` with **one shared interface**. We change the
+`method` argument and nothing else: `"lda"`, `"qda"`, `"nb"`, `"knn"`. The same
+cross-validation settings and the same centering/scaling apply to all four, so
+a difference in the results is a difference between the *methods*, not between
+how we called them.
+
+## The data: Wisconsin breast tumors
+
+The Wisconsin Diagnostic Breast Cancer (WDBC) dataset records 569 tumors from
+fine-needle-aspirate images. Each tumor is labeled **Benign** or **Malignant**
+— a binary outcome, so the ROC curve and AUC work directly. Ten features are
+measured (radius, texture, smoothness, and so on); for each feature the data
+gives its mean, standard error, and "worst" value across the image, for 30
+columns in all.
+
+```{webr}
+library(dplyr)
+
+wdbc <- read.csv("data/wdbc.csv") |>
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
+
+table(wdbc$diagnosis)
+```
+
+About 63% of the tumors are benign and 37% malignant — imbalanced, but not
+severely. Keep that split in mind: a classifier that called *everything* benign
+would already be 63% accurate while catching zero cancers (so accuracy alone will
+not be enough to track performance, we need to look at *other* metrics).
+
+### Choosing the features
+
+The full 30 features separate the two classes almost perfectly (test AUC near
+0.98 - take my word for it although you are free to check :)). Every method would look great and
+we would learn nothing about their differences; so we deliberately keep a
+harder subset: **four features, each in its mean and standard-error form**.
+
+```{webr}
+soft <- c("texture_mean", "smoothness_mean", "symmetry_mean", "fractal_dim_mean",
+          "texture_se",   "smoothness_se",   "symmetry_se",   "fractal_dim_se")
+
+dat <- wdbc[, c("diagnosis", soft)]
+head(dat)
+```
+
+### Train / test split
+
+```{webr}
+library(caret)
+
+set.seed(2155)
+idx <- createDataPartition(dat$diagnosis, p = 0.75, list = FALSE)
+train_data <- dat[idx, ]
+test_data  <- dat[-idx, ]
+
+c(train = nrow(train_data), test = nrow(test_data))
+```
+
+`createDataPartition` keeps the benign/malignant ratio the same in both parts.
+We tune and fit on the 427 training tumors and judge every model on the same
+142 held-out test tumors.
+
+## Fitting the four models
+
+The shared control object below asks for 10-fold cross-validation and, because
+we will want predicted probabilities for the ROC curve, class probabilities.
+
+```{webr}
+ctrl <- trainControl(method = "cv", number = 10, classProbs = TRUE)
+```
+
+### LDA and QDA
+
+LDA assumes a single shared covariance matrix across classes (linear
+boundary); QDA gives each class its own (quadratic boundary). Same call, one
+argument apart.
+
+```{webr}
+library(MASS)
+
+set.seed(2155)
+lda_model <- train(diagnosis ~ ., data = train_data, method = "lda",
+                   trControl = ctrl, preProcess = c("center", "scale"))
+
+set.seed(2155)
+qda_model <- train(diagnosis ~ ., data = train_data, method = "qda",
+                   trControl = ctrl, preProcess = c("center", "scale"))
+```
+
+### Naive Bayes
+
+Naive Bayes keeps the generative recipe but assumes the features are
+independent within each class — a *diagonal* covariance. Here we use the
+Gaussian version (`usekernel = FALSE`), matching the density in the slides (but remember, Naive Bayes is the ONLY generative model that allows for mixed data types!)
+
+The `suppressWarnings()` wrapper hides a harmless "numerical 0 probability"
+message: on a few outlying tumors the Gaussian density underflows to zero. It
+does not affect the fit. Note that **technically** Naive Bayes could have other distributions to support feature space as well!
+
+```{webr}
+library(klaR)
+
+set.seed(2155)
+nb_model <- suppressWarnings(
+  train(diagnosis ~ ., data = train_data, method = "nb",
+        trControl = ctrl, preProcess = c("center", "scale"),
+        tuneGrid = expand.grid(fL = 0, usekernel = FALSE, adjust = 1))
+)
+```
+
+### k-Nearest Neighbors
+
+k-NN is non-parametric — no distribution assumed. We let cross-validation pick
+`k` from the odd numbers 1 to 25. This is the heaviest cell; give it a moment.
+
+```{webr}
+set.seed(2155)
+knn_model <- train(diagnosis ~ ., data = train_data, method = "knn",
+                   trControl = ctrl, preProcess = c("center", "scale"),
+                   tuneGrid = expand.grid(k = seq(1, 25, by = 2)))
+
+knn_model$bestTune
+```
+
+Cross-validation chooses **k = 15** — not k = 1. That matches the slide's
+warning: a very small `k` overfits (low bias, high variance), so CV pulls us
+toward a smoother boundary.
+
+## Evaluating on the test set
+
+The confusion matrix from the slides, in code. We set `positive = "Malignant"`
+because catching cancer is the outcome we care about, so **sensitivity** =
+"of the true malignant tumors, how many did we catch?" and **specificity** =
+"of the true benign tumors, how many did we correctly clear?"
+
+```{webr}
+lda_preds <- predict(lda_model, test_data)
+confusionMatrix(lda_preds, test_data$diagnosis, positive = "Malignant")
+```
+
+Read the output against the slides: **Accuracy** is the overall proportion
+correct, **Sensitivity** and **Specificity** are the two class-wise rates, and
+Youden's J = Sensitivity + Specificity − 1 summarizes both in one number.
+
+Now the other three:
+
+```{webr}
+qda_preds <- predict(qda_model, test_data)
+confusionMatrix(qda_preds, test_data$diagnosis, positive = "Malignant")
+```
+
+```{webr}
+nb_preds <- suppressWarnings(predict(nb_model, test_data))
+confusionMatrix(nb_preds, test_data$diagnosis, positive = "Malignant")
+```
+
+```{webr}
+knn_preds <- predict(knn_model, test_data)
+confusionMatrix(knn_preds, test_data$diagnosis, positive = "Malignant")
+```
+
+### Putting the four side by side
+
+```{webr}
+library(pROC)
+
+summarise_model <- function(model, name) {
+  p  <- suppressWarnings(predict(model, test_data))
+  cm <- confusionMatrix(p, test_data$diagnosis, positive = "Malignant")
+  pr <- suppressWarnings(predict(model, test_data, type = "prob"))[, "Malignant"]
+  auc <- as.numeric(auc(roc(test_data$diagnosis, pr,
+                            levels = c("Benign", "Malignant"),
+                            direction = "<", quiet = TRUE)))
+  sens <- cm$byClass["Sensitivity"]; spec <- cm$byClass["Specificity"]
+  data.frame(Model = name,
+             Accuracy    = round(cm$overall["Accuracy"], 3),
+             Sensitivity = round(sens, 3),
+             Specificity = round(spec, 3),
+             Youden_J    = round(sens + spec - 1, 3),
+             AUC         = round(auc, 3),
+             row.names = NULL)
+}
+
+rbind(
+  summarise_model(lda_model, "LDA"),
+  summarise_model(qda_model, "QDA"),
+  summarise_model(nb_model,  "Naive Bayes"),
+  summarise_model(knn_model, "k-NN")
+)
+```
+
+Three things worth reading off this table:
+
+- **QDA beats LDA** (accuracy 0.838 vs 0.817, Youden's J 0.650 vs 0.593). The
+  two classes really do have different covariance structure, so letting each
+  class keep its own — the quadratic boundary — pays off. This is the QDA
+  lesson from the slides, made concrete.
+- **Naive Bayes is the weakest here** (accuracy 0.782). Its independence
+  assumption is wrong: these tumor measurements are correlated, and throwing
+  the correlations away costs accuracy. A reminder that "naive" is a real
+  assumption, not a free lunch.
+- **k-NN and QDA tie on accuracy**, but they get there differently: k-NN has
+  the highest **specificity** (0.910 — best at clearing benign tumors) while
+  QDA has the highest **sensitivity** (0.774 — best at catching cancer). In a
+  screening setting a missed malignancy is the costly error, which would push
+  you toward QDA even at equal accuracy.
+
+## The ROC curve
+
+Accuracy and the confusion matrix fix a single threshold (predict "Malignant"
+when its probability exceeds 0.5). The ROC curve sweeps *every* threshold,
+plotting sensitivity against 1 − specificity, and AUC is the area under it.
+Let's draw all four on one plot.
+
+```{webr}
+library(ggplot2)
+
+roc_df <- function(model, name) {
+  pr <- suppressWarnings(predict(model, test_data, type = "prob"))[, "Malignant"]
+  r  <- roc(test_data$diagnosis, pr, levels = c("Benign", "Malignant"),
+            direction = "<", quiet = TRUE)
+  data.frame(fpr = 1 - r$specificities, tpr = r$sensitivities, Model = name)
+}
+
+all_roc <- rbind(
+  roc_df(lda_model, "LDA"),
+  roc_df(qda_model, "QDA"),
+  roc_df(nb_model,  "Naive Bayes"),
+  roc_df(knn_model, "k-NN")
+)
+
+ggplot(all_roc, aes(fpr, tpr, color = Model)) +
+  geom_line(linewidth = 0.5) +
+  geom_abline(linetype = "dashed", color = "grey60") +
+  ggsci::scale_color_aaas() +
+  coord_equal() +
+  labs(x = "1 − Specificity (False Positive Rate)",
+       y = "Sensitivity (True Positive Rate)",
+       title = "ROC curves: four classifiers, same test set") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+A curve closer to the top-left corner is better. LDA and k-NN have the highest
+AUC (~0.90), even though QDA had the best single-threshold accuracy — a good
+illustration that "best classifier" depends on whether you care about one
+threshold or the whole range.
+
+## Try it yourself
+
+The comparison above used `set.seed(2155)`. Does the winner depend on that
+particular split? Change the seed, re-run the split and the four fits, and see
+whether the ranking holds.
+
+```{webr}
+#| exercise: ex_seed
+# Change the seed, then re-run this whole cell.
+set.seed(______)   # try 1, 7, 2026, your birthday...
+idx2 <- createDataPartition(dat$diagnosis, p = 0.75, list = FALSE)
+tr2 <- dat[idx2, ]; te2 <- dat[-idx2, ]
+
+set.seed(1); lda2 <- train(diagnosis ~ ., tr2, method = "lda",
+                           trControl = ctrl, preProcess = c("center", "scale"))
+set.seed(1); qda2 <- train(diagnosis ~ ., tr2, method = "qda",
+                           trControl = ctrl, preProcess = c("center", "scale"))
+
+data.frame(
+  LDA = mean(predict(lda2, te2) == te2$diagnosis),
+  QDA = mean(predict(qda2, te2) == te2$diagnosis)
+)
+```
+
+Across most splits QDA stays ahead of LDA on this feature set — the covariance
+difference is a property of the data, not an accident of one split.
+
+For a second experiment: the lab uses eight features. Add `radius_mean` and
+`area_mean` to the `soft` vector near the top, re-run everything, and watch
+every model's accuracy jump — those two features carry most of the signal,
+which is exactly why we left them out to keep the comparison interesting.
+
+## Things worth remembering
+
+- **One interface, four methods.** `train(method = ...)` let us swap LDA, QDA,
+  naive Bayes, and k-NN without relearning four APIs.
+- **The covariance assumption is the dial.** LDA (shared) → QDA (per-class) →
+  naive Bayes (diagonal) are the same generative idea under different
+  restrictions, and on this data QDA's extra flexibility earned its keep while
+  naive Bayes' independence assumption cost it.
+- **Accuracy is not the whole story.** Sensitivity, specificity, Youden's J,
+  and AUC each answer a different question, and for a cancer screen the one
+  that matters most is sensitivity.
