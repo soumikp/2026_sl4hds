@@ -55,7 +55,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>Sep 25</td>
 <td><strong><a href="lectures/05-classification-1/index.html">Classification I</a></strong> — logistic regression, generative models<br><span class="quiz-dates">Quiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.</span></td>
 <td>ISLR ch. 4</td>
-<td><a href="lectures/05-classification-1/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/05-classification-1/slides_clean.pdf">slides</a><br><a href="lectures/05-classification-1/slides_annotated.pdf">annotated</a></td>
 <td><a href="lectures/05-classification-1/code/class5_lab1.html">Lab 5</a></td>
 <td><a href="lectures/05-classification-1/extras/classification_summarized.pdf">classification summary</a></td>
 <td rowspan="2"><a href="assignments/hw2.qmd">HW2</a><br>Rel: Sep 25, 11:00 AM<br>Due: Oct 9, 11:59 PM</td>

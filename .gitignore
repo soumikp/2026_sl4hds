@@ -92,11 +92,10 @@ _solutions/
 /lectures/04-regression-2/code/lab1.R
 /lectures/04-regression-2/code/lab2.R
 
-# Lecture 5 is published, but only clean slides + lab go on the site.
-# Keep these parts local (annotated slides, readings, figures, figure and
-# scratch scripts, page-level data). The lab's own data (code/data/wdbc.csv)
-# IS shipped; the lab uses wdbc only, so the old winequality.csv is dropped.
-/lectures/05-classification-1/slides_annotated.pdf
+# Lecture 5 is published: clean + annotated slides and the lab go on the site.
+# Keep the rest local (readings, figures, figure and scratch scripts,
+# page-level data). The lab's own data (code/data/wdbc.csv) IS shipped; the
+# lab uses wdbc only, so the old winequality.csv is dropped.
 /lectures/05-classification-1/readings/
 /lectures/05-classification-1/figures/
 /lectures/05-classification-1/data/

@@ -28,6 +28,7 @@ project:
     - "lectures/04-regression-2/extras/nonlinear_methods.pdf"
     - "lectures/04-regression-2/code/data/**"
     - "lectures/05-classification-1/slides_clean.pdf"
+    - "lectures/05-classification-1/slides_annotated.pdf"
     - "lectures/05-classification-1/extras/classification_summarized.pdf"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"

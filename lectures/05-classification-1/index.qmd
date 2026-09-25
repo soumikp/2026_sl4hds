@@ -14,6 +14,7 @@ Logistic regression as a discriminative classifier; LDA, QDA, and naive Bayes as
 ## 📊 Slides
 
 - 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
 ## 🧪 Lab
 
