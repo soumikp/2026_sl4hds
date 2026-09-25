@@ -31,6 +31,8 @@ project:
     - "lectures/05-classification-1/extras/classification_summarized.pdf"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"
+    # HW2 materials (released Sep 25) — the hw2.qmd download links point here.
+    - "assignments/hw2/**"
 
 website:
   title: "BIOST 2155"

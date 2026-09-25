@@ -5,7 +5,10 @@ subtitle: "Regression II; Classification I"
 
 ## Materials
 
-*Materials TBD.*
+- 📝 [Template (.Rmd)](hw2/assignment2_blank.Rmd) — start here; fill in each section
+- 📄 [Assignment (PDF)](hw2/assignment2_blank.pdf) — readable version of the questions
+- 📊 [Data — Part A (assign1_regData.csv)](hw2/assign1_regData.csv) — same data as Assignment 1
+- 📊 [Data — Part B (assign2_diabetes.csv)](hw2/assign2_diabetes.csv)
 
 ## Instructions
 
