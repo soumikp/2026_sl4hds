@@ -5,7 +5,6 @@ project:
     - "**/*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
-    - "!lectures/06-classification-2/**"
     - "!lectures/07-clustering-kmeans/**"
     - "!lectures/08-clustering-gmm/**"
     - "!lectures/09-pca/**"
@@ -30,6 +29,8 @@ project:
     - "lectures/05-classification-1/slides_clean.pdf"
     - "lectures/05-classification-1/slides_annotated.pdf"
     - "lectures/05-classification-1/extras/classification_summarized.pdf"
+    - "lectures/06-classification-2/slides_clean.pdf"
+    - "lectures/06-classification-2/code/data/**"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"
     # HW2 materials (released Sep 25) — the hw2.qmd download links point here.

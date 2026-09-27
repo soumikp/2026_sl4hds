@@ -1,0 +1,22 @@
+---
+title: "Classification II"
+subtitle: "Support vector machines"
+date: "Oct 2, 2026"
+date-format: long
+---
+
+Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries. The lab goes further than the slides: interactive simulations of hyperplanes, support vectors, and kernels, and variable selection for classification with the lasso.
+
+📖 **Assigned reading:** ISLR ch. 9
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
+
+- 🧪 [Lab 6 (interactive)](code/class6_lab1.html){target="_blank"}

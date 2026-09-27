@@ -1,0 +1,1004 @@
+---
+title: "Class 6/Lab 1: Support Vector Machines and Variable Selection for Classification"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 2, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - caret
+    - kernlab
+    - MASS
+    - glmnet
+    - ggsci
+  resources:
+    - data/wdbc.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+In class we built support vector machines one idea at a time: a **hyperplane**
+that separates two classes, the **maximal margin classifier** that picks the
+widest such hyperplane, the **soft margin** that tolerates some violations, and
+**kernels** that bend the boundary. This lab has four parts:
+
+1. **See the ideas.** Simulated data with sliders — move a hyperplane by hand,
+   push support vectors around, turn the cost dial, switch kernels.
+2. **The tumor example from the slides.** Real biopsy data, the same two
+   features (cell size and cell shape uniformity), then all nine.
+3. **More than two classes.** Iris, three species, one-versus-one.
+4. **Variable selection for classification.** Thirty correlated tumor features:
+   ordinary logistic regression breaks, and the lasso picks a handful.
+
+Every code cell runs live in your browser via webR — no local R install
+needed. Packages and data load once when the page opens; give it a few seconds
+on first load.
+
+**Two kinds of cells.** The **interactive cells** (the ones with sliders above
+them) run on their own and re-run every time you move a slider — just play.
+Every other cell runs when you click **Run Code**; run those in order from the
+top of each part, because later cells use objects made by earlier ones.
+
+## A warning about C before we start
+
+The slides (and ISLR) write the soft margin with a **budget** $C$:
+
+$$\sum_{i=1}^n \epsilon_i \le C .$$
+
+A **large** budget means *more* tolerance for points on the wrong side of the
+margin — a wider margin.
+
+Every R package we use (`kernlab`, `e1071`, `caret`) instead uses a **cost**
+`C`: the price paid per unit of violation. A **large** cost means *less*
+tolerance — a narrower margin. The two run in **opposite directions**:
+
+| | slides / ISLR budget $C$ | software cost `C` |
+|---|---|---|
+| wider margin, more violations, more support vectors | large | small |
+| narrower margin, fewer violations, fewer support vectors | small | large |
+
+Everything in this lab uses the software meaning. When you read `C = 100`
+below, think "violations are expensive", not "a big budget".
+
+We use `kernlab::ksvm()` directly for the pictures in Part 1 and
+`caret::train()` for the real-data fits, following
+[Lab 5](../../05-classification-1/code/class5_lab1.html): `method =
+"svmLinear"`, `"svmPoly"`, and `"svmRadial"` all call `kernlab` underneath.
+
+# Part 1 — Seeing the ideas
+
+## 1.1 A hyperplane is just a sign
+
+With $p = 2$ features a hyperplane is a line,
+$f(X) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0$. The slides normalize
+$\beta_1^2 + \beta_2^2 = 1$; we build that in by writing
+$\beta_1 = \cos\theta$, $\beta_2 = \sin\theta$, so the two sliders below are the
+**direction** of the normal vector (the angle $\theta$) and the **offset**
+$\beta_0$.
+
+The shading shows the sign of $f(X)$. A point with label $y_i = \pm 1$ is on
+the correct side when $y_i f(x_i) > 0$. When every point is on the correct
+side, you have a **separating hyperplane**, and — because
+$\beta_1^2 + \beta_2^2 = 1$ — the smallest $y_i f(x_i)$ is the **margin** $M$:
+the distance from the line to the closest point.
+
+**Your job:** find a separating hyperplane, then make $M$ as large as you can.
+The title tells you the best achievable value.
+
+```{ojs}
+//| echo: false
+viewof theta = Inputs.range([0, 355], {value: 0, step: 5, label: "angle θ (degrees)"})
+viewof beta0 = Inputs.range([-5, 5], {value: -2, step: 0.05, label: "offset β₀"})
+```
+
+```{webr}
+#| autorun: true
+#| fig-width: 8
+#| fig-height: 6
+#| input:
+#|   - theta
+#|   - beta0
+library(ggplot2)
+
+# Two well-separated clouds; y = -1 (lower left) and y = +1 (upper right)
+set.seed(6)
+n <- 20
+sep <- data.frame(X1 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  X2 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  y  = rep(c(-1, 1), each = n))
+
+# The hyperplane you chose (beta1^2 + beta2^2 = 1)
+b1 <- cos(theta * pi / 180)
+b2 <- sin(theta * pi / 180)
+f  <- beta0 + b1 * sep$X1 + b2 * sep$X2
+n_wrong <- sum(sep$y * f <= 0)
+M <- min(sep$y * f)
+
+grid <- expand.grid(X1 = seq(-0.5, 4.5, length.out = 120),
+                     X2 = seq(-0.5, 4.5, length.out = 120))
+grid$f <- beta0 + b1 * grid$X1 + b2 * grid$X2
+
+headline <- if (n_wrong == 0) {
+  sprintf("Separating hyperplane!  Your margin M = %.2f  (best possible: 0.49)", M)
+} else {
+  sprintf("%d point(s) on the wrong side (circled)  —  keep going", n_wrong)
+}
+
+ggplot() +
+  geom_raster(data = grid, aes(X1, X2, fill = f > 0), alpha = 0.25) +
+  geom_contour(data = grid, aes(X1, X2, z = f), breaks = 0, colour = "black",
+               linewidth = 1) +
+  geom_point(data = sep, aes(X1, X2, colour = factor(y)), size = 3) +
+  geom_point(data = sep[sep$y * f <= 0, ], aes(X1, X2), shape = 21,
+             size = 7, stroke = 1.2) +
+  scale_fill_manual(values = c(`FALSE` = "#3B4992", `TRUE` = "#EE0000"),
+                    labels = c("f(X) < 0", "f(X) > 0"), name = NULL) +
+  scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                      labels = c("y = -1", "y = +1"), name = NULL) +
+  coord_equal(xlim = c(-0.5, 4.5), ylim = c(-0.5, 4.5), expand = FALSE) +
+  labs(title = headline) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+Notice how many different lines separate these two clouds — infinitely many.
+Separation alone does not pick a classifier; that is why we ask for the one
+with the **largest margin**. (Hint if you are stuck: the best angle is about
+40° and the best offset about −2.75.)
+
+## 1.2 The maximal margin classifier and its support vectors
+
+`ksvm()` with a linear kernel and a huge cost (`C = 10000`, so no violations
+are affordable) finds the maximal margin hyperplane for us. The solid line is
+the hyperplane; the dashed lines are the margins; circled points are the
+**support vectors**.
+
+The slides claim the support vectors are the only points that matter. Test
+it: pick a point and slide it **away from** (positive) or **toward**
+(negative) the boundary. The grey line is the original hyperplane for
+comparison.
+
+```{ojs}
+//| echo: false
+viewof which_point = Inputs.radio(["a support vector", "a point far from the margin"], {value: "a support vector", label: "Move"})
+viewof shift = Inputs.range([-0.4, 1.5], {value: 0, step: 0.05, label: "distance moved"})
+```
+
+```{webr}
+#| autorun: true
+#| fig-width: 8
+#| fig-height: 6
+#| input:
+#|   - which_point
+#|   - shift
+library(ggplot2)
+library(kernlab)
+
+set.seed(6)
+n <- 20
+sep <- data.frame(X1 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  X2 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  y  = factor(rep(c(-1, 1), each = n)))
+
+fit_mmc <- function(d) {
+  ksvm(y ~ X1 + X2, data = d, kernel = "vanilladot", kpar = list(),
+       C = 10000, scaled = FALSE)
+}
+margin_M <- function(m) {                       # M = 1 / ||beta||
+  w <- colSums(coef(m)[[1]] * xmatrix(m)[[1]])
+  1 / sqrt(sum(w^2))
+}
+
+m0 <- fit_mmc(sep)
+w0 <- colSums(coef(m0)[[1]] * xmatrix(m0)[[1]])
+u  <- w0 / sqrt(sum(w0^2))                       # unit normal to the hyperplane
+f0 <- predict(m0, sep, type = "decision")[, 1]
+
+# Choose the point: the first support vector, or the point farthest from the line
+i <- if (which_point == "a support vector") alphaindex(m0)[[1]][1] else which.max(abs(f0))
+
+# Move it along the normal: positive = away from the boundary
+moved <- sep
+moved[i, c("X1", "X2")] <- sep[i, c("X1", "X2")] + shift * sign(f0[i]) * u
+m1 <- fit_mmc(moved)
+
+grid <- expand.grid(X1 = seq(-0.5, 4.5, length.out = 150),
+                    X2 = seq(-0.5, 4.5, length.out = 150))
+grid$f0 <- predict(m0, grid, type = "decision")[, 1]
+grid$f1 <- predict(m1, grid, type = "decision")[, 1]
+sv <- moved[alphaindex(m1)[[1]], ]
+
+ggplot() +
+  geom_contour(data = grid, aes(X1, X2, z = f0), breaks = 0,
+               colour = "grey60", linewidth = 1) +
+  geom_contour(data = grid, aes(X1, X2, z = f1), breaks = 0,
+               colour = "black", linewidth = 1) +
+  geom_contour(data = grid, aes(X1, X2, z = f1), breaks = c(-1, 1),
+               colour = "black", linetype = "dashed") +
+  geom_point(data = moved, aes(X1, X2, colour = y), size = 3) +
+  geom_point(data = sv, aes(X1, X2), shape = 21, size = 7, stroke = 1.2) +
+  geom_point(data = moved[i, ], aes(X1, X2), shape = 4, size = 5, stroke = 2) +
+  scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                      labels = c("y = -1", "y = +1"), name = NULL) +
+  coord_equal(xlim = c(-0.5, 4.5), ylim = c(-0.5, 4.5), expand = FALSE) +
+  labs(title = sprintf("Margin M = %.2f (was %.2f)   |   %d support vectors",
+                       margin_M(m1), margin_M(m0), length(alphaindex(m1)[[1]])),
+       subtitle = "x marks the point you are moving") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+What you should see:
+
+- **Far-away point:** slide it anywhere in its range — the hyperplane does not
+  move at all. It is not a support vector, so it has no say.
+- **Support vector, pulled toward the boundary** (negative): the margin
+  shrinks immediately. The whole classifier is at the mercy of this one point.
+- **Support vector, pushed away** (positive): the margin widens until another
+  point takes over as a support vector.
+
+That sensitivity is the maximal margin classifier's weakness, and the reason
+the soft margin exists.
+
+## 1.3 The soft margin: turning the cost dial
+
+Now the classes overlap, so **no** separating hyperplane exists. The soft
+margin lets some points sit inside the margin, or even on the wrong side of the
+hyperplane. Slide the cost from cheap (left) to expensive (right).
+
+```{ojs}
+//| echo: false
+viewof log10C = Inputs.range([-2, 2], {value: 0, step: 0.25, label: "log₁₀(cost C)"})
+```
+
+```{webr}
+#| autorun: true
+#| fig-width: 8
+#| fig-height: 6
+#| input:
+#|   - log10C
+library(ggplot2)
+library(kernlab)
+
+set.seed(3)
+n <- 50
+ovl <- data.frame(X1 = c(rnorm(n, 1.2, 0.8), rnorm(n, 2.8, 0.8)),
+                  X2 = c(rnorm(n, 1.2, 0.8), rnorm(n, 2.8, 0.8)),
+                  y  = factor(rep(c(-1, 1), each = n)))
+
+C <- 10^log10C
+m <- ksvm(y ~ X1 + X2, data = ovl, kernel = "vanilladot", kpar = list(),
+          C = C, scaled = FALSE)
+w <- colSums(coef(m)[[1]] * xmatrix(m)[[1]])
+
+grid <- expand.grid(X1 = seq(-1.5, 5.5, length.out = 150),
+                    X2 = seq(-1.5, 5.5, length.out = 150))
+grid$f <- predict(m, grid, type = "decision")[, 1]
+sv <- ovl[alphaindex(m)[[1]], ]
+
+ggplot() +
+  geom_contour(data = grid, aes(X1, X2, z = f), breaks = 0,
+               colour = "black", linewidth = 1) +
+  geom_contour(data = grid, aes(X1, X2, z = f), breaks = c(-1, 1),
+               colour = "black", linetype = "dashed") +
+  geom_point(data = ovl, aes(X1, X2, colour = y), size = 2.5) +
+  geom_point(data = sv, aes(X1, X2), shape = 21, size = 5, stroke = 0.8) +
+  scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                      labels = c("y = -1", "y = +1"), name = NULL) +
+  coord_equal(xlim = c(-1.5, 5.5), ylim = c(-1.5, 5.5), expand = FALSE) +
+  labs(title = sprintf("cost C = %.2f   |   margin width = %.2f   |   %d support vectors   |   training error = %.0f%%",
+                       C, 2 / sqrt(sum(w^2)), nSV(m), 100 * error(m))) +
+  theme_bw() +
+  theme(legend.position = "bottom", plot.title = element_text(size = 11))
+```
+
+Sweep the slider end to end and watch three numbers move together:
+
+| cost `C` | margin width | support vectors | training error |
+|---|---|---|---|
+| 0.01 (cheap violations) | 3.32 | 70 | 4% |
+| 1 | 0.91 | 16 | 4% |
+| 100 (expensive violations) | 0.59 | 10 | 3% |
+
+- **Cheap violations → wide margin, many support vectors.** 70 of the 100
+  points help set the boundary, so no single point can drag it around: **low
+  variance, higher bias.**
+- **Expensive violations → narrow margin, few support vectors.** The fit
+  bends to a handful of points near the boundary: **low bias, higher
+  variance.**
+- **Training error barely changes (4% → 3%).** So training error cannot pick
+  `C` for us — it will always favor expensive violations. We choose `C` the
+  way we choose every tuning parameter: **cross-validation**. That is exactly
+  what `caret::train()` does in Part 2.
+
+## 1.4 Kernels: when a straight line won't do
+
+Here class `+1` sits **inside** a ring and class `-1` outside it — no straight
+line can separate them. We fit on 200 training points and report the error on
+1,000 fresh test points from the same process. Try each kernel; for the
+radial kernel, also slide $\gamma$ (kernlab calls it `sigma`).
+
+```{ojs}
+//| echo: false
+viewof kern = Inputs.select(["linear", "polynomial, degree 2", "polynomial, degree 3", "radial"], {value: "linear", label: "kernel"})
+viewof log10gamma = Inputs.range([-1, 2], {value: 0, step: 0.25, label: "log₁₀(γ)  (radial only)"})
+```
+
+```{webr}
+#| autorun: true
+#| fig-width: 8
+#| fig-height: 6
+#| input:
+#|   - kern
+#|   - log10gamma
+library(ggplot2)
+library(kernlab)
+
+make_ring <- function(n) {
+  X1 <- runif(n, -2, 2)
+  X2 <- runif(n, -2, 2)
+  inside <- sqrt(X1^2 + X2^2) + rnorm(n, 0, 0.15) < 1.2
+  data.frame(X1, X2, y = factor(ifelse(inside, 1, -1), levels = c(-1, 1)))
+}
+set.seed(4); ring_train <- make_ring(200)
+set.seed(5); ring_test  <- make_ring(1000)
+
+gamma <- 10^log10gamma
+m <- switch(kern,
+  "linear"               = ksvm(y ~ ., ring_train, kernel = "vanilladot",
+                                kpar = list(), C = 1),
+  "polynomial, degree 2" = ksvm(y ~ ., ring_train, kernel = "polydot",
+                                kpar = list(degree = 2), C = 1),
+  "polynomial, degree 3" = ksvm(y ~ ., ring_train, kernel = "polydot",
+                                kpar = list(degree = 3), C = 1),
+  "radial"               = ksvm(y ~ ., ring_train, kernel = "rbfdot",
+                                kpar = list(sigma = gamma), C = 1))
+
+train_err <- mean(predict(m, ring_train) != ring_train$y)
+test_err  <- mean(predict(m, ring_test)  != ring_test$y)
+
+grid <- expand.grid(X1 = seq(-2, 2, length.out = 150),
+                    X2 = seq(-2, 2, length.out = 150))
+grid$pred <- predict(m, grid)
+
+ggplot() +
+  geom_raster(data = grid, aes(X1, X2, fill = pred), alpha = 0.25) +
+  geom_point(data = ring_train, aes(X1, X2, colour = y), size = 2) +
+  scale_fill_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                    guide = "none") +
+  scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                      labels = c("y = -1 (outside)", "y = +1 (inside)"), name = NULL) +
+  coord_equal(expand = FALSE) +
+  labs(title = sprintf("%s%s   |   training error %.1f%%   |   test error %.1f%%",
+                       kern, if (kern == "radial") sprintf(" (γ = %.2f)", gamma) else "",
+                       100 * train_err, 100 * test_err)) +
+  theme_bw() +
+  theme(legend.position = "bottom", plot.title = element_text(size = 11))
+```
+
+Things to try:
+
+| kernel | training error | test error |
+|---|---|---|
+| linear | 30.5% | 28.5% |
+| polynomial, degree 2 | 7.0% | 7.4% |
+| radial, γ = 1 | 8.5% | 6.3% |
+| radial, γ = 100 | 3.0% | 21.0% |
+
+- **linear** gives up and calls everything "outside" — one straight cut can't
+  carve out a disc, so it misclassifies the whole inside class.
+- **polynomial, degree 2** gets close to the best possible: the true boundary
+  $X_1^2 + X_2^2 = 1.2^2$ *is* a degree-2 curve. (Nothing reaches 0% — the
+  labels near the ring are noisy on purpose.)
+- **radial**, then slide $\gamma$ all the way right. The training error keeps
+  falling while the test error climbs as the boundary shrink-wraps individual
+  points. Large $\gamma$ = very local kernel = **overfitting**. $\gamma$ is a
+  flexibility dial, just like $k$ in k-NN.
+
+### Why the degree-2 kernel works: the enlarged feature space
+
+The slides' trick was to add transformed features and fit a *linear*
+classifier in the bigger space. Plot the same points on $X_1^2$ and $X_2^2$
+instead of $X_1$ and $X_2$:
+
+```{webr}
+library(ggplot2)
+
+set.seed(4)
+X1 <- runif(200, -2, 2); X2 <- runif(200, -2, 2)
+inside <- sqrt(X1^2 + X2^2) + rnorm(200, 0, 0.15) < 1.2
+ring <- data.frame(X1sq = X1^2, X2sq = X2^2,
+                   y = factor(ifelse(inside, 1, -1), levels = c(-1, 1)))
+
+ggplot(ring, aes(X1sq, X2sq, colour = y)) +
+  geom_point(size = 2) +
+  geom_abline(intercept = 1.44, slope = -1, linetype = "dashed") +
+  scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                      labels = c("y = -1 (outside)", "y = +1 (inside)"), name = NULL) +
+  labs(x = expression(X[1]^2), y = expression(X[2]^2),
+       title = "The ring becomes (almost) linearly separable",
+       subtitle = "dashed line: X1² + X2² = 1.44") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+In the transformed coordinates a straight line does the job. The polynomial
+kernel gets the same result **without ever building those columns**: it only
+needs inner products, which is what makes kernels cheap even when the enlarged
+space is huge (or, for the radial kernel, infinite-dimensional).
+
+# Part 2 — The tumor example from the slides
+
+The slides motivated SVMs with benign vs. malignant tumors plotted on **cell
+size uniformity** and **cell shape uniformity**. Those come from the Wisconsin
+breast-cancer biopsy data, which ships with the `MASS` package as `biopsy`:
+699 biopsies, nine cytology scores each rated 1–10, and the diagnosis.
+
+```{webr}
+library(MASS)
+library(dplyr)
+
+tumor <- biopsy |>
+  na.omit() |>                      # 16 biopsies are missing bare_nuclei
+  transmute(clump_thickness = V1, cell_size = V2, cell_shape = V3,
+            adhesion = V4, epithelial_size = V5, bare_nuclei = V6,
+            chromatin = V7, nucleoli = V8, mitoses = V9,
+            class = factor(class, levels = c("benign", "malignant"),
+                           labels = c("Benign", "Malignant")))
+
+dim(tumor)
+table(tumor$class)
+```
+
+683 complete biopsies, 65% benign. The scores are whole numbers from 1 to 10,
+so many patients share exactly the same (size, shape) pair — we **jitter** the
+points slightly so they don't stack on top of each other:
+
+```{webr}
+library(ggplot2)
+
+ggplot(tumor, aes(cell_size, cell_shape, colour = class)) +
+  geom_jitter(width = 0.25, height = 0.25, size = 1.5, alpha = 0.6) +
+  ggsci::scale_color_aaas() +
+  labs(x = "Cell Size Uniformity", y = "Cell Shape Uniformity",
+       colour = "Tumor Class",
+       title = "Tumor classification based on biomarkers") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+Mostly separable, with a band of overlap in the middle — a job for the soft
+margin.
+
+### Split, then tune the cost by cross-validation
+
+```{webr}
+library(caret)
+
+set.seed(2155)
+idx <- createDataPartition(tumor$class, p = 0.75, list = FALSE)
+train_data <- tumor[idx, ]
+test_data  <- tumor[-idx, ]
+
+ctrl <- trainControl(method = "cv", number = 10)
+
+set.seed(2155)
+svm_2 <- train(class ~ cell_size + cell_shape, data = train_data,
+               method = "svmLinear", trControl = ctrl,
+               preProcess = c("center", "scale"),
+               tuneGrid = expand.grid(C = 2^(-6:4)))
+
+ggplot(svm_2$results, aes(C, Accuracy)) +
+  geom_line() + geom_point() +
+  scale_x_log10() +
+  labs(x = "cost C (log scale)", y = "10-fold CV accuracy",
+       title = "Cross-validated accuracy across the cost grid") +
+  theme_bw()
+svm_2$bestTune
+```
+
+Cross-validation picks `C = 8`, but look at the y-axis: accuracy only runs
+from 0.934 to 0.951 across a 1,000-fold range of `C`. On this data the cost
+barely matters. That is common — and it's why we tune on a log-spaced grid
+rather than agonizing over one value.
+
+### The fitted boundary
+
+`predict()` on a grid of (size, shape) values paints the regions the SVM
+assigns to each class. `caret` applies the same centering and scaling to the
+grid that it applied to the training data.
+
+```{webr}
+grid <- expand.grid(cell_size  = seq(0.5, 10.5, length.out = 120),
+                    cell_shape = seq(0.5, 10.5, length.out = 120))
+grid$pred <- predict(svm_2, grid)
+
+ggplot() +
+  geom_raster(data = grid, aes(cell_size, cell_shape, fill = pred), alpha = 0.2) +
+  geom_jitter(data = train_data, aes(cell_size, cell_shape, colour = class),
+              width = 0.25, height = 0.25, size = 1.5, alpha = 0.6) +
+  ggsci::scale_color_aaas() + ggsci::scale_fill_aaas(guide = "none") +
+  labs(x = "Cell Size Uniformity", y = "Cell Shape Uniformity",
+       colour = "Tumor Class", title = "Linear SVM on two biomarkers") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+### How well does it do on the test set?
+
+As in Lab 5 we set `positive = "Malignant"`, so **sensitivity** is the share of
+cancers we catch.
+
+```{webr}
+confusionMatrix(predict(svm_2, test_data), test_data$class,
+                positive = "Malignant")
+```
+
+With just two features the linear SVM gets **95.3%** of the 170 test biopsies
+right, catching 56 of 59 cancers (sensitivity 0.949) while clearing 106 of 111
+benign tumors (specificity 0.955).
+
+### All nine features, three kernels
+
+Now use every score, and compare the three kernels from class. All three go
+through the same `train()` call; only `method` changes. **This is the heaviest
+cell in Part 2** (the polynomial grid fits 270 models) — give it a moment.
+
+```{webr}
+f_all <- class ~ .
+
+set.seed(2155)
+svm_lin <- train(f_all, data = train_data, method = "svmLinear",
+                 trControl = ctrl, preProcess = c("center", "scale"),
+                 tuneGrid = expand.grid(C = 2^(-6:4)))
+set.seed(2155)
+svm_poly <- train(f_all, data = train_data, method = "svmPoly",
+                  trControl = ctrl, preProcess = c("center", "scale"),
+                  tuneLength = 3)
+set.seed(2155)
+svm_rad <- train(f_all, data = train_data, method = "svmRadial",
+                 trControl = ctrl, preProcess = c("center", "scale"),
+                 tuneLength = 6)
+
+summarise_svm <- function(model, name) {
+  cm <- confusionMatrix(predict(model, test_data), test_data$class,
+                        positive = "Malignant")
+  data.frame(Model = name,
+             Accuracy    = round(cm$overall[["Accuracy"]], 3),
+             Sensitivity = round(cm$byClass[["Sensitivity"]], 3),
+             Specificity = round(cm$byClass[["Specificity"]], 3))
+}
+
+rbind(summarise_svm(svm_2,    "Linear, 2 features"),
+      summarise_svm(svm_lin,  "Linear, 9 features"),
+      summarise_svm(svm_poly, "Polynomial, 9 features"),
+      summarise_svm(svm_rad,  "Radial, 9 features"))
+```
+
+- **More features help:** going from two scores to nine lifts accuracy from
+  0.953 to 0.971 and sensitivity from 0.949 to 0.983 (one missed cancer instead
+  of three).
+- **More flexible kernels don't:** linear, polynomial, and radial land within
+  one test biopsy of each other. Cross-validation even picked the *smallest*
+  cost on the grid for the linear kernel — the widest, most forgiving margin.
+- The lesson from §1.4 in reverse: a kernel only pays off when the true boundary
+  is curved. These cytology scores rise together as a tumor turns malignant,
+  so a straight cut is already about as good as it gets. Try the linear kernel
+  first; reach for a kernel only when CV says it helps.
+
+# Part 3 — More than two classes
+
+SVMs are binary by construction. The slides gave two ways round that:
+**one-versus-all** (fit $K$ classifiers, each class against the rest) and
+**one-versus-one** (fit all $\binom{K}{2}$ pairwise classifiers and let them
+vote). `kernlab` uses **one-versus-one**. With three iris species that means
+$\binom{3}{2} = 3$ binary SVMs inside one fitted model — we can count them:
+
+```{webr}
+library(kernlab)
+
+set.seed(1)
+m_iris <- ksvm(Species ~ ., data = iris, kernel = "rbfdot")
+length(coef(m_iris))   # one set of coefficients per pairwise classifier
+```
+
+The interactive plot below shows the combined vote as three-colored decision
+regions. The two feature pairs give very different problems:
+
+```{ojs}
+//| echo: false
+viewof iris_features = Inputs.radio(["petal", "sepal"], {value: "petal", label: "features"})
+viewof iris_kernel = Inputs.radio(["linear", "radial"], {value: "linear", label: "kernel"})
+```
+
+```{webr}
+#| autorun: true
+#| fig-width: 8
+#| fig-height: 6
+#| input:
+#|   - iris_features
+#|   - iris_kernel
+library(ggplot2)
+library(kernlab)
+
+vars <- if (iris_features == "petal") c("Petal.Length", "Petal.Width") else
+                                      c("Sepal.Length", "Sepal.Width")
+d <- data.frame(x1 = iris[[vars[1]]], x2 = iris[[vars[2]]], Species = iris$Species)
+
+set.seed(1)
+m <- if (iris_kernel == "linear") {
+  ksvm(Species ~ x1 + x2, data = d, kernel = "vanilladot", kpar = list(),
+       C = 1, cross = 10)
+} else {
+  ksvm(Species ~ x1 + x2, data = d, kernel = "rbfdot", C = 1, cross = 10)
+}
+
+grid <- expand.grid(x1 = seq(min(d$x1) - 0.3, max(d$x1) + 0.3, length.out = 150),
+                    x2 = seq(min(d$x2) - 0.3, max(d$x2) + 0.3, length.out = 150))
+grid$pred <- predict(m, grid)
+
+ggplot() +
+  geom_raster(data = grid, aes(x1, x2, fill = pred), alpha = 0.25) +
+  geom_jitter(data = d, aes(x1, x2, colour = Species, shape = Species),
+              width = 0.03, height = 0.03, size = 2.5) +
+  ggsci::scale_color_aaas() + ggsci::scale_fill_aaas(guide = "none") +
+  coord_cartesian(expand = FALSE) +
+  labs(x = vars[1], y = vars[2],
+       title = sprintf("%s kernel on %s features   |   10-fold CV error %.1f%%",
+                       iris_kernel, iris_features, 100 * cross(m))) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+- **Petal features:** both kernels separate the three species almost perfectly
+  (10-fold CV error 4.7% linear, 4.0% radial). Setosa sits far off on its own;
+  the two classifiers that involve it are easy.
+- **Sepal features:** the error jumps to about 21% (linear) and 25% (radial).
+  Versicolor and virginica overlap heavily on sepal measurements, and no
+  kernel can separate points that sit on top of each other — the radial kernel
+  just draws a more contorted boundary through the overlap and does *worse*.
+  Better features beat a fancier kernel.
+
+# Part 4 — Variable selection for classification
+
+Everything so far used a few hand-picked features. Real problems often come
+with many correlated candidates, and we would like the data to tell us which
+ones matter. Back to the **Wisconsin Diagnostic (WDBC)** data from Lab 5, this
+time with **all 30 features**: ten nuclear measurements, each recorded as a
+mean, a standard error, and a "worst" value.
+
+```{webr}
+library(dplyr)
+library(caret)
+
+wdbc <- read.csv("data/wdbc.csv") |>
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
+
+set.seed(2155)
+idx <- createDataPartition(wdbc$diagnosis, p = 0.75, list = FALSE)
+wtrain <- wdbc[idx, ]
+wtest  <- wdbc[-idx, ]
+
+c(train = nrow(wtrain), test = nrow(wtest), features = ncol(wdbc) - 1)
+```
+
+### Why not just throw everything into logistic regression?
+
+```{webr}
+full_glm <- glm(diagnosis ~ ., data = wtrain, family = binomial)
+summary(abs(coef(full_glm)))
+```
+
+R warns that the algorithm **did not converge** and that fitted probabilities
+are **numerically 0 or 1**. The training tumors are perfectly separable in 30
+dimensions, so the likelihood keeps improving as the coefficients grow —
+the median coefficient is about 500 and the largest about 44,000, on the
+log-odds scale. These estimates mean nothing, and
+(spoiler) the model does worst of everything we'll try on the test set.
+
+### The lasso: logistic regression with a penalty
+
+The fix is the same one we used for regression in [Lab 3](../../03-regression-1/code/class3_lab1.html): add a penalty. The
+**lasso** maximizes
+
+$$\underbrace{\sum_{i=1}^n \log L(\beta;\, y_i, x_i)}_{\text{logistic log-likelihood}} \; - \; \lambda \sum_{j=1}^{p} |\beta_j| .$$
+
+The absolute-value penalty does two jobs at once: it keeps the coefficients
+finite, and it sets many of them **exactly to zero** — so fitting the model
+*is* selecting variables. $\lambda$ controls how many survive. `glmnet` fits
+the whole path of $\lambda$ values in one call (`alpha = 1` is the lasso;
+`alpha = 0` would be ridge).
+
+The features are on very different scales (areas in the hundreds,
+smoothness around 0.1), and the penalty treats every $\beta_j$ alike, so we
+**standardize first**, using the training means and SDs for both sets.
+
+```{webr}
+library(glmnet)
+
+X_train <- scale(as.matrix(wtrain[, -1]))
+X_test  <- scale(as.matrix(wtest[, -1]),
+                 center = attr(X_train, "scaled:center"),
+                 scale  = attr(X_train, "scaled:scale"))
+
+lasso_path <- glmnet(X_train, wtrain$diagnosis, family = "binomial", alpha = 1)
+plot(lasso_path, xvar = "lambda", label = TRUE)
+```
+
+Read the plot right to left: at large $\lambda$ (right) every coefficient is
+zero; as $\lambda$ shrinks, features enter one at a time. The numbers along
+the top count how many are in the model.
+
+### Pick your own λ
+
+Slide $\lambda$ and watch which features survive and how the test accuracy
+responds.
+
+```{ojs}
+//| echo: false
+viewof log10lambda = Inputs.range([-3.5, -0.5], {value: -1, step: 0.1, label: "log₁₀(λ)"})
+```
+
+```{webr}
+#| autorun: true
+#| fig-width: 9
+#| fig-height: 6
+#| input:
+#|   - log10lambda
+library(ggplot2)
+library(glmnet)
+library(caret)
+
+wd <- read.csv("data/wdbc.csv")
+wd$diagnosis <- factor(wd$diagnosis, levels = c("B", "M"),
+                       labels = c("Benign", "Malignant"))
+set.seed(2155)
+ix <- createDataPartition(wd$diagnosis, p = 0.75, list = FALSE)
+Xtr <- scale(as.matrix(wd[ix, -1]))
+Xte <- scale(as.matrix(wd[-ix, -1]), center = attr(Xtr, "scaled:center"),
+             scale = attr(Xtr, "scaled:scale"))
+
+lam <- 10^log10lambda
+fit <- glmnet(Xtr, wd$diagnosis[ix], family = "binomial", alpha = 1)
+b   <- as.matrix(coef(fit, s = lam))[-1, 1]
+b   <- b[b != 0]
+acc <- mean(predict(fit, Xte, s = lam, type = "class") == wd$diagnosis[-ix])
+
+if (length(b) == 0) {
+  b <- c("(no features selected)" = 0)
+}
+coefs <- data.frame(feature = names(b), beta = unname(b))
+coefs$effect <- factor(ifelse(coefs$beta > 0, "raises P(Malignant)",
+                              "lowers P(Malignant)"),
+                       levels = c("lowers P(Malignant)", "raises P(Malignant)"))
+
+ggplot(coefs, aes(beta, reorder(feature, abs(beta)), fill = effect)) +
+  geom_col() +
+  geom_vline(xintercept = 0) +
+  scale_fill_manual(values = c("lowers P(Malignant)" = "#3B4992",
+                               "raises P(Malignant)" = "#EE0000"),
+                    name = NULL, drop = FALSE) +
+  labs(x = "standardized coefficient", y = NULL,
+       title = sprintf("λ = %.4f   |   %d of 30 features kept   |   test accuracy %.1f%%",
+                       lam, sum(coefs$beta != 0), 100 * acc)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+A few settings to try:
+
+| log₁₀(λ) | features kept | test accuracy |
+|---|---|---|
+| −3.5 | 21 | 97.9% |
+| −2.0 | 8 | 97.9% |
+| −1.0 | 4 | 95.1% |
+| −0.5 | 2 | 69.7% |
+
+From 21 features down to 8 the test accuracy **does not move**: those extra
+13 features were redundant. Around 6 features it starts to slip, and at
+2 the model has thrown away real signal. Somewhere in between is the smallest
+model that is still as good as the big one — which is what cross-validation
+will find.
+
+### Letting cross-validation choose λ
+
+`cv.glmnet()` runs 10-fold CV along the whole path. It reports two choices:
+`lambda.min` (the lowest CV error) and `lambda.1se` (the largest $\lambda$
+within one standard error of that minimum — the simplest model that is
+statistically as good). For selection we usually prefer `lambda.1se`.
+
+```{webr}
+set.seed(2155)
+lasso_cv <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                      alpha = 1, nfolds = 10)
+plot(lasso_cv)
+
+b_1se <- coef(lasso_cv, s = "lambda.1se")
+selected <- rownames(b_1se)[b_1se[, 1] != 0][-1]   # drop the intercept
+selected
+```
+
+The `lambda.1se` model keeps **10 of the 30 features**. Notice what's
+there: mostly **"worst"** measurements (the most abnormal cells in the image)
+and the **concavity / concave points** family — the irregular, indented cell
+outlines a pathologist looks for. Of radius, perimeter, and area — three
+near-copies of "how big is the nucleus" — the lasso keeps area_worst and
+radius_worst but not perimeter: with correlated features, the lasso tends to
+keep one or two representatives and drop the rest.
+
+### Does selecting features cost us anything?
+
+Compare, on the same 142 test tumors: the unpenalized logistic model, the
+lasso, ridge (penalized but no selection), and a linear SVM trained on all 30
+features vs. only the lasso's picks.
+
+```{webr}
+set.seed(2155)
+ridge_cv <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                      alpha = 0, nfolds = 10)
+
+set.seed(2155)
+svm_all <- train(X_train, wtrain$diagnosis, method = "svmLinear",
+                 trControl = trainControl(method = "cv", number = 10),
+                 tuneGrid = expand.grid(C = 2^(-6:4)))
+set.seed(2155)
+svm_sel <- train(X_train[, selected], wtrain$diagnosis, method = "svmLinear",
+                 trControl = trainControl(method = "cv", number = 10),
+                 tuneGrid = expand.grid(C = 2^(-6:4)))
+
+glm_pred <- ifelse(predict(full_glm, wtest, type = "response") > 0.5,
+                   "Malignant", "Benign")
+acc <- function(pred) round(mean(pred == wtest$diagnosis), 3)
+
+data.frame(
+  Model = c("Logistic, no penalty", "Lasso logistic (lambda.1se)",
+            "Ridge logistic (lambda.1se)", "Linear SVM, all features",
+            "Linear SVM, lasso-selected features"),
+  Features = c(30, length(selected), 30, 30, length(selected)),
+  Test_accuracy = c(acc(glm_pred),
+                    acc(predict(lasso_cv, X_test, s = "lambda.1se", type = "class")),
+                    acc(predict(ridge_cv, X_test, s = "lambda.1se", type = "class")),
+                    acc(predict(svm_all, X_test)),
+                    acc(predict(svm_sel, X_test[, selected])))
+)
+```
+
+- **The unpenalized model is worst (0.944)** — the inflated coefficients from
+  above do real damage on new data.
+- **Lasso with 10 features = ridge with 30 = SVM with 30 (all 0.979).** We got
+  a model a third the size at no cost in accuracy, and one that names which
+  measurements matter.
+- **The SVM on the lasso's 10 features is one tumor behind (0.972).** Variable
+  selection by one method can be handed to another.
+- Everything — the standardization, the λ choice, the selected list — came from
+  the **training** tumors only. Selecting features on all the data and then
+  "testing" on part of it leaks information and makes the test accuracy look
+  better than it is.
+
+### How stable is the selection?
+
+The lasso's choice depends on the data it saw — including the random
+assignment of CV folds. Re-run the CV with 10 different fold assignments and
+count how often each feature is picked. To keep it quick we search a 30-point
+λ grid around where `lambda.1se` landed. **This is the slowest cell in the
+lab** — allow up to a minute.
+
+```{webr}
+#| timelimit: 300
+lambda_grid <- 10^seq(-1, -3, length.out = 30)
+
+picks <- sapply(1:10, function(s) {
+  set.seed(s)
+  cvfit <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                     alpha = 1, nfolds = 10, lambda = lambda_grid)
+  as.matrix(coef(cvfit, s = "lambda.1se"))[-1, 1] != 0
+})
+
+freq <- sort(rowMeans(picks), decreasing = TRUE)
+freq <- freq[freq > 0]
+
+ggplot(data.frame(feature = names(freq), freq = freq),
+       aes(freq, reorder(feature, freq))) +
+  geom_col(fill = "#3B4992") +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "share of 10 CV runs that selected the feature", y = NULL,
+       title = "Lasso selection frequency across CV fold assignments") +
+  theme_bw()
+```
+
+Seven features are chosen in **every** run — concavity_mean,
+concave_points_mean, radius_worst, texture_worst, smoothness_worst,
+concave_points_worst, symmetry_worst. Those you can trust. The rest come and
+go with nothing more than a reshuffle of the CV folds (area_worst, picked in our
+single run above, rarely or never makes the cut here). A single lasso fit gives one
+list; a stability check tells you which parts of it are real. Report the
+stable core, not whatever one run happened to say.
+
+### A connection worth knowing
+
+The SVM is secretly a penalized method too. ISLR §9.5 shows the support vector
+classifier solves
+
+$$\min_{\beta}\; \sum_{i=1}^n \max\big[0,\, 1 - y_i f(x_i)\big] \;+\; \lambda \sum_{j=1}^p \beta_j^2 ,$$
+
+a **hinge loss** plus a **ridge** penalty — and $\lambda$ plays the role of
+$1/C$ for the software cost. Swap the hinge loss for the logistic loss and you
+have ridge logistic regression; swap the ridge penalty for the lasso penalty
+and you have the lasso. "Regularization for classification" is one recipe —
+**loss + penalty** — with interchangeable parts.
+
+## Try it yourself
+
+**1. Elastic net.** `alpha` between 0 and 1 mixes the lasso and ridge
+penalties. Correlated features (radius, perimeter, and area are nearly the
+same measurement) tend to enter *together* under the elastic net, where the
+lasso picks one and drops the rest. Fill in an `alpha` and compare how many
+features survive — and whether the test accuracy changes at all.
+
+```{webr}
+#| exercise: ex_enet
+set.seed(2155)
+enet_cv <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                     alpha = ______, nfolds = 10)   # try 0.5, then 0.1
+
+b <- coef(enet_cv, s = "lambda.1se")
+c(features_kept = sum(b[-1, 1] != 0),
+  test_accuracy = mean(predict(enet_cv, X_test, s = "lambda.1se",
+                               type = "class") == wtest$diagnosis))
+```
+
+**2. A different split.** In Part 2, change `set.seed(2155)` before
+`createDataPartition()` to another number and re-run the part. Does the
+linear kernel still hold its own against the radial one?
+
+**3. Break the ring.** In §1.4, the ring's noise is `rnorm(n, 0, 0.15)`.
+There is no slider for it — edit the cell, raise it to `0.4`, and re-run. What
+happens to the test error of the degree-2 kernel, and why can no kernel fix
+it?
+
+## Things worth remembering
+
+- **The margin is decided by a few points.** Only the support vectors shape the
+  SVM; everything else could move (within limits) without changing the fit.
+- **Cost `C` in software is the opposite of the budget $C$ on the slides.**
+  Large software `C` = expensive violations = narrow margin = low bias, high
+  variance. Tune it by cross-validation, never by training error.
+- **Kernels buy flexibility, and flexibility has to be earned.** On the ring a
+  degree-2 kernel is exactly right; on the tumor data a straight line is
+  already as good as anything fancier.
+- **Multi-class SVMs are a vote.** `kernlab` fits one binary SVM per pair of
+  classes.
+- **With many correlated features, penalize.** Unpenalized logistic regression
+  broke on 30 correlated features; the lasso kept the coefficients sane *and*
+  selected a short list — but check how stable that list is before you
+  interpret it.

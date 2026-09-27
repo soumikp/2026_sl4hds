@@ -63,10 +63,10 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Oct 2</td>
-<td><strong>Classification II</strong> — support vector machines<br><span class="quiz-dates">Quiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.</span></td>
+<td><strong><a href="lectures/06-classification-2/index.html">Classification II</a></strong> — support vector machines<br><span class="quiz-dates">Quiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.</span></td>
 <td>ISLR ch. 9</td>
-<td><em>TBD</em></td>
-<td><em>TBD</em></td>
+<td><a href="lectures/06-classification-2/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/06-classification-2/code/class6_lab1.html">Lab 6</a></td>
 <td>—</td>
 </tr>
 

@@ -114,8 +114,24 @@ _solutions/
 /lectures/05-classification-1/code/class5_lab1.html
 /lectures/05-classification-1/code/class5_lab1_files/
 
+# Lecture 6 is published: clean slides and the lab go on the site (annotated
+# slides follow after class). Keep the rest local (readings, figures, figure
+# scripts, the Shiny app, page-level data). The lab's own data
+# (code/data/wdbc.csv) IS shipped.
+/lectures/06-classification-2/slides_annotated.pdf
+/lectures/06-classification-2/readings/
+/lectures/06-classification-2/figures/
+/lectures/06-classification-2/data/
+/lectures/06-classification-2/code/fig1.R
+/lectures/06-classification-2/code/fig2.R
+/lectures/06-classification-2/code/fig3.R
+/lectures/06-classification-2/code/app1.R
+# Local render byproducts (see lecture 5)
+/lectures/06-classification-2/code/_extensions/
+/lectures/06-classification-2/code/class6_lab1.html
+/lectures/06-classification-2/code/class6_lab1_files/
+
 # Unreleased lectures — remove the line for a lecture when it's ready to publish
-/lectures/06-classification-2/
 /lectures/07-clustering-kmeans/
 /lectures/08-clustering-gmm/
 /lectures/09-pca/
