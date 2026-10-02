@@ -30,6 +30,7 @@ project:
     - "lectures/05-classification-1/slides_annotated.pdf"
     - "lectures/05-classification-1/extras/classification_summarized.pdf"
     - "lectures/06-classification-2/slides_clean.pdf"
+    - "lectures/06-classification-2/slides_annotated.pdf"
     - "lectures/06-classification-2/code/data/**"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"

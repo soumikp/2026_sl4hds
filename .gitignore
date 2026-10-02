@@ -114,11 +114,9 @@ _solutions/
 /lectures/05-classification-1/code/class5_lab1.html
 /lectures/05-classification-1/code/class5_lab1_files/
 
-# Lecture 6 is published: clean slides and the lab go on the site (annotated
-# slides follow after class). Keep the rest local (readings, figures, figure
+# Lecture 6 is published: clean + annotated slides and the labs go on the site. Keep the rest local (readings, figures, figure
 # scripts, the Shiny app, page-level data). The lab's own data
 # (code/data/wdbc.csv) IS shipped.
-/lectures/06-classification-2/slides_annotated.pdf
 /lectures/06-classification-2/readings/
 /lectures/06-classification-2/figures/
 /lectures/06-classification-2/data/

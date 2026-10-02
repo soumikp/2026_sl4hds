@@ -14,6 +14,7 @@ Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linea
 ## 📊 Slides
 
 - 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
 ## 🧪 Labs
 
