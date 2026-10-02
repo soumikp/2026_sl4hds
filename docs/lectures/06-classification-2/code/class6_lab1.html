@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2026-10-02">
 
-<title>Class 6/Lab 1: Support Vector Machines and Variable Selection for Classification – BIOST 2155</title>
+<title>Class 6/Lab 1: Seeing Support Vector Machines – BIOST 2155</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,41 +23,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -75,12 +40,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-6a53539d8ec9bfc63628230de0690b95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="../../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
-<link href="../../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-a71a1d035469241ddb2e91826af1a167.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="shinylive:serviceworker_dir" content="../../..">
+<script src="../../../site_libs/quarto-contrib/shinylive-0.10.12/shinylive/load-shinylive-sw.js" type="module"></script>
+<script src="../../../site_libs/quarto-contrib/shinylive-0.10.12/shinylive/run-python-blocks.js" type="module"></script>
+<link href="../../../site_libs/quarto-contrib/shinylive-0.10.12/shinylive/shinylive.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/shinylive-quarto-css/shinylive-quarto.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,8 +76,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
-<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -143,7 +110,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -191,14 +158,29 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#a-warning-about-c-before-we-start" id="toc-a-warning-about-c-before-we-start" class="nav-link" data-scroll-target="#a-warning-about-c-before-we-start">A warning about C before we start</a></li>
+  <li><a href="#a-hyperplane-is-just-a-sign" id="toc-a-hyperplane-is-just-a-sign" class="nav-link" data-scroll-target="#a-hyperplane-is-just-a-sign">1. A hyperplane is just a sign</a></li>
+  <li><a href="#the-maximal-margin-classifier-and-its-support-vectors" id="toc-the-maximal-margin-classifier-and-its-support-vectors" class="nav-link" data-scroll-target="#the-maximal-margin-classifier-and-its-support-vectors">2. The maximal margin classifier and its support vectors</a></li>
+  <li><a href="#the-soft-margin-turning-the-cost-dial" id="toc-the-soft-margin-turning-the-cost-dial" class="nav-link" data-scroll-target="#the-soft-margin-turning-the-cost-dial">3. The soft margin: turning the cost dial</a></li>
+  <li><a href="#kernels-when-a-straight-line-wont-do" id="toc-kernels-when-a-straight-line-wont-do" class="nav-link" data-scroll-target="#kernels-when-a-straight-line-wont-do">4. Kernels: when a straight line won’t do</a></li>
+  <li><a href="#more-than-two-classes" id="toc-more-than-two-classes" class="nav-link" data-scroll-target="#more-than-two-classes">5. More than two classes</a></li>
+  <li><a href="#things-worth-remembering" id="toc-things-worth-remembering" class="nav-link" data-scroll-target="#things-worth-remembering">Things worth remembering</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Class 6/Lab 1: Support Vector Machines and Variable Selection for Classification</h1>
-<p class="subtitle lead">Live in-browser R — edit and re-run any cell</p>
+<h1 class="title">Class 6/Lab 1: Seeing Support Vector Machines</h1>
+<p class="subtitle lead">Interactive Shiny simulations — runs in your browser</p>
 </div>
 
 
@@ -240,15 +222,9 @@ window.Quarto = {
 </style>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In class we built support vector machines one idea at a time: a <strong>hyperplane</strong> that separates two classes, the <strong>maximal margin classifier</strong> that picks the widest such hyperplane, the <strong>soft margin</strong> that tolerates some violations, and <strong>kernels</strong> that bend the boundary. This lab has four parts:</p>
-<ol type="1">
-<li><strong>See the ideas.</strong> Simulated data with sliders — move a hyperplane by hand, push support vectors around, turn the cost dial, switch kernels.</li>
-<li><strong>The tumor example from the slides.</strong> Real biopsy data, the same two features (cell size and cell shape uniformity), then all nine.</li>
-<li><strong>More than two classes.</strong> Iris, three species, one-versus-one.</li>
-<li><strong>Variable selection for classification.</strong> Thirty correlated tumor features: ordinary logistic regression breaks, and the lasso picks a handful.</li>
-</ol>
-<p>Every code cell runs live in your browser via webR — no local R install needed. Packages and data load once when the page opens; give it a few seconds on first load.</p>
-<p><strong>Two kinds of cells.</strong> The <strong>interactive cells</strong> (the ones with sliders above them) run on their own and re-run every time you move a slider — just play. Every other cell runs when you click <strong>Run Code</strong>; run those in order from the top of each part, because later cells use objects made by earlier ones.</p>
+<p>In class we built support vector machines one idea at a time: a <strong>hyperplane</strong> that separates two classes, the <strong>maximal margin classifier</strong> that picks the widest such hyperplane, the <strong>soft margin</strong> that tolerates some violations, and <strong>kernels</strong> that bend the boundary. This lab lets you <em>see</em> each idea on simulated data. Move a hyperplane by hand, push support vectors around, turn the cost dial, switch kernels.</p>
+<p>There is no code to run here. Each section is a small <strong>Shiny app</strong> that runs entirely in your browser (via <a href="https://posit-dev.github.io/r-shinylive/">Shinylive</a> and webR) — no local R install needed. The first app takes 10–30 seconds to start while R and the packages download; the rest start faster after that.</p>
+<p>The real data analysis — the tumor example from the slides and variable selection with the lasso — is in <a href="class6_lab2.html" target="_blank">Lab 2</a>.</p>
 </section>
 <section id="a-warning-about-c-before-we-start" class="level2">
 <h2 class="anchored" data-anchor-id="a-warning-about-c-before-we-start">A warning about C before we start</h2>
@@ -282,78 +258,164 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>Everything in this lab uses the software meaning. When you read <code>C = 100</code> below, think “violations are expensive”, not “a big budget”.</p>
-<p>We use <code>kernlab::ksvm()</code> directly for the pictures in Part 1 and <code>caret::train()</code> for the real-data fits, following <a href="../../05-classification-1/code/class5_lab1.html">Lab 5</a>: <code>method = "svmLinear"</code>, <code>"svmPoly"</code>, and <code>"svmRadial"</code> all call <code>kernlab</code> underneath.</p>
+<p>Both labs use the software meaning. When you read <code>C = 100</code> below, think “violations are expensive”, not “a big budget”. The apps fit SVMs with <code>kernlab::ksvm()</code>, the same engine <code>caret</code>’s <code>svm*</code> methods call in Lab 2.</p>
 </section>
-<section id="part-1-seeing-the-ideas" class="level1">
-<h1>Part 1 — Seeing the ideas</h1>
 <section id="a-hyperplane-is-just-a-sign" class="level2">
-<h2 class="anchored" data-anchor-id="a-hyperplane-is-just-a-sign">1.1 A hyperplane is just a sign</h2>
-<p>With <span class="math inline">\(p = 2\)</span> features a hyperplane is a line, <span class="math inline">\(f(X) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0\)</span>. The slides normalize <span class="math inline">\(\beta_1^2 + \beta_2^2 = 1\)</span>; we build that in by writing <span class="math inline">\(\beta_1 = \cos\theta\)</span>, <span class="math inline">\(\beta_2 = \sin\theta\)</span>, so the two sliders below are the <strong>direction</strong> of the normal vector (the angle <span class="math inline">\(\theta\)</span>) and the <strong>offset</strong> <span class="math inline">\(\beta_0\)</span>.</p>
+<h2 class="anchored" data-anchor-id="a-hyperplane-is-just-a-sign">1. A hyperplane is just a sign</h2>
+<p>With <span class="math inline">\(p = 2\)</span> features a hyperplane is a line, <span class="math inline">\(f(X) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0\)</span>. The slides normalize <span class="math inline">\(\beta_1^2 + \beta_2^2 = 1\)</span>; we build that in by writing <span class="math inline">\(\beta_1 = \cos\theta\)</span>, <span class="math inline">\(\beta_2 = \sin\theta\)</span>, so the two sliders are the <strong>direction</strong> of the normal vector (the angle <span class="math inline">\(\theta\)</span>) and the <strong>offset</strong> <span class="math inline">\(\beta_0\)</span>.</p>
 <p>The shading shows the sign of <span class="math inline">\(f(X)\)</span>. A point with label <span class="math inline">\(y_i = \pm 1\)</span> is on the correct side when <span class="math inline">\(y_i f(x_i) &gt; 0\)</span>. When every point is on the correct side, you have a <strong>separating hyperplane</strong>, and — because <span class="math inline">\(\beta_1^2 + \beta_2^2 = 1\)</span> — the smallest <span class="math inline">\(y_i f(x_i)\)</span> is the <strong>margin</strong> <span class="math inline">\(M\)</span>: the distance from the line to the closest point.</p>
 <p><strong>Your job:</strong> find a separating hyperplane, then make <span class="math inline">\(M\)</span> as large as you can. The title tells you the best achievable value.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="119" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 118;"><span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>viewof theta <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="dv">355</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"angle θ (degrees)"</span>})</span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>viewof beta0 <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="op">-</span><span class="dv">5</span><span class="op">,</span> <span class="dv">5</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="op">-</span><span class="dv">2</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"offset β₀"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-1-1" data-nodetype="declaration">
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
 
-</div>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-1-2" data-nodetype="declaration">
+# Two well-separated clouds; y = -1 (lower left) and y = +1 (upper right)
+set.seed(6)
+n &lt;- 20
+sep &lt;- data.frame(X1 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  X2 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  y  = rep(c(-1, 1), each = n))
+grid &lt;- expand.grid(X1 = seq(-0.5, 4.5, length.out = 120),
+                    X2 = seq(-0.5, 4.5, length.out = 120))
 
-</div>
-</div>
-</div>
-</div>
-<div class="cell" data-autorun="true" data-input="[&quot;theta&quot;,&quot;beta0&quot;]">
-<div>
-<div id="webr-1" class="exercise-cell">
+ui &lt;- page_sidebar(
+  sidebar = sidebar(
+    sliderInput("theta", "angle θ (degrees)", min = 0, max = 355,
+                value = 0, step = 5),
+    sliderInput("beta0", "offset β₀", min = -5, max = 5,
+                value = -2, step = 0.05)
+  ),
+  plotOutput("plot", height = "560px")
+)
 
-</div>
-<script type="webr-1-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQiOjYsImZpZy13aWR0aCI6OCwiaW5wdXQiOlsidGhldGEiLCJiZXRhMCJdfSwiY29kZSI6ImxpYnJhcnkoZ2dwbG90MilcblxuIyBUd28gd2VsbC1zZXBhcmF0ZWQgY2xvdWRzOyB5ID0gLTEgKGxvd2VyIGxlZnQpIGFuZCB5ID0gKzEgKHVwcGVyIHJpZ2h0KVxuc2V0LnNlZWQoNilcbm4gPC0gMjBcbnNlcCA8LSBkYXRhLmZyYW1lKFgxID0gYyhybm9ybShuLCAxLCAwLjUpLCBybm9ybShuLCAzLCAwLjUpKSxcbiAgICAgICAgICAgICAgICAgIFgyID0gYyhybm9ybShuLCAxLCAwLjUpLCBybm9ybShuLCAzLCAwLjUpKSxcbiAgICAgICAgICAgICAgICAgIHkgID0gcmVwKGMoLTEsIDEpLCBlYWNoID0gbikpXG5cbiMgVGhlIGh5cGVycGxhbmUgeW91IGNob3NlIChiZXRhMV4yICsgYmV0YTJeMiA9IDEpXG5iMSA8LSBjb3ModGhldGEgKiBwaSAvIDE4MClcbmIyIDwtIHNpbih0aGV0YSAqIHBpIC8gMTgwKVxuZiAgPC0gYmV0YTAgKyBiMSAqIHNlcCRYMSArIGIyICogc2VwJFgyXG5uX3dyb25nIDwtIHN1bShzZXAkeSAqIGYgPD0gMClcbk0gPC0gbWluKHNlcCR5ICogZilcblxuZ3JpZCA8LSBleHBhbmQuZ3JpZChYMSA9IHNlcSgtMC41LCA0LjUsIGxlbmd0aC5vdXQgPSAxMjApLFxuICAgICAgICAgICAgICAgICAgICAgWDIgPSBzZXEoLTAuNSwgNC41LCBsZW5ndGgub3V0ID0gMTIwKSlcbmdyaWQkZiA8LSBiZXRhMCArIGIxICogZ3JpZCRYMSArIGIyICogZ3JpZCRYMlxuXG5oZWFkbGluZSA8LSBpZiAobl93cm9uZyA9PSAwKSB7XG4gIHNwcmludGYoXCJTZXBhcmF0aW5nIGh5cGVycGxhbmUhICBZb3VyIG1hcmdpbiBNID0gJS4yZiAgKGJlc3QgcG9zc2libGU6IDAuNDkpXCIsIE0pXG59IGVsc2Uge1xuICBzcHJpbnRmKFwiJWQgcG9pbnQocykgb24gdGhlIHdyb25nIHNpZGUgKGNpcmNsZWQpICDigJQgIGtlZXAgZ29pbmdcIiwgbl93cm9uZylcbn1cblxuZ2dwbG90KCkgK1xuICBnZW9tX3Jhc3RlcihkYXRhID0gZ3JpZCwgYWVzKFgxLCBYMiwgZmlsbCA9IGYgPiAwKSwgYWxwaGEgPSAwLjI1KSArXG4gIGdlb21fY29udG91cihkYXRhID0gZ3JpZCwgYWVzKFgxLCBYMiwgeiA9IGYpLCBicmVha3MgPSAwLCBjb2xvdXIgPSBcImJsYWNrXCIsXG4gICAgICAgICAgICAgICBsaW5ld2lkdGggPSAxKSArXG4gIGdlb21fcG9pbnQoZGF0YSA9IHNlcCwgYWVzKFgxLCBYMiwgY29sb3VyID0gZmFjdG9yKHkpKSwgc2l6ZSA9IDMpICtcbiAgZ2VvbV9wb2ludChkYXRhID0gc2VwW3NlcCR5ICogZiA8PSAwLCBdLCBhZXMoWDEsIFgyKSwgc2hhcGUgPSAyMSxcbiAgICAgICAgICAgICBzaXplID0gNywgc3Ryb2tlID0gMS4yKSArXG4gIHNjYWxlX2ZpbGxfbWFudWFsKHZhbHVlcyA9IGMoYEZBTFNFYCA9IFwiIzNCNDk5MlwiLCBgVFJVRWAgPSBcIiNFRTAwMDBcIiksXG4gICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGMoXCJmKFgpIDwgMFwiLCBcImYoWCkgPiAwXCIpLCBuYW1lID0gTlVMTCkgK1xuICBzY2FsZV9jb2xvdXJfbWFudWFsKHZhbHVlcyA9IGMoYC0xYCA9IFwiIzNCNDk5MlwiLCBgMWAgPSBcIiNFRTAwMDBcIiksXG4gICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhcInkgPSAtMVwiLCBcInkgPSArMVwiKSwgbmFtZSA9IE5VTEwpICtcbiAgY29vcmRfZXF1YWwoeGxpbSA9IGMoLTAuNSwgNC41KSwgeWxpbSA9IGMoLTAuNSwgNC41KSwgZXhwYW5kID0gRkFMU0UpICtcbiAgbGFicyh0aXRsZSA9IGhlYWRsaW5lKSArXG4gIHRoZW1lX2J3KCkgK1xuICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKSJ9
-</script>
-</div>
-</div>
+server &lt;- function(input, output, session) {
+  output$plot &lt;- renderPlot({
+    # The hyperplane you chose (beta1^2 + beta2^2 = 1)
+    b1 &lt;- cos(input$theta * pi / 180)
+    b2 &lt;- sin(input$theta * pi / 180)
+    f  &lt;- input$beta0 + b1 * sep$X1 + b2 * sep$X2
+    n_wrong &lt;- sum(sep$y * f &lt;= 0)
+    M &lt;- min(sep$y * f)
+    grid$f &lt;- input$beta0 + b1 * grid$X1 + b2 * grid$X2
+
+    headline &lt;- if (n_wrong == 0) {
+      sprintf("Separating hyperplane!  Your margin M = %.2f", M)
+    } else {
+      sprintf("%d point(s) on the wrong side (circled)", n_wrong)
+    }
+
+    ggplot() +
+      geom_raster(data = grid, aes(X1, X2, fill = f &gt; 0), alpha = 0.25) +
+      geom_contour(data = grid, aes(X1, X2, z = f), breaks = 0,
+                   colour = "black", linewidth = 1) +
+      geom_point(data = sep, aes(X1, X2, colour = factor(y)), size = 3) +
+      geom_point(data = sep[sep$y * f &lt;= 0, ], aes(X1, X2), shape = 21,
+                 size = 7, stroke = 1.2) +
+      scale_fill_manual(values = c(`FALSE` = "#3B4992", `TRUE` = "#EE0000"),
+                        labels = c("f(X) &lt; 0", "f(X) &gt; 0"), name = NULL,
+                        drop = FALSE) +
+      scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                          labels = c("y = -1", "y = +1"), name = NULL) +
+      coord_equal(xlim = c(-0.5, 4.5), ylim = c(-0.5, 4.5), expand = FALSE) +
+      labs(title = headline,
+           subtitle = "best possible margin: M = 0.49") +
+      theme_bw(base_size = 15) +
+      theme(legend.position = "bottom")
+  }, res = 96)
+}
+
+shinyApp(ui, server)</code></pre>
 <p>Notice how many different lines separate these two clouds — infinitely many. Separation alone does not pick a classifier; that is why we ask for the one with the <strong>largest margin</strong>. (Hint if you are stuck: the best angle is about 40° and the best offset about −2.75.)</p>
 </section>
 <section id="the-maximal-margin-classifier-and-its-support-vectors" class="level2">
-<h2 class="anchored" data-anchor-id="the-maximal-margin-classifier-and-its-support-vectors">1.2 The maximal margin classifier and its support vectors</h2>
+<h2 class="anchored" data-anchor-id="the-maximal-margin-classifier-and-its-support-vectors">2. The maximal margin classifier and its support vectors</h2>
 <p><code>ksvm()</code> with a linear kernel and a huge cost (<code>C = 10000</code>, so no violations are affordable) finds the maximal margin hyperplane for us. The solid line is the hyperplane; the dashed lines are the margins; circled points are the <strong>support vectors</strong>.</p>
 <p>The slides claim the support vectors are the only points that matter. Test it: pick a point and slide it <strong>away from</strong> (positive) or <strong>toward</strong> (negative) the boundary. The grey line is the original hyperplane for comparison.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb2" data-startfrom="192" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 191;"><span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>viewof which_point <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"a support vector"</span><span class="op">,</span> <span class="st">"a point far from the margin"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"a support vector"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Move"</span>})</span>
-<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>viewof shift <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="op">-</span><span class="fl">0.4</span><span class="op">,</span> <span class="fl">1.5</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"distance moved"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-2-1" data-nodetype="declaration">
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(kernlab)
 
-</div>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-2-2" data-nodetype="declaration">
+set.seed(6)
+n &lt;- 20
+sep &lt;- data.frame(X1 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  X2 = c(rnorm(n, 1, 0.5), rnorm(n, 3, 0.5)),
+                  y  = factor(rep(c(-1, 1), each = n)))
 
-</div>
-</div>
-</div>
-</div>
-<div class="cell" data-autorun="true" data-input="[&quot;which_point&quot;,&quot;shift&quot;]">
-<div>
-<div id="webr-2" class="exercise-cell">
+fit_mmc &lt;- function(d) {
+  ksvm(y ~ X1 + X2, data = d, kernel = "vanilladot", kpar = list(),
+       C = 10000, scaled = FALSE)
+}
+margin_M &lt;- function(m) {                       # M = 1 / ||beta||
+  w &lt;- colSums(coef(m)[[1]] * xmatrix(m)[[1]])
+  1 / sqrt(sum(w^2))
+}
 
-</div>
-<script type="webr-2-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQiOjYsImZpZy13aWR0aCI6OCwiaW5wdXQiOlsid2hpY2hfcG9pbnQiLCJzaGlmdCJdfSwiY29kZSI6ImxpYnJhcnkoZ2dwbG90MilcbmxpYnJhcnkoa2VybmxhYilcblxuc2V0LnNlZWQoNilcbm4gPC0gMjBcbnNlcCA8LSBkYXRhLmZyYW1lKFgxID0gYyhybm9ybShuLCAxLCAwLjUpLCBybm9ybShuLCAzLCAwLjUpKSxcbiAgICAgICAgICAgICAgICAgIFgyID0gYyhybm9ybShuLCAxLCAwLjUpLCBybm9ybShuLCAzLCAwLjUpKSxcbiAgICAgICAgICAgICAgICAgIHkgID0gZmFjdG9yKHJlcChjKC0xLCAxKSwgZWFjaCA9IG4pKSlcblxuZml0X21tYyA8LSBmdW5jdGlvbihkKSB7XG4gIGtzdm0oeSB+IFgxICsgWDIsIGRhdGEgPSBkLCBrZXJuZWwgPSBcInZhbmlsbGFkb3RcIiwga3BhciA9IGxpc3QoKSxcbiAgICAgICBDID0gMTAwMDAsIHNjYWxlZCA9IEZBTFNFKVxufVxubWFyZ2luX00gPC0gZnVuY3Rpb24obSkgeyAgICAgICAgICAgICAgICAgICAgICAgIyBNID0gMSAvIHx8YmV0YXx8XG4gIHcgPC0gY29sU3Vtcyhjb2VmKG0pW1sxXV0gKiB4bWF0cml4KG0pW1sxXV0pXG4gIDEgLyBzcXJ0KHN1bSh3XjIpKVxufVxuXG5tMCA8LSBmaXRfbW1jKHNlcClcbncwIDwtIGNvbFN1bXMoY29lZihtMClbWzFdXSAqIHhtYXRyaXgobTApW1sxXV0pXG51ICA8LSB3MCAvIHNxcnQoc3VtKHcwXjIpKSAgICAgICAgICAgICAgICAgICAgICAgIyB1bml0IG5vcm1hbCB0byB0aGUgaHlwZXJwbGFuZVxuZjAgPC0gcHJlZGljdChtMCwgc2VwLCB0eXBlID0gXCJkZWNpc2lvblwiKVssIDFdXG5cbiMgQ2hvb3NlIHRoZSBwb2ludDogdGhlIGZpcnN0IHN1cHBvcnQgdmVjdG9yLCBvciB0aGUgcG9pbnQgZmFydGhlc3QgZnJvbSB0aGUgbGluZVxuaSA8LSBpZiAod2hpY2hfcG9pbnQgPT0gXCJhIHN1cHBvcnQgdmVjdG9yXCIpIGFscGhhaW5kZXgobTApW1sxXV1bMV0gZWxzZSB3aGljaC5tYXgoYWJzKGYwKSlcblxuIyBNb3ZlIGl0IGFsb25nIHRoZSBub3JtYWw6IHBvc2l0aXZlID0gYXdheSBmcm9tIHRoZSBib3VuZGFyeVxubW92ZWQgPC0gc2VwXG5tb3ZlZFtpLCBjKFwiWDFcIiwgXCJYMlwiKV0gPC0gc2VwW2ksIGMoXCJYMVwiLCBcIlgyXCIpXSArIHNoaWZ0ICogc2lnbihmMFtpXSkgKiB1XG5tMSA8LSBmaXRfbW1jKG1vdmVkKVxuXG5ncmlkIDwtIGV4cGFuZC5ncmlkKFgxID0gc2VxKC0wLjUsIDQuNSwgbGVuZ3RoLm91dCA9IDE1MCksXG4gICAgICAgICAgICAgICAgICAgIFgyID0gc2VxKC0wLjUsIDQuNSwgbGVuZ3RoLm91dCA9IDE1MCkpXG5ncmlkJGYwIDwtIHByZWRpY3QobTAsIGdyaWQsIHR5cGUgPSBcImRlY2lzaW9uXCIpWywgMV1cbmdyaWQkZjEgPC0gcHJlZGljdChtMSwgZ3JpZCwgdHlwZSA9IFwiZGVjaXNpb25cIilbLCAxXVxuc3YgPC0gbW92ZWRbYWxwaGFpbmRleChtMSlbWzFdXSwgXVxuXG5nZ3Bsb3QoKSArXG4gIGdlb21fY29udG91cihkYXRhID0gZ3JpZCwgYWVzKFgxLCBYMiwgeiA9IGYwKSwgYnJlYWtzID0gMCxcbiAgICAgICAgICAgICAgIGNvbG91ciA9IFwiZ3JleTYwXCIsIGxpbmV3aWR0aCA9IDEpICtcbiAgZ2VvbV9jb250b3VyKGRhdGEgPSBncmlkLCBhZXMoWDEsIFgyLCB6ID0gZjEpLCBicmVha3MgPSAwLFxuICAgICAgICAgICAgICAgY29sb3VyID0gXCJibGFja1wiLCBsaW5ld2lkdGggPSAxKSArXG4gIGdlb21fY29udG91cihkYXRhID0gZ3JpZCwgYWVzKFgxLCBYMiwgeiA9IGYxKSwgYnJlYWtzID0gYygtMSwgMSksXG4gICAgICAgICAgICAgICBjb2xvdXIgPSBcImJsYWNrXCIsIGxpbmV0eXBlID0gXCJkYXNoZWRcIikgK1xuICBnZW9tX3BvaW50KGRhdGEgPSBtb3ZlZCwgYWVzKFgxLCBYMiwgY29sb3VyID0geSksIHNpemUgPSAzKSArXG4gIGdlb21fcG9pbnQoZGF0YSA9IHN2LCBhZXMoWDEsIFgyKSwgc2hhcGUgPSAyMSwgc2l6ZSA9IDcsIHN0cm9rZSA9IDEuMikgK1xuICBnZW9tX3BvaW50KGRhdGEgPSBtb3ZlZFtpLCBdLCBhZXMoWDEsIFgyKSwgc2hhcGUgPSA0LCBzaXplID0gNSwgc3Ryb2tlID0gMikgK1xuICBzY2FsZV9jb2xvdXJfbWFudWFsKHZhbHVlcyA9IGMoYC0xYCA9IFwiIzNCNDk5MlwiLCBgMWAgPSBcIiNFRTAwMDBcIiksXG4gICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhcInkgPSAtMVwiLCBcInkgPSArMVwiKSwgbmFtZSA9IE5VTEwpICtcbiAgY29vcmRfZXF1YWwoeGxpbSA9IGMoLTAuNSwgNC41KSwgeWxpbSA9IGMoLTAuNSwgNC41KSwgZXhwYW5kID0gRkFMU0UpICtcbiAgbGFicyh0aXRsZSA9IHNwcmludGYoXCJNYXJnaW4gTSA9ICUuMmYgKHdhcyAlLjJmKSAgIHwgICAlZCBzdXBwb3J0IHZlY3RvcnNcIixcbiAgICAgICAgICAgICAgICAgICAgICAgbWFyZ2luX00obTEpLCBtYXJnaW5fTShtMCksIGxlbmd0aChhbHBoYWluZGV4KG0xKVtbMV1dKSksXG4gICAgICAgc3VidGl0bGUgPSBcInggbWFya3MgdGhlIHBvaW50IHlvdSBhcmUgbW92aW5nXCIpICtcbiAgdGhlbWVfYncoKSArXG4gIHRoZW1lKGxlZ2VuZC5wb3NpdGlvbiA9IFwiYm90dG9tXCIpIn0=
-</script>
-</div>
-</div>
+m0 &lt;- fit_mmc(sep)
+w0 &lt;- colSums(coef(m0)[[1]] * xmatrix(m0)[[1]])
+u  &lt;- w0 / sqrt(sum(w0^2))                       # unit normal to the hyperplane
+f0 &lt;- predict(m0, sep, type = "decision")[, 1]
+
+grid &lt;- expand.grid(X1 = seq(-0.5, 4.5, length.out = 150),
+                    X2 = seq(-0.5, 4.5, length.out = 150))
+grid$f0 &lt;- predict(m0, grid, type = "decision")[, 1]
+
+ui &lt;- page_sidebar(
+  sidebar = sidebar(
+    radioButtons("which_point", "Move",
+                 c("a support vector", "a point far from the margin")),
+    sliderInput("shift", "distance moved", min = -0.4, max = 1.5,
+                value = 0, step = 0.05)
+  ),
+  plotOutput("plot", height = "560px")
+)
+
+server &lt;- function(input, output, session) {
+  output$plot &lt;- renderPlot({
+    # Choose the point: the first support vector, or the point farthest from the line
+    i &lt;- if (input$which_point == "a support vector") alphaindex(m0)[[1]][1] else
+      which.max(abs(f0))
+
+    # Move it along the normal: positive = away from the boundary
+    moved &lt;- sep
+    moved[i, c("X1", "X2")] &lt;- sep[i, c("X1", "X2")] + input$shift * sign(f0[i]) * u
+    m1 &lt;- fit_mmc(moved)
+
+    grid$f1 &lt;- predict(m1, grid, type = "decision")[, 1]
+    sv &lt;- moved[alphaindex(m1)[[1]], ]
+
+    ggplot() +
+      geom_contour(data = grid, aes(X1, X2, z = f0), breaks = 0,
+                   colour = "grey60", linewidth = 1) +
+      geom_contour(data = grid, aes(X1, X2, z = f1), breaks = 0,
+                   colour = "black", linewidth = 1) +
+      geom_contour(data = grid, aes(X1, X2, z = f1), breaks = c(-1, 1),
+                   colour = "black", linetype = "dashed") +
+      geom_point(data = moved, aes(X1, X2, colour = y), size = 3) +
+      geom_point(data = sv, aes(X1, X2), shape = 21, size = 7, stroke = 1.2) +
+      geom_point(data = moved[i, ], aes(X1, X2), shape = 4, size = 5, stroke = 2) +
+      scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                          labels = c("y = -1", "y = +1"), name = NULL) +
+      coord_equal(xlim = c(-0.5, 4.5), ylim = c(-0.5, 4.5), expand = FALSE) +
+      labs(title = sprintf("Margin M = %.2f (was %.2f)   |   %d support vectors",
+                           margin_M(m1), margin_M(m0), length(alphaindex(m1)[[1]])),
+           subtitle = "x marks the point you are moving") +
+      theme_bw(base_size = 15) +
+      theme(legend.position = "bottom")
+  }, res = 96)
+}
+
+shinyApp(ui, server)</code></pre>
 <p>What you should see:</p>
 <ul>
 <li><strong>Far-away point:</strong> slide it anywhere in its range — the hyperplane does not move at all. It is not a support vector, so it has no say.</li>
@@ -363,26 +425,64 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQi
 <p>That sensitivity is the maximal margin classifier’s weakness, and the reason the soft margin exists.</p>
 </section>
 <section id="the-soft-margin-turning-the-cost-dial" class="level2">
-<h2 class="anchored" data-anchor-id="the-soft-margin-turning-the-cost-dial">1.3 The soft margin: turning the cost dial</h2>
-<p>Now the classes overlap, so <strong>no</strong> separating hyperplane exists. The soft margin lets some points sit inside the margin, or even on the wrong side of the hyperplane. Slide the cost from cheap (left) to expensive (right).</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb3" data-startfrom="279" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 278;"><span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>viewof log10C <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="op">-</span><span class="dv">2</span><span class="op">,</span> <span class="dv">2</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.25</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"log₁₀(cost C)"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="ojs-cell-3" data-nodetype="declaration">
+<h2 class="anchored" data-anchor-id="the-soft-margin-turning-the-cost-dial">3. The soft margin: turning the cost dial</h2>
+<p>Now the classes overlap, so <strong>no</strong> separating hyperplane exists. The soft margin lets some points sit inside the margin, or even on the wrong side of the hyperplane. Slide the cost from cheap (left) to expensive (right), or press ▶ under the slider to sweep it automatically.</p>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(kernlab)
 
-</div>
-</div>
-</div>
-<div class="cell" data-autorun="true" data-input="log10C">
-<div>
-<div id="webr-3" class="exercise-cell">
+set.seed(3)
+n &lt;- 50
+ovl &lt;- data.frame(X1 = c(rnorm(n, 1.2, 0.8), rnorm(n, 2.8, 0.8)),
+                  X2 = c(rnorm(n, 1.2, 0.8), rnorm(n, 2.8, 0.8)),
+                  y  = factor(rep(c(-1, 1), each = n)))
+grid &lt;- expand.grid(X1 = seq(-1.5, 5.5, length.out = 150),
+                    X2 = seq(-1.5, 5.5, length.out = 150))
 
-</div>
-<script type="webr-3-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQiOjYsImZpZy13aWR0aCI6OCwiaW5wdXQiOlsibG9nMTBDIl19LCJjb2RlIjoibGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeShrZXJubGFiKVxuXG5zZXQuc2VlZCgzKVxubiA8LSA1MFxub3ZsIDwtIGRhdGEuZnJhbWUoWDEgPSBjKHJub3JtKG4sIDEuMiwgMC44KSwgcm5vcm0obiwgMi44LCAwLjgpKSxcbiAgICAgICAgICAgICAgICAgIFgyID0gYyhybm9ybShuLCAxLjIsIDAuOCksIHJub3JtKG4sIDIuOCwgMC44KSksXG4gICAgICAgICAgICAgICAgICB5ICA9IGZhY3RvcihyZXAoYygtMSwgMSksIGVhY2ggPSBuKSkpXG5cbkMgPC0gMTBebG9nMTBDXG5tIDwtIGtzdm0oeSB+IFgxICsgWDIsIGRhdGEgPSBvdmwsIGtlcm5lbCA9IFwidmFuaWxsYWRvdFwiLCBrcGFyID0gbGlzdCgpLFxuICAgICAgICAgIEMgPSBDLCBzY2FsZWQgPSBGQUxTRSlcbncgPC0gY29sU3Vtcyhjb2VmKG0pW1sxXV0gKiB4bWF0cml4KG0pW1sxXV0pXG5cbmdyaWQgPC0gZXhwYW5kLmdyaWQoWDEgPSBzZXEoLTEuNSwgNS41LCBsZW5ndGgub3V0ID0gMTUwKSxcbiAgICAgICAgICAgICAgICAgICAgWDIgPSBzZXEoLTEuNSwgNS41LCBsZW5ndGgub3V0ID0gMTUwKSlcbmdyaWQkZiA8LSBwcmVkaWN0KG0sIGdyaWQsIHR5cGUgPSBcImRlY2lzaW9uXCIpWywgMV1cbnN2IDwtIG92bFthbHBoYWluZGV4KG0pW1sxXV0sIF1cblxuZ2dwbG90KCkgK1xuICBnZW9tX2NvbnRvdXIoZGF0YSA9IGdyaWQsIGFlcyhYMSwgWDIsIHogPSBmKSwgYnJlYWtzID0gMCxcbiAgICAgICAgICAgICAgIGNvbG91ciA9IFwiYmxhY2tcIiwgbGluZXdpZHRoID0gMSkgK1xuICBnZW9tX2NvbnRvdXIoZGF0YSA9IGdyaWQsIGFlcyhYMSwgWDIsIHogPSBmKSwgYnJlYWtzID0gYygtMSwgMSksXG4gICAgICAgICAgICAgICBjb2xvdXIgPSBcImJsYWNrXCIsIGxpbmV0eXBlID0gXCJkYXNoZWRcIikgK1xuICBnZW9tX3BvaW50KGRhdGEgPSBvdmwsIGFlcyhYMSwgWDIsIGNvbG91ciA9IHkpLCBzaXplID0gMi41KSArXG4gIGdlb21fcG9pbnQoZGF0YSA9IHN2LCBhZXMoWDEsIFgyKSwgc2hhcGUgPSAyMSwgc2l6ZSA9IDUsIHN0cm9rZSA9IDAuOCkgK1xuICBzY2FsZV9jb2xvdXJfbWFudWFsKHZhbHVlcyA9IGMoYC0xYCA9IFwiIzNCNDk5MlwiLCBgMWAgPSBcIiNFRTAwMDBcIiksXG4gICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhcInkgPSAtMVwiLCBcInkgPSArMVwiKSwgbmFtZSA9IE5VTEwpICtcbiAgY29vcmRfZXF1YWwoeGxpbSA9IGMoLTEuNSwgNS41KSwgeWxpbSA9IGMoLTEuNSwgNS41KSwgZXhwYW5kID0gRkFMU0UpICtcbiAgbGFicyh0aXRsZSA9IHNwcmludGYoXCJjb3N0IEMgPSAlLjJmICAgfCAgIG1hcmdpbiB3aWR0aCA9ICUuMmYgICB8ICAgJWQgc3VwcG9ydCB2ZWN0b3JzICAgfCAgIHRyYWluaW5nIGVycm9yID0gJS4wZiUlXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIEMsIDIgLyBzcXJ0KHN1bSh3XjIpKSwgblNWKG0pLCAxMDAgKiBlcnJvcihtKSkpICtcbiAgdGhlbWVfYncoKSArXG4gIHRoZW1lKGxlZ2VuZC5wb3NpdGlvbiA9IFwiYm90dG9tXCIsIHBsb3QudGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDExKSkifQ==
-</script>
-</div>
-</div>
+ui &lt;- page_sidebar(
+  sidebar = sidebar(
+    sliderInput("log10C", "log₁₀(cost C)", min = -2, max = 2,
+                value = 0, step = 0.25,
+                animate = animationOptions(interval = 1200))
+  ),
+  plotOutput("plot", height = "560px")
+)
+
+server &lt;- function(input, output, session) {
+  output$plot &lt;- renderPlot({
+    C &lt;- 10^input$log10C
+    m &lt;- ksvm(y ~ X1 + X2, data = ovl, kernel = "vanilladot", kpar = list(),
+              C = C, scaled = FALSE)
+    w &lt;- colSums(coef(m)[[1]] * xmatrix(m)[[1]])
+    grid$f &lt;- predict(m, grid, type = "decision")[, 1]
+    sv &lt;- ovl[alphaindex(m)[[1]], ]
+
+    ggplot() +
+      geom_contour(data = grid, aes(X1, X2, z = f), breaks = 0,
+                   colour = "black", linewidth = 1) +
+      geom_contour(data = grid, aes(X1, X2, z = f), breaks = c(-1, 1),
+                   colour = "black", linetype = "dashed") +
+      geom_point(data = ovl, aes(X1, X2, colour = y), size = 2.5) +
+      geom_point(data = sv, aes(X1, X2), shape = 21, size = 5, stroke = 0.8) +
+      scale_colour_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                          labels = c("y = -1", "y = +1"), name = NULL) +
+      coord_equal(xlim = c(-1.5, 5.5), ylim = c(-1.5, 5.5), expand = FALSE) +
+      labs(title = sprintf("cost C = %.2f   |   margin width = %.2f",
+                           C, 2 / sqrt(sum(w^2))),
+           subtitle = sprintf("%d support vectors (circled)   |   training error = %.0f%%",
+                              nSV(m), 100 * error(m))) +
+      theme_bw(base_size = 15) +
+      theme(legend.position = "bottom")
+  }, res = 96)
+}
+
+shinyApp(ui, server)</code></pre>
 <p>Sweep the slider end to end and watch three numbers move together:</p>
 <table class="caption-top table">
 <thead>
@@ -417,41 +517,107 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQi
 <ul>
 <li><strong>Cheap violations → wide margin, many support vectors.</strong> 70 of the 100 points help set the boundary, so no single point can drag it around: <strong>low variance, higher bias.</strong></li>
 <li><strong>Expensive violations → narrow margin, few support vectors.</strong> The fit bends to a handful of points near the boundary: <strong>low bias, higher variance.</strong></li>
-<li><strong>Training error barely changes (4% → 3%).</strong> So training error cannot pick <code>C</code> for us — it will always favor expensive violations. We choose <code>C</code> the way we choose every tuning parameter: <strong>cross-validation</strong>. That is exactly what <code>caret::train()</code> does in Part 2.</li>
+<li><strong>Training error barely changes (4% → 3%).</strong> So training error cannot pick <code>C</code> for us — it will always favor expensive violations. We choose <code>C</code> the way we choose every tuning parameter: <strong>cross-validation</strong>. That is exactly what <code>caret::train()</code> does in Lab 2.</li>
 </ul>
 </section>
 <section id="kernels-when-a-straight-line-wont-do" class="level2">
-<h2 class="anchored" data-anchor-id="kernels-when-a-straight-line-wont-do">1.4 Kernels: when a straight line won’t do</h2>
+<h2 class="anchored" data-anchor-id="kernels-when-a-straight-line-wont-do">4. Kernels: when a straight line won’t do</h2>
 <p>Here class <code>+1</code> sits <strong>inside</strong> a ring and class <code>-1</code> outside it — no straight line can separate them. We fit on 200 training points and report the error on 1,000 fresh test points from the same process. Try each kernel; for the radial kernel, also slide <span class="math inline">\(\gamma\)</span> (kernlab calls it <code>sigma</code>).</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="352" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 351;"><span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a>viewof kern <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>([<span class="st">"linear"</span><span class="op">,</span> <span class="st">"polynomial, degree 2"</span><span class="op">,</span> <span class="st">"polynomial, degree 3"</span><span class="op">,</span> <span class="st">"radial"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"linear"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"kernel"</span>})</span>
-<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a>viewof log10gamma <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.25</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"log₁₀(γ)  (radial only)"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-4-1" data-nodetype="declaration">
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 680
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(kernlab)
 
-</div>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-4-2" data-nodetype="declaration">
+make_ring &lt;- function(n, noise) {
+  X1 &lt;- runif(n, -2, 2)
+  X2 &lt;- runif(n, -2, 2)
+  inside &lt;- sqrt(X1^2 + X2^2) + rnorm(n, 0, noise) &lt; 1.2
+  data.frame(X1, X2, y = factor(ifelse(inside, 1, -1), levels = c(-1, 1)))
+}
+grid &lt;- expand.grid(X1 = seq(-2, 2, length.out = 150),
+                    X2 = seq(-2, 2, length.out = 150))
+ring_colours &lt;- scale_colour_manual(
+  values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+  labels = c("y = -1 (outside)", "y = +1 (inside)"), name = NULL)
 
-</div>
-</div>
-</div>
-</div>
-<div class="cell" data-autorun="true" data-input="[&quot;kern&quot;,&quot;log10gamma&quot;]">
-<div>
-<div id="webr-4" class="exercise-cell">
+ui &lt;- page_sidebar(
+  sidebar = sidebar(
+    selectInput("kern", "kernel",
+                c("linear", "polynomial, degree 2", "polynomial, degree 3",
+                  "radial")),
+    conditionalPanel(
+      "input.kern == 'radial'",
+      sliderInput("log10gamma", "log₁₀(γ)", min = -1, max = 2,
+                  value = 0, step = 0.25)
+    ),
+    sliderInput("noise", "label noise near the ring (SD)", min = 0.05,
+                max = 0.5, value = 0.15, step = 0.05)
+  ),
+  navset_card_tab(
+    nav_panel("Original space: X₁, X₂",
+              plotOutput("fit_plot", height = "520px")),
+    nav_panel("Enlarged space: X₁², X₂²",
+              plotOutput("enlarged_plot", height = "520px"))
+  )
+)
 
-</div>
-<script type="webr-4-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQiOjYsImZpZy13aWR0aCI6OCwiaW5wdXQiOlsia2VybiIsImxvZzEwZ2FtbWEiXX0sImNvZGUiOiJsaWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KGtlcm5sYWIpXG5cbm1ha2VfcmluZyA8LSBmdW5jdGlvbihuKSB7XG4gIFgxIDwtIHJ1bmlmKG4sIC0yLCAyKVxuICBYMiA8LSBydW5pZihuLCAtMiwgMilcbiAgaW5zaWRlIDwtIHNxcnQoWDFeMiArIFgyXjIpICsgcm5vcm0obiwgMCwgMC4xNSkgPCAxLjJcbiAgZGF0YS5mcmFtZShYMSwgWDIsIHkgPSBmYWN0b3IoaWZlbHNlKGluc2lkZSwgMSwgLTEpLCBsZXZlbHMgPSBjKC0xLCAxKSkpXG59XG5zZXQuc2VlZCg0KTsgcmluZ190cmFpbiA8LSBtYWtlX3JpbmcoMjAwKVxuc2V0LnNlZWQoNSk7IHJpbmdfdGVzdCAgPC0gbWFrZV9yaW5nKDEwMDApXG5cbmdhbW1hIDwtIDEwXmxvZzEwZ2FtbWFcbm0gPC0gc3dpdGNoKGtlcm4sXG4gIFwibGluZWFyXCIgICAgICAgICAgICAgICA9IGtzdm0oeSB+IC4sIHJpbmdfdHJhaW4sIGtlcm5lbCA9IFwidmFuaWxsYWRvdFwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBrcGFyID0gbGlzdCgpLCBDID0gMSksXG4gIFwicG9seW5vbWlhbCwgZGVncmVlIDJcIiA9IGtzdm0oeSB+IC4sIHJpbmdfdHJhaW4sIGtlcm5lbCA9IFwicG9seWRvdFwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBrcGFyID0gbGlzdChkZWdyZWUgPSAyKSwgQyA9IDEpLFxuICBcInBvbHlub21pYWwsIGRlZ3JlZSAzXCIgPSBrc3ZtKHkgfiAuLCByaW5nX3RyYWluLCBrZXJuZWwgPSBcInBvbHlkb3RcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAga3BhciA9IGxpc3QoZGVncmVlID0gMyksIEMgPSAxKSxcbiAgXCJyYWRpYWxcIiAgICAgICAgICAgICAgID0ga3N2bSh5IH4gLiwgcmluZ190cmFpbiwga2VybmVsID0gXCJyYmZkb3RcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAga3BhciA9IGxpc3Qoc2lnbWEgPSBnYW1tYSksIEMgPSAxKSlcblxudHJhaW5fZXJyIDwtIG1lYW4ocHJlZGljdChtLCByaW5nX3RyYWluKSAhPSByaW5nX3RyYWluJHkpXG50ZXN0X2VyciAgPC0gbWVhbihwcmVkaWN0KG0sIHJpbmdfdGVzdCkgICE9IHJpbmdfdGVzdCR5KVxuXG5ncmlkIDwtIGV4cGFuZC5ncmlkKFgxID0gc2VxKC0yLCAyLCBsZW5ndGgub3V0ID0gMTUwKSxcbiAgICAgICAgICAgICAgICAgICAgWDIgPSBzZXEoLTIsIDIsIGxlbmd0aC5vdXQgPSAxNTApKVxuZ3JpZCRwcmVkIDwtIHByZWRpY3QobSwgZ3JpZClcblxuZ2dwbG90KCkgK1xuICBnZW9tX3Jhc3RlcihkYXRhID0gZ3JpZCwgYWVzKFgxLCBYMiwgZmlsbCA9IHByZWQpLCBhbHBoYSA9IDAuMjUpICtcbiAgZ2VvbV9wb2ludChkYXRhID0gcmluZ190cmFpbiwgYWVzKFgxLCBYMiwgY29sb3VyID0geSksIHNpemUgPSAyKSArXG4gIHNjYWxlX2ZpbGxfbWFudWFsKHZhbHVlcyA9IGMoYC0xYCA9IFwiIzNCNDk5MlwiLCBgMWAgPSBcIiNFRTAwMDBcIiksXG4gICAgICAgICAgICAgICAgICAgIGd1aWRlID0gXCJub25lXCIpICtcbiAgc2NhbGVfY29sb3VyX21hbnVhbCh2YWx1ZXMgPSBjKGAtMWAgPSBcIiMzQjQ5OTJcIiwgYDFgID0gXCIjRUUwMDAwXCIpLFxuICAgICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGMoXCJ5ID0gLTEgKG91dHNpZGUpXCIsIFwieSA9ICsxIChpbnNpZGUpXCIpLCBuYW1lID0gTlVMTCkgK1xuICBjb29yZF9lcXVhbChleHBhbmQgPSBGQUxTRSkgK1xuICBsYWJzKHRpdGxlID0gc3ByaW50ZihcIiVzJXMgICB8ICAgdHJhaW5pbmcgZXJyb3IgJS4xZiUlICAgfCAgIHRlc3QgZXJyb3IgJS4xZiUlXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIGtlcm4sIGlmIChrZXJuID09IFwicmFkaWFsXCIpIHNwcmludGYoXCIgKM6zID0gJS4yZilcIiwgZ2FtbWEpIGVsc2UgXCJcIixcbiAgICAgICAgICAgICAgICAgICAgICAgMTAwICogdHJhaW5fZXJyLCAxMDAgKiB0ZXN0X2VycikpICtcbiAgdGhlbWVfYncoKSArXG4gIHRoZW1lKGxlZ2VuZC5wb3NpdGlvbiA9IFwiYm90dG9tXCIsIHBsb3QudGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDExKSkifQ==
-</script>
-</div>
-</div>
-<p>Things to try:</p>
+server &lt;- function(input, output, session) {
+  ring_train &lt;- reactive({ set.seed(4); make_ring(200, input$noise) })
+  ring_test  &lt;- reactive({ set.seed(5); make_ring(1000, input$noise) })
+
+  output$fit_plot &lt;- renderPlot({
+    d &lt;- ring_train()
+    gamma &lt;- 10^input$log10gamma
+    m &lt;- switch(input$kern,
+      "linear"               = ksvm(y ~ ., d, kernel = "vanilladot",
+                                    kpar = list(), C = 1),
+      "polynomial, degree 2" = ksvm(y ~ ., d, kernel = "polydot",
+                                    kpar = list(degree = 2), C = 1),
+      "polynomial, degree 3" = ksvm(y ~ ., d, kernel = "polydot",
+                                    kpar = list(degree = 3), C = 1),
+      "radial"               = ksvm(y ~ ., d, kernel = "rbfdot",
+                                    kpar = list(sigma = gamma), C = 1))
+
+    train_err &lt;- mean(predict(m, d) != d$y)
+    test_err  &lt;- mean(predict(m, ring_test()) != ring_test()$y)
+    grid$pred &lt;- predict(m, grid)
+
+    ggplot() +
+      geom_raster(data = grid, aes(X1, X2, fill = pred), alpha = 0.25) +
+      geom_point(data = d, aes(X1, X2, colour = y), size = 2) +
+      scale_fill_manual(values = c(`-1` = "#3B4992", `1` = "#EE0000"),
+                        guide = "none") +
+      ring_colours +
+      coord_equal(expand = FALSE) +
+      labs(title = sprintf("%s%s", input$kern,
+                           if (input$kern == "radial") sprintf(" (γ = %.2f)", gamma) else ""),
+           subtitle = sprintf("training error %.1f%%   |   test error %.1f%%",
+                              100 * train_err, 100 * test_err)) +
+      theme_bw(base_size = 15) +
+      theme(legend.position = "bottom")
+  }, res = 96)
+
+  output$enlarged_plot &lt;- renderPlot({
+    d &lt;- ring_train()
+    ggplot(d, aes(X1^2, X2^2, colour = y)) +
+      geom_point(size = 2) +
+      geom_abline(intercept = 1.44, slope = -1, linetype = "dashed") +
+      ring_colours +
+      labs(x = expression(X[1]^2), y = expression(X[2]^2),
+           title = "The ring becomes (almost) linearly separable",
+           subtitle = "dashed line: X1² + X2² = 1.44, the true boundary") +
+      theme_bw(base_size = 15) +
+      theme(legend.position = "bottom")
+  }, res = 96)
+}
+
+shinyApp(ui, server)</code></pre>
+<p>Things to try (at the default noise, 0.15):</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -488,373 +654,89 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQi
 <li><strong>polynomial, degree 2</strong> gets close to the best possible: the true boundary <span class="math inline">\(X_1^2 + X_2^2 = 1.2^2\)</span> <em>is</em> a degree-2 curve. (Nothing reaches 0% — the labels near the ring are noisy on purpose.)</li>
 <li><strong>radial</strong>, then slide <span class="math inline">\(\gamma\)</span> all the way right. The training error keeps falling while the test error climbs as the boundary shrink-wraps individual points. Large <span class="math inline">\(\gamma\)</span> = very local kernel = <strong>overfitting</strong>. <span class="math inline">\(\gamma\)</span> is a flexibility dial, just like <span class="math inline">\(k\)</span> in k-NN.</li>
 </ul>
-<section id="why-the-degree-2-kernel-works-the-enlarged-feature-space" class="level3">
-<h3 class="anchored" data-anchor-id="why-the-degree-2-kernel-works-the-enlarged-feature-space">Why the degree-2 kernel works: the enlarged feature space</h3>
-<p>The slides’ trick was to add transformed features and fit a <em>linear</em> classifier in the bigger space. Plot the same points on <span class="math inline">\(X_1^2\)</span> and <span class="math inline">\(X_2^2\)</span> instead of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>:</p>
-<div class="cell">
-<div>
-<div id="webr-5" class="exercise-cell">
-
-</div>
-<script type="webr-5-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShnZ3Bsb3QyKVxuXG5zZXQuc2VlZCg0KVxuWDEgPC0gcnVuaWYoMjAwLCAtMiwgMik7IFgyIDwtIHJ1bmlmKDIwMCwgLTIsIDIpXG5pbnNpZGUgPC0gc3FydChYMV4yICsgWDJeMikgKyBybm9ybSgyMDAsIDAsIDAuMTUpIDwgMS4yXG5yaW5nIDwtIGRhdGEuZnJhbWUoWDFzcSA9IFgxXjIsIFgyc3EgPSBYMl4yLFxuICAgICAgICAgICAgICAgICAgIHkgPSBmYWN0b3IoaWZlbHNlKGluc2lkZSwgMSwgLTEpLCBsZXZlbHMgPSBjKC0xLCAxKSkpXG5cbmdncGxvdChyaW5nLCBhZXMoWDFzcSwgWDJzcSwgY29sb3VyID0geSkpICtcbiAgZ2VvbV9wb2ludChzaXplID0gMikgK1xuICBnZW9tX2FibGluZShpbnRlcmNlcHQgPSAxLjQ0LCBzbG9wZSA9IC0xLCBsaW5ldHlwZSA9IFwiZGFzaGVkXCIpICtcbiAgc2NhbGVfY29sb3VyX21hbnVhbCh2YWx1ZXMgPSBjKGAtMWAgPSBcIiMzQjQ5OTJcIiwgYDFgID0gXCIjRUUwMDAwXCIpLFxuICAgICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGMoXCJ5ID0gLTEgKG91dHNpZGUpXCIsIFwieSA9ICsxIChpbnNpZGUpXCIpLCBuYW1lID0gTlVMTCkgK1xuICBsYWJzKHggPSBleHByZXNzaW9uKFhbMV1eMiksIHkgPSBleHByZXNzaW9uKFhbMl1eMiksXG4gICAgICAgdGl0bGUgPSBcIlRoZSByaW5nIGJlY29tZXMgKGFsbW9zdCkgbGluZWFybHkgc2VwYXJhYmxlXCIsXG4gICAgICAgc3VidGl0bGUgPSBcImRhc2hlZCBsaW5lOiBYMcKyICsgWDLCsiA9IDEuNDRcIikgK1xuICB0aGVtZV9idygpICtcbiAgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJib3R0b21cIikifQ==
-</script>
-</div>
-</div>
-<p>In the transformed coordinates a straight line does the job. The polynomial kernel gets the same result <strong>without ever building those columns</strong>: it only needs inner products, which is what makes kernels cheap even when the enlarged space is huge (or, for the radial kernel, infinite-dimensional).</p>
+<p><strong>Why the degree-2 kernel works.</strong> Open the <strong>Enlarged space</strong> tab. The slides’ trick was to add transformed features and fit a <em>linear</em> classifier in the bigger space. On <span class="math inline">\(X_1^2\)</span> and <span class="math inline">\(X_2^2\)</span> instead of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>, a straight line does the job. The polynomial kernel gets the same result <strong>without ever building those columns</strong>: it only needs inner products, which is what makes kernels cheap even when the enlarged space is huge (or, for the radial kernel, infinite-dimensional).</p>
+<p><strong>Break the ring.</strong> Raise the noise slider to 0.4. The test error of the degree-2 kernel climbs, and switching kernels does not bring it back down. Why can no kernel fix this?</p>
 </section>
-</section>
-</section>
-<section id="part-2-the-tumor-example-from-the-slides" class="level1">
-<h1>Part 2 — The tumor example from the slides</h1>
-<p>The slides motivated SVMs with benign vs.&nbsp;malignant tumors plotted on <strong>cell size uniformity</strong> and <strong>cell shape uniformity</strong>. Those come from the Wisconsin breast-cancer biopsy data, which ships with the <code>MASS</code> package as <code>biopsy</code>: 699 biopsies, nine cytology scores each rated 1–10, and the diagnosis.</p>
-<div class="cell">
-<div>
-<div id="webr-6" class="exercise-cell">
+<section id="more-than-two-classes" class="level2">
+<h2 class="anchored" data-anchor-id="more-than-two-classes">5. More than two classes</h2>
+<p>SVMs are binary by construction. The slides gave two ways round that: <strong>one-versus-all</strong> (fit <span class="math inline">\(K\)</span> classifiers, each class against the rest) and <strong>one-versus-one</strong> (fit all <span class="math inline">\(\binom{K}{2}\)</span> pairwise classifiers and let them vote). <code>kernlab</code> uses <strong>one-versus-one</strong>. With three iris species that means <span class="math inline">\(\binom{3}{2} = 3\)</span> binary SVMs inside one fitted model — the subtitle counts them from the fitted object.</p>
+<p>The app shows the combined vote as three-colored decision regions. The two feature pairs give very different problems:</p>
+<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
+#|   shinylive does not work in self-contained HTML documents.
+#|   Please set `embed-resources: false` in your metadata.
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(kernlab)
 
-</div>
-<script type="webr-6-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShNQVNTKVxubGlicmFyeShkcGx5cilcblxudHVtb3IgPC0gYmlvcHN5IHw+XG4gIG5hLm9taXQoKSB8PiAgICAgICAgICAgICAgICAgICAgICAjIDE2IGJpb3BzaWVzIGFyZSBtaXNzaW5nIGJhcmVfbnVjbGVpXG4gIHRyYW5zbXV0ZShjbHVtcF90aGlja25lc3MgPSBWMSwgY2VsbF9zaXplID0gVjIsIGNlbGxfc2hhcGUgPSBWMyxcbiAgICAgICAgICAgIGFkaGVzaW9uID0gVjQsIGVwaXRoZWxpYWxfc2l6ZSA9IFY1LCBiYXJlX251Y2xlaSA9IFY2LFxuICAgICAgICAgICAgY2hyb21hdGluID0gVjcsIG51Y2xlb2xpID0gVjgsIG1pdG9zZXMgPSBWOSxcbiAgICAgICAgICAgIGNsYXNzID0gZmFjdG9yKGNsYXNzLCBsZXZlbHMgPSBjKFwiYmVuaWduXCIsIFwibWFsaWduYW50XCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhcIkJlbmlnblwiLCBcIk1hbGlnbmFudFwiKSkpXG5cbmRpbSh0dW1vcilcbnRhYmxlKHR1bW9yJGNsYXNzKSJ9
-</script>
-</div>
-</div>
-<p>683 complete biopsies, 65% benign. The scores are whole numbers from 1 to 10, so many patients share exactly the same (size, shape) pair — we <strong>jitter</strong> the points slightly so they don’t stack on top of each other:</p>
-<div class="cell">
-<div>
-<div id="webr-7" class="exercise-cell">
+ui &lt;- page_sidebar(
+  sidebar = sidebar(
+    radioButtons("features", "features", c("petal", "sepal")),
+    radioButtons("kernel", "kernel", c("linear", "radial"))
+  ),
+  plotOutput("plot", height = "560px")
+)
 
-</div>
-<script type="webr-7-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShnZ3Bsb3QyKVxuXG5nZ3Bsb3QodHVtb3IsIGFlcyhjZWxsX3NpemUsIGNlbGxfc2hhcGUsIGNvbG91ciA9IGNsYXNzKSkgK1xuICBnZW9tX2ppdHRlcih3aWR0aCA9IDAuMjUsIGhlaWdodCA9IDAuMjUsIHNpemUgPSAxLjUsIGFscGhhID0gMC42KSArXG4gIGdnc2NpOjpzY2FsZV9jb2xvcl9hYWFzKCkgK1xuICBsYWJzKHggPSBcIkNlbGwgU2l6ZSBVbmlmb3JtaXR5XCIsIHkgPSBcIkNlbGwgU2hhcGUgVW5pZm9ybWl0eVwiLFxuICAgICAgIGNvbG91ciA9IFwiVHVtb3IgQ2xhc3NcIixcbiAgICAgICB0aXRsZSA9IFwiVHVtb3IgY2xhc3NpZmljYXRpb24gYmFzZWQgb24gYmlvbWFya2Vyc1wiKSArXG4gIHRoZW1lX2J3KCkgK1xuICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKSJ9
-</script>
-</div>
-</div>
-<p>Mostly separable, with a band of overlap in the middle — a job for the soft margin.</p>
-<section id="split-then-tune-the-cost-by-cross-validation" class="level3">
-<h3 class="anchored" data-anchor-id="split-then-tune-the-cost-by-cross-validation">Split, then tune the cost by cross-validation</h3>
-<div class="cell">
-<div>
-<div id="webr-8" class="exercise-cell">
+server &lt;- function(input, output, session) {
+  output$plot &lt;- renderPlot({
+    vars &lt;- if (input$features == "petal") c("Petal.Length", "Petal.Width") else
+                                           c("Sepal.Length", "Sepal.Width")
+    d &lt;- data.frame(x1 = iris[[vars[1]]], x2 = iris[[vars[2]]],
+                    Species = iris$Species)
 
-</div>
-<script type="webr-8-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShjYXJldClcblxuc2V0LnNlZWQoMjE1NSlcbmlkeCA8LSBjcmVhdGVEYXRhUGFydGl0aW9uKHR1bW9yJGNsYXNzLCBwID0gMC43NSwgbGlzdCA9IEZBTFNFKVxudHJhaW5fZGF0YSA8LSB0dW1vcltpZHgsIF1cbnRlc3RfZGF0YSAgPC0gdHVtb3JbLWlkeCwgXVxuXG5jdHJsIDwtIHRyYWluQ29udHJvbChtZXRob2QgPSBcImN2XCIsIG51bWJlciA9IDEwKVxuXG5zZXQuc2VlZCgyMTU1KVxuc3ZtXzIgPC0gdHJhaW4oY2xhc3MgfiBjZWxsX3NpemUgKyBjZWxsX3NoYXBlLCBkYXRhID0gdHJhaW5fZGF0YSxcbiAgICAgICAgICAgICAgIG1ldGhvZCA9IFwic3ZtTGluZWFyXCIsIHRyQ29udHJvbCA9IGN0cmwsXG4gICAgICAgICAgICAgICBwcmVQcm9jZXNzID0gYyhcImNlbnRlclwiLCBcInNjYWxlXCIpLFxuICAgICAgICAgICAgICAgdHVuZUdyaWQgPSBleHBhbmQuZ3JpZChDID0gMl4oLTY6NCkpKVxuXG5nZ3Bsb3Qoc3ZtXzIkcmVzdWx0cywgYWVzKEMsIEFjY3VyYWN5KSkgK1xuICBnZW9tX2xpbmUoKSArIGdlb21fcG9pbnQoKSArXG4gIHNjYWxlX3hfbG9nMTAoKSArXG4gIGxhYnMoeCA9IFwiY29zdCBDIChsb2cgc2NhbGUpXCIsIHkgPSBcIjEwLWZvbGQgQ1YgYWNjdXJhY3lcIixcbiAgICAgICB0aXRsZSA9IFwiQ3Jvc3MtdmFsaWRhdGVkIGFjY3VyYWN5IGFjcm9zcyB0aGUgY29zdCBncmlkXCIpICtcbiAgdGhlbWVfYncoKVxuc3ZtXzIkYmVzdFR1bmUifQ==
-</script>
-</div>
-</div>
-<p>Cross-validation picks <code>C = 8</code>, but look at the y-axis: accuracy only runs from 0.934 to 0.951 across a 1,000-fold range of <code>C</code>. On this data the cost barely matters. That is common — and it’s why we tune on a log-spaced grid rather than agonizing over one value.</p>
-</section>
-<section id="the-fitted-boundary" class="level3">
-<h3 class="anchored" data-anchor-id="the-fitted-boundary">The fitted boundary</h3>
-<p><code>predict()</code> on a grid of (size, shape) values paints the regions the SVM assigns to each class. <code>caret</code> applies the same centering and scaling to the grid that it applied to the training data.</p>
-<div class="cell">
-<div>
-<div id="webr-9" class="exercise-cell">
+    set.seed(1)
+    m &lt;- if (input$kernel == "linear") {
+      ksvm(Species ~ x1 + x2, data = d, kernel = "vanilladot", kpar = list(),
+           C = 1, cross = 10)
+    } else {
+      ksvm(Species ~ x1 + x2, data = d, kernel = "rbfdot", C = 1, cross = 10)
+    }
 
-</div>
-<script type="webr-9-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZ3JpZCA8LSBleHBhbmQuZ3JpZChjZWxsX3NpemUgID0gc2VxKDAuNSwgMTAuNSwgbGVuZ3RoLm91dCA9IDEyMCksXG4gICAgICAgICAgICAgICAgICAgIGNlbGxfc2hhcGUgPSBzZXEoMC41LCAxMC41LCBsZW5ndGgub3V0ID0gMTIwKSlcbmdyaWQkcHJlZCA8LSBwcmVkaWN0KHN2bV8yLCBncmlkKVxuXG5nZ3Bsb3QoKSArXG4gIGdlb21fcmFzdGVyKGRhdGEgPSBncmlkLCBhZXMoY2VsbF9zaXplLCBjZWxsX3NoYXBlLCBmaWxsID0gcHJlZCksIGFscGhhID0gMC4yKSArXG4gIGdlb21faml0dGVyKGRhdGEgPSB0cmFpbl9kYXRhLCBhZXMoY2VsbF9zaXplLCBjZWxsX3NoYXBlLCBjb2xvdXIgPSBjbGFzcyksXG4gICAgICAgICAgICAgIHdpZHRoID0gMC4yNSwgaGVpZ2h0ID0gMC4yNSwgc2l6ZSA9IDEuNSwgYWxwaGEgPSAwLjYpICtcbiAgZ2dzY2k6OnNjYWxlX2NvbG9yX2FhYXMoKSArIGdnc2NpOjpzY2FsZV9maWxsX2FhYXMoZ3VpZGUgPSBcIm5vbmVcIikgK1xuICBsYWJzKHggPSBcIkNlbGwgU2l6ZSBVbmlmb3JtaXR5XCIsIHkgPSBcIkNlbGwgU2hhcGUgVW5pZm9ybWl0eVwiLFxuICAgICAgIGNvbG91ciA9IFwiVHVtb3IgQ2xhc3NcIiwgdGl0bGUgPSBcIkxpbmVhciBTVk0gb24gdHdvIGJpb21hcmtlcnNcIikgK1xuICB0aGVtZV9idygpICtcbiAgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJib3R0b21cIikifQ==
-</script>
-</div>
-</div>
-</section>
-<section id="how-well-does-it-do-on-the-test-set" class="level3">
-<h3 class="anchored" data-anchor-id="how-well-does-it-do-on-the-test-set">How well does it do on the test set?</h3>
-<p>As in Lab 5 we set <code>positive = "Malignant"</code>, so <strong>sensitivity</strong> is the share of cancers we catch.</p>
-<div class="cell">
-<div>
-<div id="webr-10" class="exercise-cell">
+    grid &lt;- expand.grid(x1 = seq(min(d$x1) - 0.3, max(d$x1) + 0.3, length.out = 150),
+                        x2 = seq(min(d$x2) - 0.3, max(d$x2) + 0.3, length.out = 150))
+    grid$pred &lt;- predict(m, grid)
+    species_cols &lt;- c(setosa = "#3B4992", versicolor = "#EE0000",
+                      virginica = "#008B45")
 
-</div>
-<script type="webr-10-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiY29uZnVzaW9uTWF0cml4KHByZWRpY3Qoc3ZtXzIsIHRlc3RfZGF0YSksIHRlc3RfZGF0YSRjbGFzcyxcbiAgICAgICAgICAgICAgICBwb3NpdGl2ZSA9IFwiTWFsaWduYW50XCIpIn0=
-</script>
-</div>
-</div>
-<p>With just two features the linear SVM gets <strong>95.3%</strong> of the 170 test biopsies right, catching 56 of 59 cancers (sensitivity 0.949) while clearing 106 of 111 benign tumors (specificity 0.955).</p>
-</section>
-<section id="all-nine-features-three-kernels" class="level3">
-<h3 class="anchored" data-anchor-id="all-nine-features-three-kernels">All nine features, three kernels</h3>
-<p>Now use every score, and compare the three kernels from class. All three go through the same <code>train()</code> call; only <code>method</code> changes. <strong>This is the heaviest cell in Part 2</strong> (the polynomial grid fits 270 models) — give it a moment.</p>
-<div class="cell">
-<div>
-<div id="webr-11" class="exercise-cell">
+    ggplot() +
+      geom_raster(data = grid, aes(x1, x2, fill = pred), alpha = 0.25) +
+      geom_jitter(data = d, aes(x1, x2, colour = Species, shape = Species),
+                  width = 0.03, height = 0.03, size = 2.5) +
+      scale_colour_manual(values = species_cols) +
+      scale_fill_manual(values = species_cols, guide = "none") +
+      coord_cartesian(expand = FALSE) +
+      labs(x = vars[1], y = vars[2],
+           title = sprintf("%s kernel on %s features   |   10-fold CV error %.1f%%",
+                           input$kernel, input$features, 100 * cross(m)),
+           subtitle = sprintf("one-versus-one: %d pairwise classifiers in this model",
+                              length(coef(m)))) +
+      theme_bw(base_size = 15) +
+      theme(legend.position = "bottom")
+  }, res = 96)
+}
 
-</div>
-<script type="webr-11-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZl9hbGwgPC0gY2xhc3MgfiAuXG5cbnNldC5zZWVkKDIxNTUpXG5zdm1fbGluIDwtIHRyYWluKGZfYWxsLCBkYXRhID0gdHJhaW5fZGF0YSwgbWV0aG9kID0gXCJzdm1MaW5lYXJcIixcbiAgICAgICAgICAgICAgICAgdHJDb250cm9sID0gY3RybCwgcHJlUHJvY2VzcyA9IGMoXCJjZW50ZXJcIiwgXCJzY2FsZVwiKSxcbiAgICAgICAgICAgICAgICAgdHVuZUdyaWQgPSBleHBhbmQuZ3JpZChDID0gMl4oLTY6NCkpKVxuc2V0LnNlZWQoMjE1NSlcbnN2bV9wb2x5IDwtIHRyYWluKGZfYWxsLCBkYXRhID0gdHJhaW5fZGF0YSwgbWV0aG9kID0gXCJzdm1Qb2x5XCIsXG4gICAgICAgICAgICAgICAgICB0ckNvbnRyb2wgPSBjdHJsLCBwcmVQcm9jZXNzID0gYyhcImNlbnRlclwiLCBcInNjYWxlXCIpLFxuICAgICAgICAgICAgICAgICAgdHVuZUxlbmd0aCA9IDMpXG5zZXQuc2VlZCgyMTU1KVxuc3ZtX3JhZCA8LSB0cmFpbihmX2FsbCwgZGF0YSA9IHRyYWluX2RhdGEsIG1ldGhvZCA9IFwic3ZtUmFkaWFsXCIsXG4gICAgICAgICAgICAgICAgIHRyQ29udHJvbCA9IGN0cmwsIHByZVByb2Nlc3MgPSBjKFwiY2VudGVyXCIsIFwic2NhbGVcIiksXG4gICAgICAgICAgICAgICAgIHR1bmVMZW5ndGggPSA2KVxuXG5zdW1tYXJpc2Vfc3ZtIDwtIGZ1bmN0aW9uKG1vZGVsLCBuYW1lKSB7XG4gIGNtIDwtIGNvbmZ1c2lvbk1hdHJpeChwcmVkaWN0KG1vZGVsLCB0ZXN0X2RhdGEpLCB0ZXN0X2RhdGEkY2xhc3MsXG4gICAgICAgICAgICAgICAgICAgICAgICBwb3NpdGl2ZSA9IFwiTWFsaWduYW50XCIpXG4gIGRhdGEuZnJhbWUoTW9kZWwgPSBuYW1lLFxuICAgICAgICAgICAgIEFjY3VyYWN5ICAgID0gcm91bmQoY20kb3ZlcmFsbFtbXCJBY2N1cmFjeVwiXV0sIDMpLFxuICAgICAgICAgICAgIFNlbnNpdGl2aXR5ID0gcm91bmQoY20kYnlDbGFzc1tbXCJTZW5zaXRpdml0eVwiXV0sIDMpLFxuICAgICAgICAgICAgIFNwZWNpZmljaXR5ID0gcm91bmQoY20kYnlDbGFzc1tbXCJTcGVjaWZpY2l0eVwiXV0sIDMpKVxufVxuXG5yYmluZChzdW1tYXJpc2Vfc3ZtKHN2bV8yLCAgICBcIkxpbmVhciwgMiBmZWF0dXJlc1wiKSxcbiAgICAgIHN1bW1hcmlzZV9zdm0oc3ZtX2xpbiwgIFwiTGluZWFyLCA5IGZlYXR1cmVzXCIpLFxuICAgICAgc3VtbWFyaXNlX3N2bShzdm1fcG9seSwgXCJQb2x5bm9taWFsLCA5IGZlYXR1cmVzXCIpLFxuICAgICAgc3VtbWFyaXNlX3N2bShzdm1fcmFkLCAgXCJSYWRpYWwsIDkgZmVhdHVyZXNcIikpIn0=
-</script>
-</div>
-</div>
-<ul>
-<li><strong>More features help:</strong> going from two scores to nine lifts accuracy from 0.953 to 0.971 and sensitivity from 0.949 to 0.983 (one missed cancer instead of three).</li>
-<li><strong>More flexible kernels don’t:</strong> linear, polynomial, and radial land within one test biopsy of each other. Cross-validation even picked the <em>smallest</em> cost on the grid for the linear kernel — the widest, most forgiving margin.</li>
-<li>The lesson from §1.4 in reverse: a kernel only pays off when the true boundary is curved. These cytology scores rise together as a tumor turns malignant, so a straight cut is already about as good as it gets. Try the linear kernel first; reach for a kernel only when CV says it helps.</li>
-</ul>
-</section>
-</section>
-<section id="part-3-more-than-two-classes" class="level1">
-<h1>Part 3 — More than two classes</h1>
-<p>SVMs are binary by construction. The slides gave two ways round that: <strong>one-versus-all</strong> (fit <span class="math inline">\(K\)</span> classifiers, each class against the rest) and <strong>one-versus-one</strong> (fit all <span class="math inline">\(\binom{K}{2}\)</span> pairwise classifiers and let them vote). <code>kernlab</code> uses <strong>one-versus-one</strong>. With three iris species that means <span class="math inline">\(\binom{3}{2} = 3\)</span> binary SVMs inside one fitted model — we can count them:</p>
-<div class="cell">
-<div>
-<div id="webr-12" class="exercise-cell">
-
-</div>
-<script type="webr-12-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShrZXJubGFiKVxuXG5zZXQuc2VlZCgxKVxubV9pcmlzIDwtIGtzdm0oU3BlY2llcyB+IC4sIGRhdGEgPSBpcmlzLCBrZXJuZWwgPSBcInJiZmRvdFwiKVxubGVuZ3RoKGNvZWYobV9pcmlzKSkgICAjIG9uZSBzZXQgb2YgY29lZmZpY2llbnRzIHBlciBwYWlyd2lzZSBjbGFzc2lmaWVyIn0=
-</script>
-</div>
-</div>
-<p>The interactive plot below shows the combined vote as three-colored decision regions. The two feature pairs give very different problems:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="639" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 638;"><span id="cb5-639"><a href="#cb5-639" aria-hidden="true" tabindex="-1"></a>viewof iris_features <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"petal"</span><span class="op">,</span> <span class="st">"sepal"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"petal"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"features"</span>})</span>
-<span id="cb5-640"><a href="#cb5-640" aria-hidden="true" tabindex="-1"></a>viewof iris_kernel <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">radio</span>([<span class="st">"linear"</span><span class="op">,</span> <span class="st">"radial"</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="st">"linear"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"kernel"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-5-1" data-nodetype="declaration">
-
-</div>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-<div id="ojs-cell-5-2" data-nodetype="declaration">
-
-</div>
-</div>
-</div>
-</div>
-<div class="cell" data-autorun="true" data-input="[&quot;iris_features&quot;,&quot;iris_kernel&quot;]">
-<div>
-<div id="webr-13" class="exercise-cell">
-
-</div>
-<script type="webr-13-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQiOjYsImZpZy13aWR0aCI6OCwiaW5wdXQiOlsiaXJpc19mZWF0dXJlcyIsImlyaXNfa2VybmVsIl19LCJjb2RlIjoibGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeShrZXJubGFiKVxuXG52YXJzIDwtIGlmIChpcmlzX2ZlYXR1cmVzID09IFwicGV0YWxcIikgYyhcIlBldGFsLkxlbmd0aFwiLCBcIlBldGFsLldpZHRoXCIpIGVsc2VcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYyhcIlNlcGFsLkxlbmd0aFwiLCBcIlNlcGFsLldpZHRoXCIpXG5kIDwtIGRhdGEuZnJhbWUoeDEgPSBpcmlzW1t2YXJzWzFdXV0sIHgyID0gaXJpc1tbdmFyc1syXV1dLCBTcGVjaWVzID0gaXJpcyRTcGVjaWVzKVxuXG5zZXQuc2VlZCgxKVxubSA8LSBpZiAoaXJpc19rZXJuZWwgPT0gXCJsaW5lYXJcIikge1xuICBrc3ZtKFNwZWNpZXMgfiB4MSArIHgyLCBkYXRhID0gZCwga2VybmVsID0gXCJ2YW5pbGxhZG90XCIsIGtwYXIgPSBsaXN0KCksXG4gICAgICAgQyA9IDEsIGNyb3NzID0gMTApXG59IGVsc2Uge1xuICBrc3ZtKFNwZWNpZXMgfiB4MSArIHgyLCBkYXRhID0gZCwga2VybmVsID0gXCJyYmZkb3RcIiwgQyA9IDEsIGNyb3NzID0gMTApXG59XG5cbmdyaWQgPC0gZXhwYW5kLmdyaWQoeDEgPSBzZXEobWluKGQkeDEpIC0gMC4zLCBtYXgoZCR4MSkgKyAwLjMsIGxlbmd0aC5vdXQgPSAxNTApLFxuICAgICAgICAgICAgICAgICAgICB4MiA9IHNlcShtaW4oZCR4MikgLSAwLjMsIG1heChkJHgyKSArIDAuMywgbGVuZ3RoLm91dCA9IDE1MCkpXG5ncmlkJHByZWQgPC0gcHJlZGljdChtLCBncmlkKVxuXG5nZ3Bsb3QoKSArXG4gIGdlb21fcmFzdGVyKGRhdGEgPSBncmlkLCBhZXMoeDEsIHgyLCBmaWxsID0gcHJlZCksIGFscGhhID0gMC4yNSkgK1xuICBnZW9tX2ppdHRlcihkYXRhID0gZCwgYWVzKHgxLCB4MiwgY29sb3VyID0gU3BlY2llcywgc2hhcGUgPSBTcGVjaWVzKSxcbiAgICAgICAgICAgICAgd2lkdGggPSAwLjAzLCBoZWlnaHQgPSAwLjAzLCBzaXplID0gMi41KSArXG4gIGdnc2NpOjpzY2FsZV9jb2xvcl9hYWFzKCkgKyBnZ3NjaTo6c2NhbGVfZmlsbF9hYWFzKGd1aWRlID0gXCJub25lXCIpICtcbiAgY29vcmRfY2FydGVzaWFuKGV4cGFuZCA9IEZBTFNFKSArXG4gIGxhYnMoeCA9IHZhcnNbMV0sIHkgPSB2YXJzWzJdLFxuICAgICAgIHRpdGxlID0gc3ByaW50ZihcIiVzIGtlcm5lbCBvbiAlcyBmZWF0dXJlcyAgIHwgICAxMC1mb2xkIENWIGVycm9yICUuMWYlJVwiLFxuICAgICAgICAgICAgICAgICAgICAgICBpcmlzX2tlcm5lbCwgaXJpc19mZWF0dXJlcywgMTAwICogY3Jvc3MobSkpKSArXG4gIHRoZW1lX2J3KCkgK1xuICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKSJ9
-</script>
-</div>
-</div>
+shinyApp(ui, server)</code></pre>
 <ul>
 <li><strong>Petal features:</strong> both kernels separate the three species almost perfectly (10-fold CV error 4.7% linear, 4.0% radial). Setosa sits far off on its own; the two classifiers that involve it are easy.</li>
 <li><strong>Sepal features:</strong> the error jumps to about 21% (linear) and 25% (radial). Versicolor and virginica overlap heavily on sepal measurements, and no kernel can separate points that sit on top of each other — the radial kernel just draws a more contorted boundary through the overlap and does <em>worse</em>. Better features beat a fancier kernel.</li>
 </ul>
-</section>
-<section id="part-4-variable-selection-for-classification" class="level1">
-<h1>Part 4 — Variable selection for classification</h1>
-<p>Everything so far used a few hand-picked features. Real problems often come with many correlated candidates, and we would like the data to tell us which ones matter. Back to the <strong>Wisconsin Diagnostic (WDBC)</strong> data from Lab 5, this time with <strong>all 30 features</strong>: ten nuclear measurements, each recorded as a mean, a standard error, and a “worst” value.</p>
-<div class="cell">
-<div>
-<div id="webr-14" class="exercise-cell">
-
-</div>
-<script type="webr-14-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShkcGx5cilcbmxpYnJhcnkoY2FyZXQpXG5cbndkYmMgPC0gcmVhZC5jc3YoXCJkYXRhL3dkYmMuY3N2XCIpIHw+XG4gIG11dGF0ZShkaWFnbm9zaXMgPSBmYWN0b3IoZGlhZ25vc2lzLCBsZXZlbHMgPSBjKFwiQlwiLCBcIk1cIiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhcIkJlbmlnblwiLCBcIk1hbGlnbmFudFwiKSkpXG5cbnNldC5zZWVkKDIxNTUpXG5pZHggPC0gY3JlYXRlRGF0YVBhcnRpdGlvbih3ZGJjJGRpYWdub3NpcywgcCA9IDAuNzUsIGxpc3QgPSBGQUxTRSlcbnd0cmFpbiA8LSB3ZGJjW2lkeCwgXVxud3Rlc3QgIDwtIHdkYmNbLWlkeCwgXVxuXG5jKHRyYWluID0gbnJvdyh3dHJhaW4pLCB0ZXN0ID0gbnJvdyh3dGVzdCksIGZlYXR1cmVzID0gbmNvbCh3ZGJjKSAtIDEpIn0=
-</script>
-</div>
-</div>
-<section id="why-not-just-throw-everything-into-logistic-regression" class="level3">
-<h3 class="anchored" data-anchor-id="why-not-just-throw-everything-into-logistic-regression">Why not just throw everything into logistic regression?</h3>
-<div class="cell">
-<div>
-<div id="webr-15" class="exercise-cell">
-
-</div>
-<script type="webr-15-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZnVsbF9nbG0gPC0gZ2xtKGRpYWdub3NpcyB+IC4sIGRhdGEgPSB3dHJhaW4sIGZhbWlseSA9IGJpbm9taWFsKVxuc3VtbWFyeShhYnMoY29lZihmdWxsX2dsbSkpKSJ9
-</script>
-</div>
-</div>
-<p>R warns that the algorithm <strong>did not converge</strong> and that fitted probabilities are <strong>numerically 0 or 1</strong>. The training tumors are perfectly separable in 30 dimensions, so the likelihood keeps improving as the coefficients grow — the median coefficient is about 500 and the largest about 44,000, on the log-odds scale. These estimates mean nothing, and (spoiler) the model does worst of everything we’ll try on the test set.</p>
-</section>
-<section id="the-lasso-logistic-regression-with-a-penalty" class="level3">
-<h3 class="anchored" data-anchor-id="the-lasso-logistic-regression-with-a-penalty">The lasso: logistic regression with a penalty</h3>
-<p>The fix is the same one we used for regression in <a href="../../03-regression-1/code/class3_lab1.html">Lab 3</a>: add a penalty. The <strong>lasso</strong> maximizes</p>
-<p><span class="math display">\[\underbrace{\sum_{i=1}^n \log L(\beta;\, y_i, x_i)}_{\text{logistic log-likelihood}} \; - \; \lambda \sum_{j=1}^{p} |\beta_j| .\]</span></p>
-<p>The absolute-value penalty does two jobs at once: it keeps the coefficients finite, and it sets many of them <strong>exactly to zero</strong> — so fitting the model <em>is</em> selecting variables. <span class="math inline">\(\lambda\)</span> controls how many survive. <code>glmnet</code> fits the whole path of <span class="math inline">\(\lambda\)</span> values in one call (<code>alpha = 1</code> is the lasso; <code>alpha = 0</code> would be ridge).</p>
-<p>The features are on very different scales (areas in the hundreds, smoothness around 0.1), and the penalty treats every <span class="math inline">\(\beta_j\)</span> alike, so we <strong>standardize first</strong>, using the training means and SDs for both sets.</p>
-<div class="cell">
-<div>
-<div id="webr-16" class="exercise-cell">
-
-</div>
-<script type="webr-16-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShnbG1uZXQpXG5cblhfdHJhaW4gPC0gc2NhbGUoYXMubWF0cml4KHd0cmFpblssIC0xXSkpXG5YX3Rlc3QgIDwtIHNjYWxlKGFzLm1hdHJpeCh3dGVzdFssIC0xXSksXG4gICAgICAgICAgICAgICAgIGNlbnRlciA9IGF0dHIoWF90cmFpbiwgXCJzY2FsZWQ6Y2VudGVyXCIpLFxuICAgICAgICAgICAgICAgICBzY2FsZSAgPSBhdHRyKFhfdHJhaW4sIFwic2NhbGVkOnNjYWxlXCIpKVxuXG5sYXNzb19wYXRoIDwtIGdsbW5ldChYX3RyYWluLCB3dHJhaW4kZGlhZ25vc2lzLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsIGFscGhhID0gMSlcbnBsb3QobGFzc29fcGF0aCwgeHZhciA9IFwibGFtYmRhXCIsIGxhYmVsID0gVFJVRSkifQ==
-</script>
-</div>
-</div>
-<p>Read the plot right to left: at large <span class="math inline">\(\lambda\)</span> (right) every coefficient is zero; as <span class="math inline">\(\lambda\)</span> shrinks, features enter one at a time. The numbers along the top count how many are in the model.</p>
-</section>
-<section id="pick-your-own-λ" class="level3">
-<h3 class="anchored" data-anchor-id="pick-your-own-λ">Pick your own λ</h3>
-<p>Slide <span class="math inline">\(\lambda\)</span> and watch which features survive and how the test accuracy responds.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb6" data-startfrom="768" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 767;"><span id="cb6-768"><a href="#cb6-768" aria-hidden="true" tabindex="-1"></a>viewof log10lambda <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="op">-</span><span class="fl">3.5</span><span class="op">,</span> <span class="op">-</span><span class="fl">0.5</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"log₁₀(λ)"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="ojs-cell-6" data-nodetype="declaration">
-
-</div>
-</div>
-</div>
-<div class="cell" data-autorun="true" data-input="log10lambda">
-<div>
-<div id="webr-17" class="exercise-cell">
-
-</div>
-<script type="webr-17-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImZpZy1oZWlnaHQiOjYsImZpZy13aWR0aCI6OSwiaW5wdXQiOlsibG9nMTBsYW1iZGEiXX0sImNvZGUiOiJsaWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KGdsbW5ldClcbmxpYnJhcnkoY2FyZXQpXG5cbndkIDwtIHJlYWQuY3N2KFwiZGF0YS93ZGJjLmNzdlwiKVxud2QkZGlhZ25vc2lzIDwtIGZhY3Rvcih3ZCRkaWFnbm9zaXMsIGxldmVscyA9IGMoXCJCXCIsIFwiTVwiKSxcbiAgICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhcIkJlbmlnblwiLCBcIk1hbGlnbmFudFwiKSlcbnNldC5zZWVkKDIxNTUpXG5peCA8LSBjcmVhdGVEYXRhUGFydGl0aW9uKHdkJGRpYWdub3NpcywgcCA9IDAuNzUsIGxpc3QgPSBGQUxTRSlcblh0ciA8LSBzY2FsZShhcy5tYXRyaXgod2RbaXgsIC0xXSkpXG5YdGUgPC0gc2NhbGUoYXMubWF0cml4KHdkWy1peCwgLTFdKSwgY2VudGVyID0gYXR0cihYdHIsIFwic2NhbGVkOmNlbnRlclwiKSxcbiAgICAgICAgICAgICBzY2FsZSA9IGF0dHIoWHRyLCBcInNjYWxlZDpzY2FsZVwiKSlcblxubGFtIDwtIDEwXmxvZzEwbGFtYmRhXG5maXQgPC0gZ2xtbmV0KFh0ciwgd2QkZGlhZ25vc2lzW2l4XSwgZmFtaWx5ID0gXCJiaW5vbWlhbFwiLCBhbHBoYSA9IDEpXG5iICAgPC0gYXMubWF0cml4KGNvZWYoZml0LCBzID0gbGFtKSlbLTEsIDFdXG5iICAgPC0gYltiICE9IDBdXG5hY2MgPC0gbWVhbihwcmVkaWN0KGZpdCwgWHRlLCBzID0gbGFtLCB0eXBlID0gXCJjbGFzc1wiKSA9PSB3ZCRkaWFnbm9zaXNbLWl4XSlcblxuaWYgKGxlbmd0aChiKSA9PSAwKSB7XG4gIGIgPC0gYyhcIihubyBmZWF0dXJlcyBzZWxlY3RlZClcIiA9IDApXG59XG5jb2VmcyA8LSBkYXRhLmZyYW1lKGZlYXR1cmUgPSBuYW1lcyhiKSwgYmV0YSA9IHVubmFtZShiKSlcbmNvZWZzJGVmZmVjdCA8LSBmYWN0b3IoaWZlbHNlKGNvZWZzJGJldGEgPiAwLCBcInJhaXNlcyBQKE1hbGlnbmFudClcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwibG93ZXJzIFAoTWFsaWduYW50KVwiKSxcbiAgICAgICAgICAgICAgICAgICAgICAgbGV2ZWxzID0gYyhcImxvd2VycyBQKE1hbGlnbmFudClcIiwgXCJyYWlzZXMgUChNYWxpZ25hbnQpXCIpKVxuXG5nZ3Bsb3QoY29lZnMsIGFlcyhiZXRhLCByZW9yZGVyKGZlYXR1cmUsIGFicyhiZXRhKSksIGZpbGwgPSBlZmZlY3QpKSArXG4gIGdlb21fY29sKCkgK1xuICBnZW9tX3ZsaW5lKHhpbnRlcmNlcHQgPSAwKSArXG4gIHNjYWxlX2ZpbGxfbWFudWFsKHZhbHVlcyA9IGMoXCJsb3dlcnMgUChNYWxpZ25hbnQpXCIgPSBcIiMzQjQ5OTJcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcInJhaXNlcyBQKE1hbGlnbmFudClcIiA9IFwiI0VFMDAwMFwiKSxcbiAgICAgICAgICAgICAgICAgICAgbmFtZSA9IE5VTEwsIGRyb3AgPSBGQUxTRSkgK1xuICBsYWJzKHggPSBcInN0YW5kYXJkaXplZCBjb2VmZmljaWVudFwiLCB5ID0gTlVMTCxcbiAgICAgICB0aXRsZSA9IHNwcmludGYoXCLOuyA9ICUuNGYgICB8ICAgJWQgb2YgMzAgZmVhdHVyZXMga2VwdCAgIHwgICB0ZXN0IGFjY3VyYWN5ICUuMWYlJVwiLFxuICAgICAgICAgICAgICAgICAgICAgICBsYW0sIHN1bShjb2VmcyRiZXRhICE9IDApLCAxMDAgKiBhY2MpKSArXG4gIHRoZW1lX2J3KCkgK1xuICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKSJ9
-</script>
-</div>
-</div>
-<p>A few settings to try:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>log₁₀(λ)</th>
-<th>features kept</th>
-<th>test accuracy</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>−3.5</td>
-<td>21</td>
-<td>97.9%</td>
-</tr>
-<tr class="even">
-<td>−2.0</td>
-<td>8</td>
-<td>97.9%</td>
-</tr>
-<tr class="odd">
-<td>−1.0</td>
-<td>4</td>
-<td>95.1%</td>
-</tr>
-<tr class="even">
-<td>−0.5</td>
-<td>2</td>
-<td>69.7%</td>
-</tr>
-</tbody>
-</table>
-<p>From 21 features down to 8 the test accuracy <strong>does not move</strong>: those extra 13 features were redundant. Around 6 features it starts to slip, and at 2 the model has thrown away real signal. Somewhere in between is the smallest model that is still as good as the big one — which is what cross-validation will find.</p>
-</section>
-<section id="letting-cross-validation-choose-λ" class="level3">
-<h3 class="anchored" data-anchor-id="letting-cross-validation-choose-λ">Letting cross-validation choose λ</h3>
-<p><code>cv.glmnet()</code> runs 10-fold CV along the whole path. It reports two choices: <code>lambda.min</code> (the lowest CV error) and <code>lambda.1se</code> (the largest <span class="math inline">\(\lambda\)</span> within one standard error of that minimum — the simplest model that is statistically as good). For selection we usually prefer <code>lambda.1se</code>.</p>
-<div class="cell">
-<div>
-<div id="webr-18" class="exercise-cell">
-
-</div>
-<script type="webr-18-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoic2V0LnNlZWQoMjE1NSlcbmxhc3NvX2N2IDwtIGN2LmdsbW5ldChYX3RyYWluLCB3dHJhaW4kZGlhZ25vc2lzLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsXG4gICAgICAgICAgICAgICAgICAgICAgYWxwaGEgPSAxLCBuZm9sZHMgPSAxMClcbnBsb3QobGFzc29fY3YpXG5cbmJfMXNlIDwtIGNvZWYobGFzc29fY3YsIHMgPSBcImxhbWJkYS4xc2VcIilcbnNlbGVjdGVkIDwtIHJvd25hbWVzKGJfMXNlKVtiXzFzZVssIDFdICE9IDBdWy0xXSAgICMgZHJvcCB0aGUgaW50ZXJjZXB0XG5zZWxlY3RlZCJ9
-</script>
-</div>
-</div>
-<p>The <code>lambda.1se</code> model keeps <strong>10 of the 30 features</strong>. Notice what’s there: mostly <strong>“worst”</strong> measurements (the most abnormal cells in the image) and the <strong>concavity / concave points</strong> family — the irregular, indented cell outlines a pathologist looks for. Of radius, perimeter, and area — three near-copies of “how big is the nucleus” — the lasso keeps area_worst and radius_worst but not perimeter: with correlated features, the lasso tends to keep one or two representatives and drop the rest.</p>
-</section>
-<section id="does-selecting-features-cost-us-anything" class="level3">
-<h3 class="anchored" data-anchor-id="does-selecting-features-cost-us-anything">Does selecting features cost us anything?</h3>
-<p>Compare, on the same 142 test tumors: the unpenalized logistic model, the lasso, ridge (penalized but no selection), and a linear SVM trained on all 30 features vs.&nbsp;only the lasso’s picks.</p>
-<div class="cell">
-<div>
-<div id="webr-19" class="exercise-cell">
-
-</div>
-<script type="webr-19-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoic2V0LnNlZWQoMjE1NSlcbnJpZGdlX2N2IDwtIGN2LmdsbW5ldChYX3RyYWluLCB3dHJhaW4kZGlhZ25vc2lzLCBmYW1pbHkgPSBcImJpbm9taWFsXCIsXG4gICAgICAgICAgICAgICAgICAgICAgYWxwaGEgPSAwLCBuZm9sZHMgPSAxMClcblxuc2V0LnNlZWQoMjE1NSlcbnN2bV9hbGwgPC0gdHJhaW4oWF90cmFpbiwgd3RyYWluJGRpYWdub3NpcywgbWV0aG9kID0gXCJzdm1MaW5lYXJcIixcbiAgICAgICAgICAgICAgICAgdHJDb250cm9sID0gdHJhaW5Db250cm9sKG1ldGhvZCA9IFwiY3ZcIiwgbnVtYmVyID0gMTApLFxuICAgICAgICAgICAgICAgICB0dW5lR3JpZCA9IGV4cGFuZC5ncmlkKEMgPSAyXigtNjo0KSkpXG5zZXQuc2VlZCgyMTU1KVxuc3ZtX3NlbCA8LSB0cmFpbihYX3RyYWluWywgc2VsZWN0ZWRdLCB3dHJhaW4kZGlhZ25vc2lzLCBtZXRob2QgPSBcInN2bUxpbmVhclwiLFxuICAgICAgICAgICAgICAgICB0ckNvbnRyb2wgPSB0cmFpbkNvbnRyb2wobWV0aG9kID0gXCJjdlwiLCBudW1iZXIgPSAxMCksXG4gICAgICAgICAgICAgICAgIHR1bmVHcmlkID0gZXhwYW5kLmdyaWQoQyA9IDJeKC02OjQpKSlcblxuZ2xtX3ByZWQgPC0gaWZlbHNlKHByZWRpY3QoZnVsbF9nbG0sIHd0ZXN0LCB0eXBlID0gXCJyZXNwb25zZVwiKSA+IDAuNSxcbiAgICAgICAgICAgICAgICAgICBcIk1hbGlnbmFudFwiLCBcIkJlbmlnblwiKVxuYWNjIDwtIGZ1bmN0aW9uKHByZWQpIHJvdW5kKG1lYW4ocHJlZCA9PSB3dGVzdCRkaWFnbm9zaXMpLCAzKVxuXG5kYXRhLmZyYW1lKFxuICBNb2RlbCA9IGMoXCJMb2dpc3RpYywgbm8gcGVuYWx0eVwiLCBcIkxhc3NvIGxvZ2lzdGljIChsYW1iZGEuMXNlKVwiLFxuICAgICAgICAgICAgXCJSaWRnZSBsb2dpc3RpYyAobGFtYmRhLjFzZSlcIiwgXCJMaW5lYXIgU1ZNLCBhbGwgZmVhdHVyZXNcIixcbiAgICAgICAgICAgIFwiTGluZWFyIFNWTSwgbGFzc28tc2VsZWN0ZWQgZmVhdHVyZXNcIiksXG4gIEZlYXR1cmVzID0gYygzMCwgbGVuZ3RoKHNlbGVjdGVkKSwgMzAsIDMwLCBsZW5ndGgoc2VsZWN0ZWQpKSxcbiAgVGVzdF9hY2N1cmFjeSA9IGMoYWNjKGdsbV9wcmVkKSxcbiAgICAgICAgICAgICAgICAgICAgYWNjKHByZWRpY3QobGFzc29fY3YsIFhfdGVzdCwgcyA9IFwibGFtYmRhLjFzZVwiLCB0eXBlID0gXCJjbGFzc1wiKSksXG4gICAgICAgICAgICAgICAgICAgIGFjYyhwcmVkaWN0KHJpZGdlX2N2LCBYX3Rlc3QsIHMgPSBcImxhbWJkYS4xc2VcIiwgdHlwZSA9IFwiY2xhc3NcIikpLFxuICAgICAgICAgICAgICAgICAgICBhY2MocHJlZGljdChzdm1fYWxsLCBYX3Rlc3QpKSxcbiAgICAgICAgICAgICAgICAgICAgYWNjKHByZWRpY3Qoc3ZtX3NlbCwgWF90ZXN0Wywgc2VsZWN0ZWRdKSkpXG4pIn0=
-</script>
-</div>
-</div>
-<ul>
-<li><strong>The unpenalized model is worst (0.944)</strong> — the inflated coefficients from above do real damage on new data.</li>
-<li><strong>Lasso with 10 features = ridge with 30 = SVM with 30 (all 0.979).</strong> We got a model a third the size at no cost in accuracy, and one that names which measurements matter.</li>
-<li><strong>The SVM on the lasso’s 10 features is one tumor behind (0.972).</strong> Variable selection by one method can be handed to another.</li>
-<li>Everything — the standardization, the λ choice, the selected list — came from the <strong>training</strong> tumors only. Selecting features on all the data and then “testing” on part of it leaks information and makes the test accuracy look better than it is.</li>
-</ul>
-</section>
-<section id="how-stable-is-the-selection" class="level3">
-<h3 class="anchored" data-anchor-id="how-stable-is-the-selection">How stable is the selection?</h3>
-<p>The lasso’s choice depends on the data it saw — including the random assignment of CV folds. Re-run the CV with 10 different fold assignments and count how often each feature is picked. To keep it quick we search a 30-point λ grid around where <code>lambda.1se</code> landed. <strong>This is the slowest cell in the lab</strong> — allow up to a minute.</p>
-<div class="cell" data-timelimit="300">
-<div>
-<div id="webr-20" class="exercise-cell">
-
-</div>
-<script type="webr-20-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsInRpbWVsaW1pdCI6MzAwfSwiY29kZSI6ImxhbWJkYV9ncmlkIDwtIDEwXnNlcSgtMSwgLTMsIGxlbmd0aC5vdXQgPSAzMClcblxucGlja3MgPC0gc2FwcGx5KDE6MTAsIGZ1bmN0aW9uKHMpIHtcbiAgc2V0LnNlZWQocylcbiAgY3ZmaXQgPC0gY3YuZ2xtbmV0KFhfdHJhaW4sIHd0cmFpbiRkaWFnbm9zaXMsIGZhbWlseSA9IFwiYmlub21pYWxcIixcbiAgICAgICAgICAgICAgICAgICAgIGFscGhhID0gMSwgbmZvbGRzID0gMTAsIGxhbWJkYSA9IGxhbWJkYV9ncmlkKVxuICBhcy5tYXRyaXgoY29lZihjdmZpdCwgcyA9IFwibGFtYmRhLjFzZVwiKSlbLTEsIDFdICE9IDBcbn0pXG5cbmZyZXEgPC0gc29ydChyb3dNZWFucyhwaWNrcyksIGRlY3JlYXNpbmcgPSBUUlVFKVxuZnJlcSA8LSBmcmVxW2ZyZXEgPiAwXVxuXG5nZ3Bsb3QoZGF0YS5mcmFtZShmZWF0dXJlID0gbmFtZXMoZnJlcSksIGZyZXEgPSBmcmVxKSxcbiAgICAgICBhZXMoZnJlcSwgcmVvcmRlcihmZWF0dXJlLCBmcmVxKSkpICtcbiAgZ2VvbV9jb2woZmlsbCA9IFwiIzNCNDk5MlwiKSArXG4gIHNjYWxlX3hfY29udGludW91cyhsYWJlbHMgPSBzY2FsZXM6OnBlcmNlbnQpICtcbiAgbGFicyh4ID0gXCJzaGFyZSBvZiAxMCBDViBydW5zIHRoYXQgc2VsZWN0ZWQgdGhlIGZlYXR1cmVcIiwgeSA9IE5VTEwsXG4gICAgICAgdGl0bGUgPSBcIkxhc3NvIHNlbGVjdGlvbiBmcmVxdWVuY3kgYWNyb3NzIENWIGZvbGQgYXNzaWdubWVudHNcIikgK1xuICB0aGVtZV9idygpIn0=
-</script>
-</div>
-</div>
-<p>Seven features are chosen in <strong>every</strong> run — concavity_mean, concave_points_mean, radius_worst, texture_worst, smoothness_worst, concave_points_worst, symmetry_worst. Those you can trust. The rest come and go with nothing more than a reshuffle of the CV folds (area_worst, picked in our single run above, rarely or never makes the cut here). A single lasso fit gives one list; a stability check tells you which parts of it are real. Report the stable core, not whatever one run happened to say.</p>
-</section>
-<section id="a-connection-worth-knowing" class="level3">
-<h3 class="anchored" data-anchor-id="a-connection-worth-knowing">A connection worth knowing</h3>
-<p>The SVM is secretly a penalized method too. ISLR §9.5 shows the support vector classifier solves</p>
-<p><span class="math display">\[\min_{\beta}\; \sum_{i=1}^n \max\big[0,\, 1 - y_i f(x_i)\big] \;+\; \lambda \sum_{j=1}^p \beta_j^2 ,\]</span></p>
-<p>a <strong>hinge loss</strong> plus a <strong>ridge</strong> penalty — and <span class="math inline">\(\lambda\)</span> plays the role of <span class="math inline">\(1/C\)</span> for the software cost. Swap the hinge loss for the logistic loss and you have ridge logistic regression; swap the ridge penalty for the lasso penalty and you have the lasso. “Regularization for classification” is one recipe — <strong>loss + penalty</strong> — with interchangeable parts.</p>
-</section>
-<section id="try-it-yourself" class="level2">
-<h2 class="anchored" data-anchor-id="try-it-yourself">Try it yourself</h2>
-<p><strong>1. Elastic net.</strong> <code>alpha</code> between 0 and 1 mixes the lasso and ridge penalties. Correlated features (radius, perimeter, and area are nearly the same measurement) tend to enter <em>together</em> under the elastic net, where the lasso picks one and drops the rest. Fill in an <code>alpha</code> and compare how many features survive — and whether the test accuracy changes at all.</p>
-<div class="cell" data-exercise="ex_enet">
-<div>
-<div id="webr-21" class="exercise-cell">
-
-</div>
-<script type="webr-21-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfZW5ldCJ9LCJjb2RlIjoic2V0LnNlZWQoMjE1NSlcbmVuZXRfY3YgPC0gY3YuZ2xtbmV0KFhfdHJhaW4sIHd0cmFpbiRkaWFnbm9zaXMsIGZhbWlseSA9IFwiYmlub21pYWxcIixcbiAgICAgICAgICAgICAgICAgICAgIGFscGhhID0gX19fX19fLCBuZm9sZHMgPSAxMCkgICAjIHRyeSAwLjUsIHRoZW4gMC4xXG5cbmIgPC0gY29lZihlbmV0X2N2LCBzID0gXCJsYW1iZGEuMXNlXCIpXG5jKGZlYXR1cmVzX2tlcHQgPSBzdW0oYlstMSwgMV0gIT0gMCksXG4gIHRlc3RfYWNjdXJhY3kgPSBtZWFuKHByZWRpY3QoZW5ldF9jdiwgWF90ZXN0LCBzID0gXCJsYW1iZGEuMXNlXCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdHlwZSA9IFwiY2xhc3NcIikgPT0gd3Rlc3QkZGlhZ25vc2lzKSkifQ==
-</script>
-</div>
-</div>
-<p><strong>2. A different split.</strong> In Part 2, change <code>set.seed(2155)</code> before <code>createDataPartition()</code> to another number and re-run the part. Does the linear kernel still hold its own against the radial one?</p>
-<p><strong>3. Break the ring.</strong> In §1.4, the ring’s noise is <code>rnorm(n, 0, 0.15)</code>. There is no slider for it — edit the cell, raise it to <code>0.4</code>, and re-run. What happens to the test error of the degree-2 kernel, and why can no kernel fix it?</p>
 </section>
 <section id="things-worth-remembering" class="level2">
 <h2 class="anchored" data-anchor-id="things-worth-remembering">Things worth remembering</h2>
 <ul>
 <li><strong>The margin is decided by a few points.</strong> Only the support vectors shape the SVM; everything else could move (within limits) without changing the fit.</li>
 <li><strong>Cost <code>C</code> in software is the opposite of the budget <span class="math inline">\(C\)</span> on the slides.</strong> Large software <code>C</code> = expensive violations = narrow margin = low bias, high variance. Tune it by cross-validation, never by training error.</li>
-<li><strong>Kernels buy flexibility, and flexibility has to be earned.</strong> On the ring a degree-2 kernel is exactly right; on the tumor data a straight line is already as good as anything fancier.</li>
+<li><strong>Kernels buy flexibility, and flexibility has to be earned.</strong> On the ring a degree-2 kernel is exactly right; when the labels themselves are noisy, no kernel helps.</li>
 <li><strong>Multi-class SVMs are a vote.</strong> <code>kernlab</code> fits one binary SVM per pair of classes.</li>
-<li><strong>With many correlated features, penalize.</strong> Unpenalized logistic regression broke on 30 correlated features; the lasso kept the coefficients sane <em>and</em> selected a short list — but check how stable that list is before you interpret it.</li>
 </ul>
+<p>Next: <a href="class6_lab2.html" target="_blank">Lab 2</a> fits these models to real tumor data and uses the lasso to choose which features to keep.</p>
 
 
-<script type="webr-data">
-eyJvcHRpb25zIjp7ImJhc2VVcmwiOiJodHRwczovL3dlYnIuci13YXNtLm9yZy92MC42LjAvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsiZXZhbHVhdGUiLCJrbml0ciIsImh0bWx0b29scyIsImdncGxvdDIiLCJkcGx5ciIsInRpZHlyIiwiY2FyZXQiLCJrZXJubGFiIiwiTUFTUyIsImdsbW5ldCIsImdnc2NpIl0sInJlcG9zIjpbXX0sInJlbmRlcl9kZiI6ImRlZmF1bHQifQ==
-</script>
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIxID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwid2Vici0yMS1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF93ZWJyX3ZhbHVlXzIxID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yMSwge30pO1xuX3dlYnJfZmVlZGJhY2tfMjEgPSB7XG4gIGNvbnN0IHsgV2ViUkdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBXZWJSR3JhZGVyKF93ZWJyX3ZhbHVlXzIxLmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjA7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIwID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjAtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0yMC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yMCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMjAsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTk7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE5ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTktY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xOS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xOSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTksIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTg7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE4ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTgtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xOC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xOCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTgsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTc7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE3ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNyA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTcsIHtsb2cxMGxhbWJkYX0pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTE2IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8xNjtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTE2IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMTYgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0xNi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTE2LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzE2ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8xNiwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTE1IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8xNTtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTE1IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMTUgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0xNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTE1LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzE1ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8xNSwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTE0IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8xNDtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTE0IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMTQgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0xNC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTE0LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzE0ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8xNCwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTEzIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8xMztcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTEzIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMTMgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0xMy1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTEzLWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzEzID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8xMywge2lyaXNfZmVhdHVyZXMsIGlyaXNfa2VybmVsfSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzEyO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8xMiA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTEyLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMTIgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzEyLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzExO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8xMSA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTExLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMTEgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzExLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMTAiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzEwO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMTAiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8xMCA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTEwLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMTAtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMTAgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzEwLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfOTtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTkiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl85ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItOS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTktY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfOSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfOSwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTgiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzg7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici04IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfOCA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTgtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici04LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzggPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzgsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC03IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV83O1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzcgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici03LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItNy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV83ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl83LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfNjtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTYiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl82ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItNi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTYtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfNiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfNiwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzU7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici01IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfNSA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTUtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici01LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzUgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzUsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV80O1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzQgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici00LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItNC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV80ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl80LCB7a2VybiwgbG9nMTBnYW1tYX0pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTMiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzM7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMyA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTMtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0zLWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzMgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzMsIHtsb2cxMEN9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8yO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0yLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yLCB7d2hpY2hfcG9pbnQsIHNoaWZ0fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMSwge3RoZXRhLCBiZXRhMH0pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItcHJlbHVkZSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IndlYlJPanMgPSB7XG4gIGNvbnN0IHsgV2ViUiwgQ2hhbm5lbFR5cGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWUuV2ViUjtcbiAgY29uc3Qge1xuICAgIFdlYlJFdmFsdWF0b3IsXG4gICAgV2ViUkVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gd2ViUiBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICAvLyBJbml0aWFsaXNlIHdlYlIgYW5kIHNldHVwIGZvciBSIGNvZGUgZXZhbHVhdGlvblxuICBsZXQgd2ViUlByb21pc2UgPSAoYXN5bmMgKHdlYlIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHdlYlJgO1xuICAgIGF3YWl0IHdlYlIuaW5pdCgpO1xuXG4gICAgLy8gSW5zdGFsbCBwcm92aWRlZCBsaXN0IG9mIHBhY2thZ2VzXG4gICAgLy8gRW5zdXJlIHdlYlIgZGVmYXVsdCByZXBvIGlzIGluY2x1ZGVkXG4gICAgZGF0YS5wYWNrYWdlcy5yZXBvcy5wdXNoKFwiaHR0cHM6Ly9yZXBvLnItd2FzbS5vcmdcIilcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiB3ZWJSLmV2YWxSVm9pZChgXG4gICAgICAgIHdlYnI6Omluc3RhbGwocGtnLCByZXBvcyA9IHJlcG9zKVxuICAgICAgICBsaWJyYXJ5KHBrZywgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKVxuICAgICAgYCwgeyBlbnY6IHtcbiAgICAgICAgcGtnOiBwa2csXG4gICAgICAgIHJlcG9zOiBkYXRhLnBhY2thZ2VzLnJlcG9zLFxuICAgICAgfX0pO1xuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIGNvbnN0IGFuYWx5c2lzID0gYXdhaXQgd2ViUi5GUy5hbmFseXplUGF0aChwYXRoKTtcbiAgICAgICAgaWYgKCFhbmFseXNpcy5leGlzdHMpIHtcbiAgICAgICAgICB0cnkge1xuICAgICAgICAgICAgYXdhaXQgd2ViUi5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3I6IFwiJHtlLm1lc3NhZ2V9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICByZXR1cm4gYXdhaXQgd2ViUi5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbnN0YWxsaW5nIHdlYlIgc2hpbXNgO1xuICAgIGF3YWl0IHdlYlIuZXZhbFJWb2lkKGB3ZWJyOjpzaGltX2luc3RhbGwoKWApO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBXZWJSIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFIod2ViUiwgZGF0YSk7XG5cbiAgICBzdGF0dXNUZXh0LnJlbW92ZSgpO1xuICAgIGlmIChzdGF0dXNDb250YWluZXIuY2hpbGRyZW4ubGVuZ3RoID09IDApIHtcbiAgICAgIHN0YXR1c0NvbnRhaW5lci5wYXJlbnROb2RlLnJlbW92ZSgpO1xuICAgIH1cbiAgICByZXR1cm4gd2ViUjtcbiAgfSkobmV3IFdlYlIoZGF0YS5vcHRpb25zKSk7XG5cbiAgLy8gS2VlcCB0cmFjayBvZiBpbml0aWFsIE9KUyBibG9jayByZW5kZXJcbiAgY29uc3QgcmVuZGVyZWRPanMgPSB7fTtcblxuICBjb25zdCBwcm9jZXNzID0gYXN5bmMgKGNvbnRleHQsIGlucHV0cykgPT4ge1xuICAgIGNvbnN0IHdlYlIgPSBhd2FpdCB3ZWJSUHJvbWlzZTtcbiAgICBjb25zdCBldmFsdWF0b3IgPSBuZXcgV2ViUkV2YWx1YXRvcih3ZWJSLCBjb250ZXh0KVxuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHByb2Nlc3MsXG4gICAgd2ViUlByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gIH07XG59XG4ifV19
-</script>
-<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
-<div id="exercise-loading-status" class="d-flex gap-2">
-
-</div>
-<div class="spinner-grow spinner-grow-sm">
-
-</div>
-</div>
-<script type="vfs-file">
-WyJkYXRhL3dkYmMuY3N2Il0=
-</script>
-</section>
 </section>
 
 </main> <!-- /main -->
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiB0aGV0YSA9IElucHV0cy5yYW5nZShbMCwgMzU1XSwge3ZhbHVlOiAwLCBzdGVwOiA1LCBsYWJlbDogXCJhbmdsZSDOuCAoZGVncmVlcylcIn0pXG52aWV3b2YgYmV0YTAgPSBJbnB1dHMucmFuZ2UoWy01LCA1XSwge3ZhbHVlOiAtMiwgc3RlcDogMC4wNSwgbGFiZWw6IFwib2Zmc2V0IM6y4oKAXCJ9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0yIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoidmlld29mIHdoaWNoX3BvaW50ID0gSW5wdXRzLnJhZGlvKFtcImEgc3VwcG9ydCB2ZWN0b3JcIiwgXCJhIHBvaW50IGZhciBmcm9tIHRoZSBtYXJnaW5cIl0sIHt2YWx1ZTogXCJhIHN1cHBvcnQgdmVjdG9yXCIsIGxhYmVsOiBcIk1vdmVcIn0pXG52aWV3b2Ygc2hpZnQgPSBJbnB1dHMucmFuZ2UoWy0wLjQsIDEuNV0sIHt2YWx1ZTogMCwgc3RlcDogMC4wNSwgbGFiZWw6IFwiZGlzdGFuY2UgbW92ZWRcIn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTMiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2YgbG9nMTBDID0gSW5wdXRzLnJhbmdlKFstMiwgMl0sIHt2YWx1ZTogMCwgc3RlcDogMC4yNSwgbGFiZWw6IFwibG9n4oKB4oKAKGNvc3QgQylcIn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2Yga2VybiA9IElucHV0cy5zZWxlY3QoW1wibGluZWFyXCIsIFwicG9seW5vbWlhbCwgZGVncmVlIDJcIiwgXCJwb2x5bm9taWFsLCBkZWdyZWUgM1wiLCBcInJhZGlhbFwiXSwge3ZhbHVlOiBcImxpbmVhclwiLCBsYWJlbDogXCJrZXJuZWxcIn0pXG52aWV3b2YgbG9nMTBnYW1tYSA9IElucHV0cy5yYW5nZShbLTEsIDJdLCB7dmFsdWU6IDAsIHN0ZXA6IDAuMjUsIGxhYmVsOiBcImxvZ+KCgeKCgCjOsykgIChyYWRpYWwgb25seSlcIn0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTUiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2YgaXJpc19mZWF0dXJlcyA9IElucHV0cy5yYWRpbyhbXCJwZXRhbFwiLCBcInNlcGFsXCJdLCB7dmFsdWU6IFwicGV0YWxcIiwgbGFiZWw6IFwiZmVhdHVyZXNcIn0pXG52aWV3b2YgaXJpc19rZXJuZWwgPSBJbnB1dHMucmFkaW8oW1wibGluZWFyXCIsIFwicmFkaWFsXCJdLCB7dmFsdWU6IFwibGluZWFyXCIsIGxhYmVsOiBcImtlcm5lbFwifSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtNiIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiBsb2cxMGxhbWJkYSA9IElucHV0cy5yYW5nZShbLTMuNSwgLTAuNV0sIHt2YWx1ZTogLTEsIHN0ZXA6IDAuMSwgbGFiZWw6IFwibG9n4oKB4oKAKM67KVwifSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgndGhldGEnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnYmV0YTAnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnd2hpY2hfcG9pbnQnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnc2hpZnQnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnbG9nMTBDJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ2tlcm4nKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnbG9nMTBnYW1tYScpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdpcmlzX2ZlYXR1cmVzJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ2lyaXNfa2VybmVsJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ2xvZzEwbGFtYmRhJykifV19
-</script>
-<script type="module">
-if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../../lectures/06-classification-2/code";
-window._ojs.paths.runtimeToRoot = "../..";
-window._ojs.paths.docToRoot = "../../..";
-window._ojs.selfContained = false;
-window._ojs.runtime.interpretFromScriptTags();
-</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -942,6 +824,11 @@ window._ojs.runtime.interpretFromScriptTags();
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
         }
       }
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
@@ -1269,9 +1156,9 @@ window._ojs.runtime.interpretFromScriptTags();
 </div>
   </div>
 </footer>
-<script src="../../../site_libs/quarto-contrib/quarto-project/r-wasm/live/resources/download-code.js"></script>
 
 
 
 
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

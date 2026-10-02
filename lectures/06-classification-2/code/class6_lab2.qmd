@@ -1,0 +1,519 @@
+---
+title: "Class 6/Lab 2: SVMs and Variable Selection on Real Tumor Data"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 2, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - caret
+    - kernlab
+    - MASS
+    - glmnet
+    - ggsci
+  resources:
+    - data/wdbc.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+[Lab 1](class6_lab1.html){target="_blank"} showed the SVM ideas on simulated
+data: hyperplanes, support vectors, the cost dial, kernels. This lab puts them
+to work on real tumor biopsies, in two parts:
+
+1. **The tumor example from the slides.** Real biopsy data, the same two
+   features (cell size and cell shape uniformity), then all nine, across three
+   kernels.
+2. **Variable selection for classification.** Thirty correlated tumor features:
+   ordinary logistic regression breaks, and the lasso picks a handful.
+
+Every code cell runs live in your browser via webR — no local R install
+needed. Packages and data load once when the page opens; give it a few seconds
+on first load. Cells run when you click **Run Code**. Run them in order from
+the top of each part, because later cells use objects made by earlier ones.
+
+**Remember the warning from Lab 1:** the software cost `C` runs *opposite* to
+the slides' budget $C$. Large software `C` = violations are expensive = narrow
+margin.
+
+We fit every SVM with `caret::train()`, following
+[Lab 5](../../05-classification-1/code/class5_lab1.html): `method =
+"svmLinear"`, `"svmPoly"`, and `"svmRadial"` all call `kernlab` underneath.
+
+# Part 1 — The tumor example from the slides
+
+The slides motivated SVMs with benign vs. malignant tumors plotted on **cell
+size uniformity** and **cell shape uniformity**. Those come from the Wisconsin
+breast-cancer biopsy data, which ships with the `MASS` package as `biopsy`:
+699 biopsies, nine cytology scores each rated 1–10, and the diagnosis.
+
+```{webr}
+library(MASS)
+library(dplyr)
+
+tumor <- biopsy |>
+  na.omit() |>                      # 16 biopsies are missing bare_nuclei
+  transmute(clump_thickness = V1, cell_size = V2, cell_shape = V3,
+            adhesion = V4, epithelial_size = V5, bare_nuclei = V6,
+            chromatin = V7, nucleoli = V8, mitoses = V9,
+            class = factor(class, levels = c("benign", "malignant"),
+                           labels = c("Benign", "Malignant")))
+
+dim(tumor)
+table(tumor$class)
+```
+
+683 complete biopsies, 65% benign. The scores are whole numbers from 1 to 10,
+so many patients share exactly the same (size, shape) pair — we **jitter** the
+points slightly so they don't stack on top of each other:
+
+```{webr}
+library(ggplot2)
+
+ggplot(tumor, aes(cell_size, cell_shape, colour = class)) +
+  geom_jitter(width = 0.25, height = 0.25, size = 1.5, alpha = 0.6) +
+  ggsci::scale_color_aaas() +
+  labs(x = "Cell Size Uniformity", y = "Cell Shape Uniformity",
+       colour = "Tumor Class",
+       title = "Tumor classification based on biomarkers") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+Mostly separable, with a band of overlap in the middle — a job for the soft
+margin.
+
+### Split, then tune the cost by cross-validation
+
+```{webr}
+#| timelimit: 300
+library(caret)
+
+set.seed(2155)
+idx <- createDataPartition(tumor$class, p = 0.75, list = FALSE)
+train_data <- tumor[idx, ]
+test_data  <- tumor[-idx, ]
+
+ctrl <- trainControl(method = "cv", number = 10)
+
+set.seed(2155)
+svm_2 <- train(class ~ cell_size + cell_shape, data = train_data,
+               method = "svmLinear", trControl = ctrl,
+               preProcess = c("center", "scale"),
+               tuneGrid = expand.grid(C = 2^(-6:4)))
+
+ggplot(svm_2$results, aes(C, Accuracy)) +
+  geom_line() + geom_point() +
+  scale_x_log10() +
+  labs(x = "cost C (log scale)", y = "10-fold CV accuracy",
+       title = "Cross-validated accuracy across the cost grid") +
+  theme_bw()
+svm_2$bestTune
+```
+
+Cross-validation picks `C = 8`, but look at the y-axis: accuracy only runs
+from 0.934 to 0.951 across a 1,000-fold range of `C`. On this data the cost
+barely matters. That is common — and it's why we tune on a log-spaced grid
+rather than agonizing over one value.
+
+### The fitted boundary
+
+`predict()` on a grid of (size, shape) values paints the regions the SVM
+assigns to each class. `caret` applies the same centering and scaling to the
+grid that it applied to the training data.
+
+```{webr}
+grid <- expand.grid(cell_size  = seq(0.5, 10.5, length.out = 120),
+                    cell_shape = seq(0.5, 10.5, length.out = 120))
+grid$pred <- predict(svm_2, grid)
+
+ggplot() +
+  geom_raster(data = grid, aes(cell_size, cell_shape, fill = pred), alpha = 0.2) +
+  geom_jitter(data = train_data, aes(cell_size, cell_shape, colour = class),
+              width = 0.25, height = 0.25, size = 1.5, alpha = 0.6) +
+  ggsci::scale_color_aaas() + ggsci::scale_fill_aaas(guide = "none") +
+  labs(x = "Cell Size Uniformity", y = "Cell Shape Uniformity",
+       colour = "Tumor Class", title = "Linear SVM on two biomarkers") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+### How well does it do on the test set?
+
+As in Lab 5 we set `positive = "Malignant"`, so **sensitivity** is the share of
+cancers we catch.
+
+```{webr}
+confusionMatrix(predict(svm_2, test_data), test_data$class,
+                positive = "Malignant")
+```
+
+With just two features the linear SVM gets **95.3%** of the 170 test biopsies
+right, catching 56 of 59 cancers (sensitivity 0.949) while clearing 106 of 111
+benign tumors (specificity 0.955).
+
+### All nine features, three kernels
+
+Now use every score, and compare the three kernels from class. All three go
+through the same `train()` call; only `method` changes. **This is the heaviest
+cell in Part 1** (the polynomial grid fits 270 models) — give it a moment.
+
+```{webr}
+#| timelimit: 300
+f_all <- class ~ .
+
+set.seed(2155)
+svm_lin <- train(f_all, data = train_data, method = "svmLinear",
+                 trControl = ctrl, preProcess = c("center", "scale"),
+                 tuneGrid = expand.grid(C = 2^(-6:4)))
+set.seed(2155)
+svm_poly <- train(f_all, data = train_data, method = "svmPoly",
+                  trControl = ctrl, preProcess = c("center", "scale"),
+                  tuneLength = 3)
+set.seed(2155)
+svm_rad <- train(f_all, data = train_data, method = "svmRadial",
+                 trControl = ctrl, preProcess = c("center", "scale"),
+                 tuneLength = 6)
+
+summarise_svm <- function(model, name) {
+  cm <- confusionMatrix(predict(model, test_data), test_data$class,
+                        positive = "Malignant")
+  data.frame(Model = name,
+             Accuracy    = round(cm$overall[["Accuracy"]], 3),
+             Sensitivity = round(cm$byClass[["Sensitivity"]], 3),
+             Specificity = round(cm$byClass[["Specificity"]], 3))
+}
+
+rbind(summarise_svm(svm_2,    "Linear, 2 features"),
+      summarise_svm(svm_lin,  "Linear, 9 features"),
+      summarise_svm(svm_poly, "Polynomial, 9 features"),
+      summarise_svm(svm_rad,  "Radial, 9 features"))
+```
+
+- **More features help:** going from two scores to nine lifts accuracy from
+  0.953 to 0.971 and sensitivity from 0.949 to 0.983 (one missed cancer instead
+  of three).
+- **More flexible kernels don't:** linear, polynomial, and radial land within
+  one test biopsy of each other. Cross-validation even picked the *smallest*
+  cost on the grid for the linear kernel — the widest, most forgiving margin.
+- The lesson from the ring in Lab 1, in reverse: a kernel only pays off when the true boundary
+  is curved. These cytology scores rise together as a tumor turns malignant,
+  so a straight cut is already about as good as it gets. Try the linear kernel
+  first; reach for a kernel only when CV says it helps.
+
+# Part 2 — Variable selection for classification
+
+Everything so far used a few hand-picked features. Real problems often come
+with many correlated candidates, and we would like the data to tell us which
+ones matter. Back to the **Wisconsin Diagnostic (WDBC)** data from Lab 5, this
+time with **all 30 features**: ten nuclear measurements, each recorded as a
+mean, a standard error, and a "worst" value.
+
+```{webr}
+library(dplyr)
+library(caret)
+
+wdbc <- read.csv("data/wdbc.csv") |>
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
+
+set.seed(2155)
+idx <- createDataPartition(wdbc$diagnosis, p = 0.75, list = FALSE)
+wtrain <- wdbc[idx, ]
+wtest  <- wdbc[-idx, ]
+
+c(train = nrow(wtrain), test = nrow(wtest), features = ncol(wdbc) - 1)
+```
+
+### Why not just throw everything into logistic regression?
+
+```{webr}
+full_glm <- glm(diagnosis ~ ., data = wtrain, family = binomial)
+summary(abs(coef(full_glm)))
+```
+
+R warns that the algorithm **did not converge** and that fitted probabilities
+are **numerically 0 or 1**. The training tumors are perfectly separable in 30
+dimensions, so the likelihood keeps improving as the coefficients grow —
+the median coefficient is about 500 and the largest about 44,000, on the
+log-odds scale. These estimates mean nothing, and
+(spoiler) the model does worst of everything we'll try on the test set.
+
+### The lasso: logistic regression with a penalty
+
+The fix is the same one we used for regression in [Lab 3](../../03-regression-1/code/class3_lab1.html): add a penalty. The
+**lasso** maximizes
+
+$$\underbrace{\sum_{i=1}^n \log L(\beta;\, y_i, x_i)}_{\text{logistic log-likelihood}} \; - \; \lambda \sum_{j=1}^{p} |\beta_j| .$$
+
+The absolute-value penalty does two jobs at once: it keeps the coefficients
+finite, and it sets many of them **exactly to zero** — so fitting the model
+*is* selecting variables. $\lambda$ controls how many survive. `glmnet` fits
+the whole path of $\lambda$ values in one call (`alpha = 1` is the lasso;
+`alpha = 0` would be ridge).
+
+The features are on very different scales (areas in the hundreds,
+smoothness around 0.1), and the penalty treats every $\beta_j$ alike, so we
+**standardize first**, using the training means and SDs for both sets.
+
+```{webr}
+library(glmnet)
+
+X_train <- scale(as.matrix(wtrain[, -1]))
+X_test  <- scale(as.matrix(wtest[, -1]),
+                 center = attr(X_train, "scaled:center"),
+                 scale  = attr(X_train, "scaled:scale"))
+
+lasso_path <- glmnet(X_train, wtrain$diagnosis, family = "binomial", alpha = 1)
+plot(lasso_path, xvar = "lambda", label = TRUE)
+```
+
+Read the plot right to left: at large $\lambda$ (right) every coefficient is
+zero; as $\lambda$ shrinks, features enter one at a time. The numbers along
+the top count how many are in the model.
+
+### Pick your own λ
+
+Choose a $\lambda$ and see which features survive and how the test accuracy
+responds. Change `log10_lambda`, then click **Run Code** again. This cell
+reuses `lasso_path`, `X_test`, and `wtest` from the cells above.
+
+```{webr}
+#| fig-width: 9
+#| fig-height: 6
+log10_lambda <- -1          # try -3.5, -2, -1, -0.5
+
+lam <- 10^log10_lambda
+b   <- as.matrix(coef(lasso_path, s = lam))[-1, 1]
+b   <- b[b != 0]
+acc <- mean(predict(lasso_path, X_test, s = lam, type = "class") == wtest$diagnosis)
+
+if (length(b) == 0) {
+  b <- c("(no features selected)" = 0)
+}
+coefs <- data.frame(feature = names(b), beta = unname(b))
+coefs$effect <- factor(ifelse(coefs$beta > 0, "raises P(Malignant)",
+                              "lowers P(Malignant)"),
+                       levels = c("lowers P(Malignant)", "raises P(Malignant)"))
+
+ggplot(coefs, aes(beta, reorder(feature, abs(beta)), fill = effect)) +
+  geom_col() +
+  geom_vline(xintercept = 0) +
+  scale_fill_manual(values = c("lowers P(Malignant)" = "#3B4992",
+                               "raises P(Malignant)" = "#EE0000"),
+                    name = NULL, drop = FALSE) +
+  labs(x = "standardized coefficient", y = NULL,
+       title = sprintf("λ = %.4f   |   %d of 30 features kept   |   test accuracy %.1f%%",
+                       lam, sum(coefs$beta != 0), 100 * acc)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+A few settings to try:
+
+| log₁₀(λ) | features kept | test accuracy |
+|---|---|---|
+| −3.5 | 21 | 97.9% |
+| −2.0 | 8 | 97.9% |
+| −1.0 | 4 | 95.1% |
+| −0.5 | 2 | 69.7% |
+
+From 21 features down to 8 the test accuracy **does not move**: those extra
+13 features were redundant. Around 6 features it starts to slip, and at
+2 the model has thrown away real signal. Somewhere in between is the smallest
+model that is still as good as the big one — which is what cross-validation
+will find.
+
+### Letting cross-validation choose λ
+
+`cv.glmnet()` runs 10-fold CV along the whole path. It reports two choices:
+`lambda.min` (the lowest CV error) and `lambda.1se` (the largest $\lambda$
+within one standard error of that minimum — the simplest model that is
+statistically as good). For selection we usually prefer `lambda.1se`.
+
+```{webr}
+#| timelimit: 300
+set.seed(2155)
+lasso_cv <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                      alpha = 1, nfolds = 10)
+plot(lasso_cv)
+
+b_1se <- coef(lasso_cv, s = "lambda.1se")
+selected <- rownames(b_1se)[b_1se[, 1] != 0][-1]   # drop the intercept
+selected
+```
+
+The `lambda.1se` model keeps **10 of the 30 features**. Notice what's
+there: mostly **"worst"** measurements (the most abnormal cells in the image)
+and the **concavity / concave points** family — the irregular, indented cell
+outlines a pathologist looks for. Of radius, perimeter, and area — three
+near-copies of "how big is the nucleus" — the lasso keeps area_worst and
+radius_worst but not perimeter: with correlated features, the lasso tends to
+keep one or two representatives and drop the rest.
+
+### Does selecting features cost us anything?
+
+Compare, on the same 142 test tumors: the unpenalized logistic model, the
+lasso, ridge (penalized but no selection), and a linear SVM trained on all 30
+features vs. only the lasso's picks.
+
+```{webr}
+#| timelimit: 300
+set.seed(2155)
+ridge_cv <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                      alpha = 0, nfolds = 10)
+
+set.seed(2155)
+svm_all <- train(X_train, wtrain$diagnosis, method = "svmLinear",
+                 trControl = trainControl(method = "cv", number = 10),
+                 tuneGrid = expand.grid(C = 2^(-6:4)))
+set.seed(2155)
+svm_sel <- train(X_train[, selected], wtrain$diagnosis, method = "svmLinear",
+                 trControl = trainControl(method = "cv", number = 10),
+                 tuneGrid = expand.grid(C = 2^(-6:4)))
+
+glm_pred <- ifelse(predict(full_glm, wtest, type = "response") > 0.5,
+                   "Malignant", "Benign")
+acc <- function(pred) round(mean(pred == wtest$diagnosis), 3)
+
+data.frame(
+  Model = c("Logistic, no penalty", "Lasso logistic (lambda.1se)",
+            "Ridge logistic (lambda.1se)", "Linear SVM, all features",
+            "Linear SVM, lasso-selected features"),
+  Features = c(30, length(selected), 30, 30, length(selected)),
+  Test_accuracy = c(acc(glm_pred),
+                    acc(predict(lasso_cv, X_test, s = "lambda.1se", type = "class")),
+                    acc(predict(ridge_cv, X_test, s = "lambda.1se", type = "class")),
+                    acc(predict(svm_all, X_test)),
+                    acc(predict(svm_sel, X_test[, selected])))
+)
+```
+
+- **The unpenalized model is worst (0.944)** — the inflated coefficients from
+  above do real damage on new data.
+- **Lasso with 10 features = ridge with 30 = SVM with 30 (all 0.979).** We got
+  a model a third the size at no cost in accuracy, and one that names which
+  measurements matter.
+- **The SVM on the lasso's 10 features is one tumor behind (0.972).** Variable
+  selection by one method can be handed to another.
+- Everything — the standardization, the λ choice, the selected list — came from
+  the **training** tumors only. Selecting features on all the data and then
+  "testing" on part of it leaks information and makes the test accuracy look
+  better than it is.
+
+### How stable is the selection?
+
+The lasso's choice depends on the data it saw — including the random
+assignment of CV folds. Re-run the CV with 10 different fold assignments and
+count how often each feature is picked. To keep it quick we search a 30-point
+λ grid around where `lambda.1se` landed. **This is the slowest cell in the
+lab** — allow up to a minute.
+
+```{webr}
+#| timelimit: 300
+lambda_grid <- 10^seq(-1, -3, length.out = 30)
+
+picks <- sapply(1:10, function(s) {
+  set.seed(s)
+  cvfit <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                     alpha = 1, nfolds = 10, lambda = lambda_grid)
+  as.matrix(coef(cvfit, s = "lambda.1se"))[-1, 1] != 0
+})
+
+freq <- sort(rowMeans(picks), decreasing = TRUE)
+freq <- freq[freq > 0]
+
+ggplot(data.frame(feature = names(freq), freq = freq),
+       aes(freq, reorder(feature, freq))) +
+  geom_col(fill = "#3B4992") +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "share of 10 CV runs that selected the feature", y = NULL,
+       title = "Lasso selection frequency across CV fold assignments") +
+  theme_bw()
+```
+
+Seven features are chosen in **every** run — concavity_mean,
+concave_points_mean, radius_worst, texture_worst, smoothness_worst,
+concave_points_worst, symmetry_worst. Those you can trust. The rest come and
+go with nothing more than a reshuffle of the CV folds (area_worst, picked in our
+single run above, rarely or never makes the cut here). A single lasso fit gives one
+list; a stability check tells you which parts of it are real. Report the
+stable core, not whatever one run happened to say.
+
+### A connection worth knowing
+
+The SVM is secretly a penalized method too. ISLR §9.5 shows the support vector
+classifier solves
+
+$$\min_{\beta}\; \sum_{i=1}^n \max\big[0,\, 1 - y_i f(x_i)\big] \;+\; \lambda \sum_{j=1}^p \beta_j^2 ,$$
+
+a **hinge loss** plus a **ridge** penalty — and $\lambda$ plays the role of
+$1/C$ for the software cost. Swap the hinge loss for the logistic loss and you
+have ridge logistic regression; swap the ridge penalty for the lasso penalty
+and you have the lasso. "Regularization for classification" is one recipe —
+**loss + penalty** — with interchangeable parts.
+
+## Try it yourself
+
+**1. Elastic net.** `alpha` between 0 and 1 mixes the lasso and ridge
+penalties. Correlated features (radius, perimeter, and area are nearly the
+same measurement) tend to enter *together* under the elastic net, where the
+lasso picks one and drops the rest. Fill in an `alpha` and compare how many
+features survive — and whether the test accuracy changes at all.
+
+```{webr}
+#| timelimit: 300
+#| exercise: ex_enet
+set.seed(2155)
+enet_cv <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
+                     alpha = ______, nfolds = 10)   # try 0.5, then 0.1
+
+b <- coef(enet_cv, s = "lambda.1se")
+c(features_kept = sum(b[-1, 1] != 0),
+  test_accuracy = mean(predict(enet_cv, X_test, s = "lambda.1se",
+                               type = "class") == wtest$diagnosis))
+```
+
+**2. A different split.** In Part 1, change `set.seed(2155)` before
+`createDataPartition()` to another number and re-run the part. Does the
+linear kernel still hold its own against the radial one?
+
+## Things worth remembering
+
+- **Cost `C` in software is the opposite of the budget $C$ on the slides.**
+  Tune it by cross-validation on a log-spaced grid, never by training error.
+- **Try the linear kernel first.** On the tumor data a straight line is
+  already as good as anything fancier; reach for a kernel only when CV says it
+  helps.
+- **With many correlated features, penalize.** Unpenalized logistic regression
+  broke on 30 correlated features; the lasso kept the coefficients sane *and*
+  selected a short list — but check how stable that list is before you
+  interpret it.

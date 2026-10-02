@@ -15,8 +15,9 @@ Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linea
 
 - 🖥️ [Clean slides](slides_clean.pdf)
 
-## 🧪 Lab
+## 🧪 Labs
 
-Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a "Download my code" button captures whatever you've written before you leave.
+Both labs run entirely in your browser, no local R install needed. Start with Lab 1.
 
-- 🧪 [Lab 6 (interactive)](code/class6_lab1.html){target="_blank"}
+- 🎛️ [Lab 1: Seeing SVMs (Shiny simulations)](code/class6_lab1.html){target="_blank"} — sliders on simulated data: hyperplanes, support vectors, the cost dial, kernels, multi-class.
+- 🧪 [Lab 2: Real tumor data (live R)](code/class6_lab2.html){target="_blank"} — edit and re-run any code cell: SVMs on biopsy data, then variable selection with the lasso. A "Download my code" button captures whatever you've written before you leave.
