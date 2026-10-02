@@ -429,45 +429,6 @@ data.frame(
   "testing" on part of it leaks information and makes the test accuracy look
   better than it is.
 
-### How stable is the selection?
-
-The lasso's choice depends on the data it saw — including the random
-assignment of CV folds. Re-run the CV with 10 different fold assignments and
-count how often each feature is picked. To keep it quick we search a 30-point
-λ grid around where `lambda.1se` landed. **This is the slowest cell in the
-lab** — allow up to a minute.
-
-```{webr}
-#| timelimit: 300
-lambda_grid <- 10^seq(-1, -3, length.out = 30)
-
-picks <- sapply(1:10, function(s) {
-  set.seed(s)
-  cvfit <- cv.glmnet(X_train, wtrain$diagnosis, family = "binomial",
-                     alpha = 1, nfolds = 10, lambda = lambda_grid)
-  as.matrix(coef(cvfit, s = "lambda.1se"))[-1, 1] != 0
-})
-
-freq <- sort(rowMeans(picks), decreasing = TRUE)
-freq <- freq[freq > 0]
-
-ggplot(data.frame(feature = names(freq), freq = freq),
-       aes(freq, reorder(feature, freq))) +
-  geom_col(fill = "#3B4992") +
-  scale_x_continuous(labels = scales::percent) +
-  labs(x = "share of 10 CV runs that selected the feature", y = NULL,
-       title = "Lasso selection frequency across CV fold assignments") +
-  theme_bw()
-```
-
-Seven features are chosen in **every** run — concavity_mean,
-concave_points_mean, radius_worst, texture_worst, smoothness_worst,
-concave_points_worst, symmetry_worst. Those you can trust. The rest come and
-go with nothing more than a reshuffle of the CV folds (area_worst, picked in our
-single run above, rarely or never makes the cut here). A single lasso fit gives one
-list; a stability check tells you which parts of it are real. Report the
-stable core, not whatever one run happened to say.
-
 ### A connection worth knowing
 
 The SVM is secretly a penalized method too. ISLR §9.5 shows the support vector
@@ -515,5 +476,4 @@ linear kernel still hold its own against the radial one?
   helps.
 - **With many correlated features, penalize.** Unpenalized logistic regression
   broke on 30 correlated features; the lasso kept the coefficients sane *and*
-  selected a short list — but check how stable that list is before you
-  interpret it.
+  selected a short list.

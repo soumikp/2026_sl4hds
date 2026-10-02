@@ -802,7 +802,7 @@
     "href": "lectures/06-classification-2/code/class6_lab2.html#things-worth-remembering",
     "title": "Class 6/Lab 2: SVMs and Variable Selection on Real Tumor Data",
     "section": "Things worth remembering",
-    "text": "Things worth remembering\n\nCost C in software is the opposite of the budget \\(C\\) on the slides. Tune it by cross-validation on a log-spaced grid, never by training error.\nTry the linear kernel first. On the tumor data a straight line is already as good as anything fancier; reach for a kernel only when CV says it helps.\nWith many correlated features, penalize. Unpenalized logistic regression broke on 30 correlated features; the lasso kept the coefficients sane and selected a short list — but check how stable that list is before you interpret it."
+    "text": "Things worth remembering\n\nCost C in software is the opposite of the budget \\(C\\) on the slides. Tune it by cross-validation on a log-spaced grid, never by training error.\nTry the linear kernel first. On the tumor data a straight line is already as good as anything fancier; reach for a kernel only when CV says it helps.\nWith many correlated features, penalize. Unpenalized logistic regression broke on 30 correlated features; the lasso kept the coefficients sane and selected a short list."
   },
   {
     "objectID": "lectures/06-classification-2/index.html#labs",
