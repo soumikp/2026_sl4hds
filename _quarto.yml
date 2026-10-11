@@ -37,6 +37,8 @@ project:
     - "assignments/hw1/**"
     # HW2 materials (released Sep 25) — the hw2.qmd download links point here.
     - "assignments/hw2/**"
+    # HW3 materials (released Oct 16) — the hw3.qmd download links point here.
+    - "assignments/hw3/**"
 
 website:
   title: "BIOST 2155"
