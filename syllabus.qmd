@@ -68,7 +68,7 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 | Homework 4 | 12% |
 | Homework 5 | 12% |
 | Final project presentation (group) | 20% |
-| Final project report (group) | 10% |
+| Final project report: final slide deck (group) | 10% |
 
 † See [quiz policy](#quiz-policy) below.
 
@@ -84,7 +84,7 @@ Late homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if mo
 
 ### Final project
 
-The final project is done in groups of 2–3. Each group submits a one-page proposal by **11/06** (required, not graded), gives a 15-minute presentation in class on **12/04**, and submits a written report by **12/09**. Groups may analyze a real dataset or reproduce a published analysis. See the [project page](project.qmd) for details.
+The final project is done in groups of 2–3. Each group submits a one-page proposal by **11/06** (required, not graded), gives a 15-minute presentation in class on **12/04**, and submits a revised slide deck as its report by **12/09**. Groups may analyze a real dataset or reproduce a published analysis. See the [project page](project.qmd) for details.
 
 ## Academic integrity
 

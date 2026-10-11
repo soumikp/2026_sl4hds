@@ -2,7 +2,7 @@
 title: "Final Project"
 ---
 
-The final project is a **group project** (groups of 2–3) worth **30%** of the course grade: **20%** for the in-class presentation and **10%** for the written report. There will be five groups. Each group gives a **15-minute presentation (12 min talk + 3 min Q&A) on the last day of class, Friday 12/04**. Every group member must present part of the talk.
+The final project is a **group project** (groups of 2–3) worth **30%** of the course grade: **20%** for the in-class presentation and **10%** for the final slide deck (the report). There will be five groups. Each group gives a **15-minute presentation (12 min talk + 3 min Q&A) on the last day of class, Friday 12/04**. Every group member must present part of the talk.
 
 You may choose either track:
 
@@ -18,7 +18,7 @@ You may choose either track:
 | Fri 11/13, 11:59 PM | Last day to submit a proposal *and still get feedback* |
 | Fri 12/04, 8:59 AM | **Slides** due (one PDF per group) |
 | Fri 12/04, 9:00–10:50 AM | **In-class presentations** |
-| Wed 12/09, 11:59 PM | **Final report** due (one PDF per group) |
+| Wed 12/09, 11:59 PM | **Final report** due: final slide deck (one PDF per group) |
 
 ## 0. Proposal (required, complete/incomplete)
 
@@ -60,17 +60,12 @@ All members of a group receive the same grade.
 
 ## 2. Report (10%)
 
-A PDF of at most **6 pages**, not counting references and an optional appendix. Use the same structure as the presentation, and add two sections:
+The report is your presentation slides, revised after the talk, with **two extra slides** at the end:
 
-1. Background (with references)
-2. Question
-3. Method(s)
-4. Results
-5. Conclusions
-6. **Limitations** — what weakens your conclusions (data, methods, sample size, assumptions).
-7. **Next steps** — what you would do with more time or more data.
+- **Limitations** — what weakens your conclusions (data, methods, sample size, assumptions).
+- **Next steps** — what you would do with more time or more data.
 
-End with references and a short **contributions statement** (one line per member). Each section is scored 0–5. Late reports follow the homework late policy.
+Use the questions and comments from the 12/04 talks to fix or improve the other slides. End with a references slide. Submit one PDF per group. The deck is scored 0–5 on each of Background, Question, Method(s), Results, Conclusions, Limitations, and Next steps. Late reports follow the homework late policy.
 
 ## Tips on choosing a project
 
