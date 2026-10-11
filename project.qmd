@@ -2,20 +2,78 @@
 title: "Final Project"
 ---
 
-The final project is **30%** of the course grade. Each student presents individual work in a **5-minute talk on the last day of class** (12/04). You may choose either an applied analysis of a real dataset or a review of a methodological paper.
+The final project is a **group project** (groups of 2–3) worth **30%** of the course grade: **20%** for the in-class presentation and **10%** for the written report. There will be five groups. Each group gives a **15-minute presentation (12 min talk + 3 min Q&A) on the last day of class, Friday 12/04**. Every group member must present part of the talk.
+
+You may choose either track:
+
+- **Applied analysis.** Pick a real dataset and a question, and compare **at least two methods from this course** on it.
+- **Reproduction of a published analysis.** Pick a published statistical learning paper that uses **public data** and repeat its analysis. Compare your results with the paper's, and compare the paper's method with **at least one method from this course**.
 
 ## Key dates
 
-- **11/06** — One-page proposal due (dataset *or* paper, plus planned scope)
-- **12/04** — In-class presentations (5 min/student)
+| Date | What |
+|------|------|
+| Fri 10/30 | Groups formed. Email the instructor your group members. Anyone without a group by then will be assigned to one. |
+| Fri 11/06, 11:59 PM | **Proposal** due (one PDF per group) |
+| Fri 11/13, 11:59 PM | Last day to submit a proposal *and still get feedback* |
+| Fri 12/04, 8:59 AM | **Slides** due (one PDF per group) |
+| Fri 12/04, 9:00–10:50 AM | **In-class presentations** |
+| Wed 12/09, 11:59 PM | **Final report** due (one PDF per group) |
 
-<!--  ## Project description: TBD -->
+## 0. Proposal (required, complete/incomplete)
 
-<!-- 📄 [Full project description (PDF)](project/project.pdf) · 📝 [Source (R Markdown)](project/project.Rmd) -->
+One page (references may go on a second page). List the group members and a working title, then:
 
+1. **Question.** What you want to learn and why it matters. *Reproduction track:* the question the paper asks.
+2. **Data.** Name, source, and link. Number of observations, predictors, and outcome (if any). Confirm you already have access.
+3. **Methods.** The methods you plan to use and why they fit the question. *Applied track:* at least two course methods to compare, and how you will judge them (e.g. test-set AUC, cross-validated RMSE). *Reproduction track:* the paper's method, the course method(s) you will compare it with, and the paper's full citation.
+
+Include references for every source you cite. Every reference must be real, and you must have read it.
+
+The proposal is not part of the course grade, but it is required. It is marked **complete** if it has all three parts. An incomplete proposal gets comments and one week to resubmit. Proposals submitted after **11/13** get no feedback. A group without a complete proposal by the start of class on 12/04 loses **10% of its presentation grade**.
+
+## 1. Presentation (20%)
+
+12 minutes of talk plus 3 minutes of questions. Follow this structure:
+
+1. **Background** — the scientific context, and why the problem matters.
+2. **Question** — the specific question you set out to answer.
+3. **Method(s)** — the data, any preprocessing, the methods, and how you evaluated them.
+4. **Results** — what you found. Use figures and tables, not raw output.
+5. **Conclusions** — what the results mean for the question.
+
+*Reproduction track:* under Results, show what you reproduced and where it differs from the paper.
+
+Each of the following is scored 0 (poor) to 5 (excellent):
+
+| Item | What we look for |
+|------|------------------|
+| Background | Context is clear and motivates the question |
+| Question | Specific and answerable with the data |
+| Method(s) | Methods fit the question; evaluation is sound |
+| Results | Clear figures/tables; results are correctly interpreted |
+| Conclusions | Follow from the results; no overreach |
+| Delivery | Clear slides, good pace, ends within 12 minutes |
+| Q&A | Questions answered directly and correctly |
+
+All members of a group receive the same grade.
+
+## 2. Report (10%)
+
+A PDF of at most **6 pages**, not counting references and an optional appendix. Use the same structure as the presentation, and add two sections:
+
+1. Background (with references)
+2. Question
+3. Method(s)
+4. Results
+5. Conclusions
+6. **Limitations** — what weakens your conclusions (data, methods, sample size, assumptions).
+7. **Next steps** — what you would do with more time or more data.
+
+End with references and a short **contributions statement** (one line per member). Each section is scored 0–5. Late reports follow the homework late policy.
 
 ## Tips on choosing a project
 
-- **For applied projects**: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well.
-- **For methodology reviews**: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.
-- **Scope honestly**: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that's the unit of analysis to plan around, not the project as a whole.
+- **Applied track**: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well. Places to look: [UCI Machine Learning Repository](https://archive.ics.uci.edu/), [NHANES](https://wwwn.cdc.gov/nchs/nhanes/), [Kaggle](https://www.kaggle.com/datasets?search=healthcare).
+- **Reproduction track**: pick a paper whose data and analysis are described well enough to repeat. Check that you can download the data *before* you submit the proposal.
+- **Scope honestly**: 12 minutes is about 8–10 slides. Plan the talk first, then do the analysis the talk needs.

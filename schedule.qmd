@@ -149,12 +149,12 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Dec 4</td>
-<td><em>In-class final project presentations</em></td>
+<td><em>In-class final project presentations</em> (9:00–10:50 AM)</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
-<td>—</td>
+<td><a href="project.qmd">Project</a><br>Slides due: Dec 4, 8:59 AM<br>Report due: Dec 9, 11:59 PM</td>
 </tr>
 
 </tbody>

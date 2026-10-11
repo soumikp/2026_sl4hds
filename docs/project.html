@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-a71a1d035469241ddb2e91826af1a167.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -129,6 +129,9 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#key-dates" id="toc-key-dates" class="nav-link active" data-scroll-target="#key-dates">Key dates</a></li>
+  <li><a href="#proposal-required-completeincomplete" id="toc-proposal-required-completeincomplete" class="nav-link" data-scroll-target="#proposal-required-completeincomplete">0. Proposal (required, complete/incomplete)</a></li>
+  <li><a href="#presentation-20" id="toc-presentation-20" class="nav-link" data-scroll-target="#presentation-20">1. Presentation (20%)</a></li>
+  <li><a href="#report-10" id="toc-report-10" class="nav-link" data-scroll-target="#report-10">2. Report (10%)</a></li>
   <li><a href="#tips-on-choosing-a-project" id="toc-tips-on-choosing-a-project" class="nav-link" data-scroll-target="#tips-on-choosing-a-project">Tips on choosing a project</a></li>
   </ul>
 </nav>
@@ -155,22 +158,136 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>The final project is <strong>30%</strong> of the course grade. Each student presents individual work in a <strong>5-minute talk on the last day of class</strong> (12/04). You may choose either an applied analysis of a real dataset or a review of a methodological paper.</p>
+<p>The final project is a <strong>group project</strong> (groups of 2–3) worth <strong>30%</strong> of the course grade: <strong>20%</strong> for the in-class presentation and <strong>10%</strong> for the written report. There will be five groups. Each group gives a <strong>15-minute presentation (12 min talk + 3 min Q&amp;A) on the last day of class, Friday 12/04</strong>. Every group member must present part of the talk.</p>
+<p>You may choose either track:</p>
+<ul>
+<li><strong>Applied analysis.</strong> Pick a real dataset and a question, and compare <strong>at least two methods from this course</strong> on it.</li>
+<li><strong>Reproduction of a published analysis.</strong> Pick a published statistical learning paper that uses <strong>public data</strong> and repeat its analysis. Compare your results with the paper’s, and compare the paper’s method with <strong>at least one method from this course</strong>.</li>
+</ul>
 <section id="key-dates" class="level2">
 <h2 class="anchored" data-anchor-id="key-dates">Key dates</h2>
-<ul>
-<li><strong>11/06</strong> — One-page proposal due (dataset <em>or</em> paper, plus planned scope)</li>
-<li><strong>12/04</strong> — In-class presentations (5 min/student)</li>
-</ul>
-<!--  ## Project description: TBD -->
-<!-- 📄 [Full project description (PDF)](project/project.pdf) · 📝 [Source (R Markdown)](project/project.Rmd) -->
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>What</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fri 10/30</td>
+<td>Groups formed. Email the instructor your group members. Anyone without a group by then will be assigned to one.</td>
+</tr>
+<tr class="even">
+<td>Fri 11/06, 11:59 PM</td>
+<td><strong>Proposal</strong> due (one PDF per group)</td>
+</tr>
+<tr class="odd">
+<td>Fri 11/13, 11:59 PM</td>
+<td>Last day to submit a proposal <em>and still get feedback</em></td>
+</tr>
+<tr class="even">
+<td>Fri 12/04, 8:59 AM</td>
+<td><strong>Slides</strong> due (one PDF per group)</td>
+</tr>
+<tr class="odd">
+<td>Fri 12/04, 9:00–10:50 AM</td>
+<td><strong>In-class presentations</strong></td>
+</tr>
+<tr class="even">
+<td>Wed 12/09, 11:59 PM</td>
+<td><strong>Final report</strong> due (one PDF per group)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="proposal-required-completeincomplete" class="level2">
+<h2 class="anchored" data-anchor-id="proposal-required-completeincomplete">0. Proposal (required, complete/incomplete)</h2>
+<p>One page (references may go on a second page). List the group members and a working title, then:</p>
+<ol type="1">
+<li><strong>Question.</strong> What you want to learn and why it matters. <em>Reproduction track:</em> the question the paper asks.</li>
+<li><strong>Data.</strong> Name, source, and link. Number of observations, predictors, and outcome (if any). Confirm you already have access.</li>
+<li><strong>Methods.</strong> The methods you plan to use and why they fit the question. <em>Applied track:</em> at least two course methods to compare, and how you will judge them (e.g.&nbsp;test-set AUC, cross-validated RMSE). <em>Reproduction track:</em> the paper’s method, the course method(s) you will compare it with, and the paper’s full citation.</li>
+</ol>
+<p>Include references for every source you cite. Every reference must be real, and you must have read it.</p>
+<p>The proposal is not part of the course grade, but it is required. It is marked <strong>complete</strong> if it has all three parts. An incomplete proposal gets comments and one week to resubmit. Proposals submitted after <strong>11/13</strong> get no feedback. A group without a complete proposal by the start of class on 12/04 loses <strong>10% of its presentation grade</strong>.</p>
+</section>
+<section id="presentation-20" class="level2">
+<h2 class="anchored" data-anchor-id="presentation-20">1. Presentation (20%)</h2>
+<p>12 minutes of talk plus 3 minutes of questions. Follow this structure:</p>
+<ol type="1">
+<li><strong>Background</strong> — the scientific context, and why the problem matters.</li>
+<li><strong>Question</strong> — the specific question you set out to answer.</li>
+<li><strong>Method(s)</strong> — the data, any preprocessing, the methods, and how you evaluated them.</li>
+<li><strong>Results</strong> — what you found. Use figures and tables, not raw output.</li>
+<li><strong>Conclusions</strong> — what the results mean for the question.</li>
+</ol>
+<p><em>Reproduction track:</em> under Results, show what you reproduced and where it differs from the paper.</p>
+<p>Each of the following is scored 0 (poor) to 5 (excellent):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>What we look for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Background</td>
+<td>Context is clear and motivates the question</td>
+</tr>
+<tr class="even">
+<td>Question</td>
+<td>Specific and answerable with the data</td>
+</tr>
+<tr class="odd">
+<td>Method(s)</td>
+<td>Methods fit the question; evaluation is sound</td>
+</tr>
+<tr class="even">
+<td>Results</td>
+<td>Clear figures/tables; results are correctly interpreted</td>
+</tr>
+<tr class="odd">
+<td>Conclusions</td>
+<td>Follow from the results; no overreach</td>
+</tr>
+<tr class="even">
+<td>Delivery</td>
+<td>Clear slides, good pace, ends within 12 minutes</td>
+</tr>
+<tr class="odd">
+<td>Q&amp;A</td>
+<td>Questions answered directly and correctly</td>
+</tr>
+</tbody>
+</table>
+<p>All members of a group receive the same grade.</p>
+</section>
+<section id="report-10" class="level2">
+<h2 class="anchored" data-anchor-id="report-10">2. Report (10%)</h2>
+<p>A PDF of at most <strong>6 pages</strong>, not counting references and an optional appendix. Use the same structure as the presentation, and add two sections:</p>
+<ol type="1">
+<li>Background (with references)</li>
+<li>Question</li>
+<li>Method(s)</li>
+<li>Results</li>
+<li>Conclusions</li>
+<li><strong>Limitations</strong> — what weakens your conclusions (data, methods, sample size, assumptions).</li>
+<li><strong>Next steps</strong> — what you would do with more time or more data.</li>
+</ol>
+<p>End with references and a short <strong>contributions statement</strong> (one line per member). Each section is scored 0–5. Late reports follow the homework late policy.</p>
 </section>
 <section id="tips-on-choosing-a-project" class="level2">
 <h2 class="anchored" data-anchor-id="tips-on-choosing-a-project">Tips on choosing a project</h2>
 <ul>
-<li><strong>For applied projects</strong>: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare in your talk. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well.</li>
-<li><strong>For methodology reviews</strong>: pick a paper recent enough to have follow-up work (so you have something to contextualize) but old enough to have settled into the literature. Aim for one core paper and 2–3 related citations.</li>
-<li><strong>Scope honestly</strong>: 5 minutes is short. Plan your talk as ~3 main slides plus framing — that’s the unit of analysis to plan around, not the project as a whole.</li>
+<li><strong>Applied track</strong>: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well. Places to look: <a href="https://archive.ics.uci.edu/">UCI Machine Learning Repository</a>, <a href="https://wwwn.cdc.gov/nchs/nhanes/">NHANES</a>, <a href="https://www.kaggle.com/datasets?search=healthcare">Kaggle</a>.</li>
+<li><strong>Reproduction track</strong>: pick a paper whose data and analysis are described well enough to repeat. Check that you can download the data <em>before</em> you submit the proposal.</li>
+<li><strong>Scope honestly</strong>: 12 minutes is about 8–10 slides. Plan the talk first, then do the analysis the talk needs.</li>
 </ul>
 
 
