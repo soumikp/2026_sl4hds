@@ -1,0 +1,614 @@
+---
+title: "Class 7/Lab 2: k-means on Thyroid Patients"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 16, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - caret
+    - recipes
+    - cluster
+    - ggsci
+  resources:
+    - data/thyroid.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+[Lab 1](class7_lab1.html){target="_blank"} showed k-means on simulated data:
+Lloyd's algorithm step by step, bad starts, scaling, and choosing $K$. This lab
+uses real patients. The question is one a clinician could ask:
+
+> *If we give the algorithm only the lab results, and no diagnoses, does it
+> find the thyroid conditions by itself?*
+
+We know the answer for these patients, so we can check. In real unsupervised
+work there is no answer key. This lab shows what to look at when you cannot
+check.
+
+The plan:
+
+1. **Look at the data.** Five lab tests on very different scales.
+2. **Preprocessing changes the answer.** k-means on raw, scaled, and
+   transformed values.
+3. **Bad starts.** Why `nstart` matters.
+4. **Choosing $K$.** The elbow, the silhouette, and the gap statistic do not
+   agree.
+5. **Hierarchical clustering.** Four linkages, four different answers.
+
+Every code cell runs live in your browser via webR, so you do not need to
+install R. Packages and data load once when the page opens. Give it a few
+seconds on first load. Click **Run Code** to run a cell. Run the cells in
+order from the top, because later cells use objects that earlier cells make.
+
+## A note on `caret`
+
+In earlier labs, `caret::train()` fit every model. `train()` tunes a model
+against an outcome, and clustering has no outcome. So in this lab, `caret`
+does the **preprocessing** with `preProcess()`, the same tool that
+`train(..., preProcess = ...)` used inside earlier labs. The clustering itself
+uses `kmeans()` and `hclust()` from base R, and `silhouette()` and `clusGap()`
+from the `cluster` package.
+
+## The data: thyroid function tests
+
+The data come from 215 patients at a hospital in Belgium (Coomans et al.,
+1983). Each patient had five blood tests:
+
+| Column | Test | What it measures |
+|---|---|---|
+| `RT3U` | T3-resin uptake (%) | how much thyroid hormone binding capacity is free |
+| `T4` | total serum thyroxine | the main hormone the thyroid makes |
+| `T3` | total serum triiodothyronine | the active form of the hormone |
+| `TSH` | basal TSH | the pituitary's signal to the thyroid ("make more") |
+| `dTSH` | TSH change after a TRH injection | how strongly the pituitary responds |
+
+Doctors gave each patient a diagnosis from the full medical record:
+**Normal** (euthyroid), **Hyper** (overactive thyroid), or **Hypo**
+(underactive thyroid). We hide the diagnosis from the algorithm, and we use
+it only at the end to check.
+
+```{webr}
+library(dplyr)
+
+thy <- read.csv("data/thyroid.csv") |>
+  mutate(diagnosis = factor(diagnosis, levels = c("Normal", "Hyper", "Hypo")))
+
+labs <- thy |> select(-diagnosis)   # the five tests: all the algorithm sees
+
+dim(thy)
+table(thy$diagnosis)
+```
+
+150 of the 215 patients are normal. The two disease groups are small (35 and
+30 patients).
+
+### What a clinician expects
+
+A clinician reads these tests together. In **hyperthyroidism**, T4 and T3 are
+high, and the pituitary stops sending TSH. In **hypothyroidism**, T4 is low,
+and the pituitary sends a lot of TSH to push the thyroid harder. The median
+values per group show this:
+
+```{webr}
+thy |>
+  group_by(diagnosis) |>
+  summarise(across(everything(), median), n = n())
+```
+
+If k-means finds groups like these, it found real clinical structure.
+
+### Scales and shapes
+
+```{webr}
+library(ggplot2)
+library(tidyr)
+
+labs |>
+  pivot_longer(everything(), names_to = "test", values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(bins = 30, fill = "grey60", colour = "white") +
+  facet_wrap(~ test, scales = "free", nrow = 1) +
+  labs(x = NULL, y = "patients",
+       title = "The five tests, on their own scales") +
+  theme_bw()
+
+round(sapply(labs, sd), 2)
+```
+
+Two problems are visible:
+
+- **The scales are different.** The SD of RT3U is 13.2. The SD of T3 is 1.4.
+  k-means uses Euclidean distance, so a difference of 10 in RT3U counts the
+  same as a difference of 10 in T3. But 10 units of T3 is the whole range of
+  the data.
+- **TSH and dTSH are very skewed.** Most patients have a TSH near 1, and a few
+  have values above 30. Those few patients are far from everyone else, and
+  they pull the centroids toward them.
+
+# Part 1 — Preprocessing changes the answer
+
+### k-means on the raw values
+
+`kmeans()` needs the data and the number of clusters. `nstart = 25` runs
+Lloyd's algorithm from 25 random starts and keeps the best result. Part 2
+explains why.
+
+```{webr}
+set.seed(42)
+km_raw <- kmeans(labs, centers = 3, nstart = 25)
+
+table(diagnosis = thy$diagnosis, cluster = km_raw$cluster)
+round(km_raw$centers, 1)
+```
+
+The cluster numbers are arbitrary labels. k-means does not know which cluster
+is "Hyper". Read each **column** of the table: which patients ended up
+together?
+
+The result is reasonable: cluster 1 is mostly hypo patients, and cluster 3 is
+mostly hyper patients. But look at the centroids. The largest gaps between
+them are in **RT3U** (90 to 126), the test with the largest SD. On the raw
+scale, RT3U decides most of the distances.
+
+### Scaling: give each test the same weight
+
+`preProcess()` learns the mean and SD of each column. `predict()` then applies
+them. This is the same step that `preProcess = c("center", "scale")` did
+inside `train()` in Labs 3 to 6.
+
+```{webr}
+library(caret)
+
+pp_scale <- preProcess(labs, method = c("center", "scale"))
+z_scale  <- predict(pp_scale, labs)
+
+set.seed(42)
+km_scale <- kmeans(z_scale, centers = 3, nstart = 25)
+table(diagnosis = thy$diagnosis, cluster = km_scale$cluster)
+```
+
+Now **all 150 normal patients** are together. But the hyper patients split
+into two clusters (16 and 19). Scaling fixed one problem and showed another:
+the skew. After scaling, the few patients with very high TSH are still far
+from everyone, and k-means uses one of its three clusters on them.
+
+### Fix the skew too: the Yeo-Johnson transformation
+
+A log transform pulls in long right tails. But `dTSH` has negative values, so
+we cannot take its log. The **Yeo-Johnson** transformation is a cousin of the
+log (and of the Box-Cox transformation). It also works for zero and negative
+values, and `preProcess()` picks the strength of the transform for each
+column.
+
+```{webr}
+pp_yj <- preProcess(labs, method = c("YeoJohnson", "center", "scale"))
+z     <- predict(pp_yj, labs)
+
+set.seed(42)
+km <- kmeans(z, centers = 3, nstart = 25)
+table(diagnosis = thy$diagnosis, cluster = km$cluster)
+```
+
+This is the best of the three:
+
+| Preprocessing | Normal together | Hyper together | Hypo together |
+|---|---|---|---|
+| Raw | 137 / 150 | 25 / 35 | 23 / 30 |
+| Center + scale | 150 / 150 | 19 / 35 | 22 / 30 |
+| Yeo-Johnson + center + scale | 145 / 150 | 33 / 35 | 24 / 30 |
+
+**Same algorithm, same data, same $K$. Three different answers.** The
+preprocessing is part of the model. Choose it with care, and report it.
+
+### Do the clusters make clinical sense?
+
+Profile each cluster on the **original** units, which a clinician can read:
+
+```{webr}
+labs |>
+  mutate(cluster = km$cluster) |>
+  group_by(cluster) |>
+  summarise(across(everything(), median), n = n())
+```
+
+- One cluster has high T4 (16.4) and high T3 (3.5), with TSH near 1 and no
+  TSH response. That is the **hyperthyroid** profile.
+- One cluster has low T4 (3.1) and very high TSH (11.9), with a large TSH
+  response. That is the **hypothyroid** profile.
+- The large cluster (153 patients) has middle values on every test. That is
+  the **normal** profile.
+
+k-means never saw a diagnosis. It found the three textbook patterns from the
+numbers alone. This profile table is the most useful output of a cluster
+analysis. Without an answer key, it is the only way to decide whether clusters
+mean something.
+
+### A picture
+
+Two tests carry most of the clinical signal: T4 (the hormone) and TSH (the
+signal that controls it). We plot them on log scales. Colour shows the
+**cluster**, and shape shows the **true diagnosis**.
+
+```{webr}
+thy |>
+  mutate(cluster = factor(km$cluster)) |>
+  ggplot(aes(T4, TSH, colour = cluster, shape = diagnosis)) +
+  geom_point(size = 2.5, alpha = 0.8) +
+  scale_x_log10() + scale_y_log10() +
+  ggsci::scale_color_aaas() +
+  labs(x = "T4 (log scale)", y = "TSH (log scale)",
+       title = "k-means clusters (colour) vs. diagnosis (shape)") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+The mistakes sit where the groups touch. A few hypo patients have only a
+small TSH rise, and they look normal. A few normal patients have a high T4,
+and they sit with the hyper patients. A clinician would call these
+**borderline** cases. k-means must put each patient in exactly one cluster, so
+it cannot say "borderline". The Gaussian mixture models in Class 8 can.
+
+# Part 2 — Bad starts and `nstart`
+
+Lloyd's algorithm always lowers the within-cluster sum of squares (WSS). But it
+stops at the first point where no single step helps, a **local minimum**. Where
+it stops depends on where it starts.
+
+With $K = 3$, these data are easy: nearly every start finds the same answer.
+With more clusters, there are more ways to go wrong. Run k-means 100 times
+with $K = 5$ and **one** start each, and compare the WSS:
+
+```{webr}
+wss_one_start <- sapply(1:100, function(s) {
+  set.seed(s)
+  kmeans(z, centers = 5, nstart = 1)$tot.withinss
+})
+
+set.seed(42)
+best <- kmeans(z, centers = 5, nstart = 25)$tot.withinss
+
+ggplot(data.frame(wss = wss_one_start), aes(wss)) +
+  geom_histogram(bins = 40, fill = "grey60", colour = "white") +
+  geom_vline(xintercept = best, colour = "#EE0000", linewidth = 1) +
+  labs(x = "within-cluster sum of squares", y = "runs (out of 100)",
+       title = "K = 5, one random start per run (red line: best of 25 starts)") +
+  theme_bw()
+
+mean(wss_one_start > best * 1.01)   # share of runs at least 1% worse than the best
+```
+
+About **one run in five** stops at a worse solution, and the worst is about 9%
+worse than the best. Each of those runs gives a different set of clusters,
+and nothing in the output warns you. So:
+
+- Always use many starts (`nstart = 25` or more).
+- Always set a seed, so that you and your readers get the same clusters.
+
+# Part 3 — Choosing $K$
+
+Here we know there are three diagnoses. In real work you do not know $K$. We
+try three tools and see what each one says.
+
+### The elbow
+
+```{webr}
+wss <- sapply(1:8, function(k) {
+  set.seed(42)
+  kmeans(z, centers = k, nstart = 25)$tot.withinss
+})
+
+ggplot(data.frame(k = 1:8, wss = wss), aes(k, wss)) +
+  geom_line() + geom_point(size = 2) +
+  scale_x_continuous(breaks = 1:8) +
+  labs(x = "number of clusters K", y = "within-cluster sum of squares",
+       title = "Elbow plot") +
+  theme_bw()
+```
+
+WSS always falls when $K$ goes up: more centroids always sit closer to the
+points. So we look for the **bend**, the $K$ after which the gain gets small.
+Here, WSS falls by 346 from $K=1$ to 2, and by 236 from 2 to 3. After that,
+each step gains 70 or less. The elbow is at $K = 3$. But "where is the bend"
+is a judgement, and different people see it at different places.
+
+### The silhouette
+
+The silhouette asks one question about each point: *is this point closer to
+its own cluster than to the nearest other cluster?*
+
+For each point $i$:
+
+1. Calculate $a(i)$. This is the mean distance from point $i$ to all other
+   points in its own cluster.
+2. For each other cluster, calculate the mean distance from point $i$ to all
+   points in that cluster. Find the smallest of these mean distances. This is
+   $b(i)$. The cluster that gives $b(i)$ is the **nearest other cluster**.
+3. Calculate the silhouette width:
+   $$s(i) = \frac{b(i) - a(i)}{\max\{a(i),\; b(i)\}}.$$
+
+The value of $s(i)$ is always between $-1$ and $1$:
+
+- If $s(i)$ is near $1$, point $i$ is near its own cluster and far from the
+  nearest other cluster. The point is in the correct cluster.
+- If $s(i)$ is near $0$, point $i$ is at the same distance from both clusters.
+  The point is on the border between two clusters.
+- If $s(i)$ is less than $0$, point $i$ is nearer to the other cluster than to
+  its own cluster. The point is probably in the wrong cluster.
+
+To get one value for one clustering, calculate the mean of $s(i)$ for all
+points. This is the **average silhouette width**. Do this for each value of
+$K$. Use the $K$ that gives the largest average silhouette width.
+
+Two warnings:
+
+- The silhouette is not defined for $K = 1$. It cannot tell you "there are no
+  clusters".
+- The silhouette prefers clusters that are compact and well separated. A large
+  value does not prove that the clusters have a real meaning.
+
+`cluster::silhouette()` needs the cluster labels and the distance matrix:
+
+```{webr}
+library(cluster)
+
+d <- dist(z)                     # Euclidean distances on the transformed data
+
+sil_k <- sapply(2:8, function(k) {
+  set.seed(42)
+  cl <- kmeans(z, centers = k, nstart = 25)$cluster
+  mean(silhouette(cl, d)[, "sil_width"])
+})
+
+ggplot(data.frame(k = 2:8, sil = sil_k), aes(k, sil)) +
+  geom_line() + geom_point(size = 2) +
+  scale_x_continuous(breaks = 2:8) +
+  labs(x = "number of clusters K", y = "average silhouette width",
+       title = "Silhouette: larger is better") +
+  theme_bw()
+
+round(sil_k, 3)
+```
+
+The silhouette picks **$K = 2$** (0.445), with $K = 3$ close behind (0.406).
+What does $K = 2$ look like?
+
+```{webr}
+set.seed(42)
+km2 <- kmeans(z, centers = 2, nstart = 25)
+table(diagnosis = thy$diagnosis, cluster = km2$cluster)
+```
+
+$K = 2$ puts all the hyper patients **with** the normal patients. It finds
+"hypo vs. everyone else". The hypo patients, with their very high TSH, are
+the most separated group, so this split gives the most compact, best
+separated clusters. It is a valid answer to the geometric question. It is the
+wrong answer to the clinical one.
+
+### Silhouette widths for each patient
+
+The average hides detail. Plot $s(i)$ for every patient in the $K = 3$
+solution, sorted within each cluster, and colour each bar by diagnosis:
+
+```{webr}
+sil3 <- silhouette(km$cluster, d)
+
+data.frame(cluster   = factor(sil3[, "cluster"]),
+           width     = sil3[, "sil_width"],
+           diagnosis = thy$diagnosis) |>
+  arrange(cluster, desc(width)) |>
+  mutate(patient = row_number()) |>
+  ggplot(aes(patient, width, fill = diagnosis)) +
+  geom_col(width = 1) +
+  facet_grid(~ cluster, scales = "free_x", space = "free_x",
+             labeller = label_both) +
+  scale_fill_manual(values = c(Normal = "grey70", Hyper = "#E69F00",
+                               Hypo = "#7B3294")) +   # diagnosis colours, not cluster colours
+  labs(x = "patients, sorted within each cluster", y = "silhouette width s(i)",
+       title = "Silhouette widths for K = 3") +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+round(tapply(sil3[, "sil_width"], thy$diagnosis, mean), 3)
+```
+
+No patient has a negative width. The hyper patients have the smallest widths
+(mean 0.29): they sit close to the normal cluster. This is why the silhouette
+prefers to merge them with the normal patients. The plot also shows the
+borderline patients from the scatter plot: they are the short bars at the
+right end of each cluster.
+
+### The gap statistic
+
+The gap statistic compares the WSS of the data with the WSS of **reference
+data that have no clusters**: points drawn uniformly over the range of each
+variable. It is the same idea as a permutation test: build a "nothing here"
+version of the data, and ask if the real data look different. $B$ is the
+number of reference data sets. **This cell takes a while.**
+
+```{webr}
+#| timelimit: 300
+set.seed(42)
+gap <- clusGap(as.matrix(z), FUNcluster = kmeans, K.max = 8, B = 50, nstart = 10)
+
+gap_tab <- data.frame(k = 1:8, gap$Tab)
+ggplot(gap_tab, aes(k, gap)) +
+  geom_line() + geom_point(size = 2) +
+  geom_errorbar(aes(ymin = gap - SE.sim, ymax = gap + SE.sim), width = 0.2) +
+  scale_x_continuous(breaks = 1:8) +
+  labs(x = "number of clusters K", y = "Gap(K)",
+       title = "Gap statistic with 1-SE error bars") +
+  theme_bw()
+
+maxSE(gap$Tab[, "gap"], gap$Tab[, "SE.sim"], method = "firstSEmax")
+```
+
+The rule from the slides (the smallest $K$ with Gap($K$) $\geq$ Gap($K+1$) $-$
+SE) gives **$K = 1$**: "no clusters". The curve is almost flat. Gap(3) to
+Gap(8) are all within about 0.02 of each other.
+
+Why does it fail here? The uniform reference fills a box. These data are one
+large group of normal patients with two small groups at its edges. Compared
+with a box, the normal group alone already looks "clustered". The two small
+groups then add little extra. The gap statistic works best when the clusters
+have similar sizes.
+
+### Three tools, three answers
+
+| Tool | Chosen $K$ |
+|---|---|
+| Elbow | 3 (by eye) |
+| Silhouette | 2 |
+| Gap statistic (1-SE rule) | 1 |
+| Medical knowledge | 3 |
+
+This happens often in practice. Each tool
+answers its own question about geometry. None of them knows what the clusters
+are **for**. Use the tools to find a short list of $K$ values. Then profile the
+clusters for each $K$ (as in Part 1) and choose with a domain expert.
+
+# Part 4 — Hierarchical clustering
+
+Hierarchical clustering does not need $K$ in advance. It merges the two
+closest groups, again and again, until one group remains. The **linkage**
+defines "closest" for groups of points:
+
+- **complete**: the largest distance between a point in one group and a point
+  in the other
+- **average**: the mean of all such distances
+- **single**: the smallest such distance
+- **Ward**: the merge that adds the least WSS (the k-means criterion)
+
+We use the same distance matrix `d` as before, so all four methods see the
+same data.
+
+```{webr}
+#| fig-width: 12
+#| fig-height: 8
+linkages <- c("complete", "average", "single", "ward.D2")
+trees <- lapply(linkages, function(m) hclust(d, method = m))
+names(trees) <- linkages
+
+par(mfrow = c(2, 2))
+for (m in linkages) {
+  plot(trees[[m]], labels = FALSE, hang = -1, main = m, xlab = "", sub = "")
+  rect.hclust(trees[[m]], k = 3, border = c("#3B4992", "#EE0000", "#008B45"))
+}
+par(mfrow = c(1, 1))
+```
+
+The boxes show where a cut into 3 groups falls. The trees have very different
+shapes:
+
+- **Single** linkage makes a long staircase. It adds one patient at a time to
+  one big group. This is called **chaining**.
+- **Complete** and **Ward** make compact, balanced branches.
+
+Now cut each tree at $K = 3$ and compare with the diagnosis:
+
+```{webr}
+for (m in linkages) {
+  cat("\n---", m, "---\n")
+  print(table(diagnosis = thy$diagnosis, cluster = cutree(trees[[m]], k = 3)))
+}
+```
+
+| Linkage | Normal together | Hyper together | Hypo together |
+|---|---|---|---|
+| complete | 147 / 150 | 24 / 35 | 24 / 30 |
+| average | 150 / 150 | 15 / 35 | 24 / 30 |
+| single | 150 / 150 | — | — |
+| Ward | 136 / 150 | 32 / 35 | 24 / 30 |
+| *k-means (Part 1)* | *145 / 150* | *33 / 35* | *24 / 30* |
+
+- **Single linkage fails.** One cluster holds 211 of the 215 patients. The
+  other two clusters hold 3 patients and 1 patient. A 3-cluster cut of a
+  chained tree only splits off the last few outliers.
+- **Ward is the closest to k-means.** This is expected, because Ward merges by
+  the same criterion that k-means minimizes.
+- Average linkage keeps the normal group whole, but it loses half of the
+  hyper patients into it.
+
+The choice of linkage is a modelling choice, like the preprocessing in Part 1.
+It can change the answer as much as the choice of algorithm.
+
+## Try it yourself
+
+**1. Four clusters.** Re-run k-means with `centers = 4`. Which group does the
+fourth cluster split? Profile the clusters on the original units (copy the
+profile code from Part 1). Is the new split clinically meaningful, or does
+k-means cut a continuous group in two?
+
+```{webr}
+#| exercise: ex_k4
+set.seed(42)
+km4 <- kmeans(z, centers = ______, nstart = 25)
+table(diagnosis = thy$diagnosis, cluster = km4$cluster)
+
+labs |>
+  mutate(cluster = km4$cluster) |>
+  group_by(cluster) |>
+  summarise(across(everything(), median), n = n())
+```
+
+**2. Fewer tests.** A clinic often orders only T4 and TSH. Cluster with those
+two columns only (use `z[, c("T4", "TSH")]`). How many patients does each
+diagnosis lose, compared with all five tests?
+
+```{webr}
+#| exercise: ex_two_tests
+set.seed(42)
+km_two <- kmeans(z[, c(______, ______)], centers = 3, nstart = 25)
+table(diagnosis = thy$diagnosis, cluster = km_two$cluster)
+```
+
+**3. Scaled only, then the silhouette.** Re-run the silhouette loop from
+Part 3 on `z_scale` (centered and scaled, no Yeo-Johnson). Which $K$ does it
+pick now? Compare with the table in Part 1: the preprocessing with the better
+match to the diagnoses has the **lower** silhouette. What does this tell you
+about using the silhouette to choose the preprocessing?
+
+## Things worth remembering
+
+- **Preprocessing is part of the model.** Raw, scaled, and transformed data
+  gave three different clusterings. Always scale. Check for skew, and
+  transform when one tail dominates.
+- **Use many starts and set a seed.** One start can stop at a worse local
+  minimum, and nothing warns you.
+- **The tools for choosing $K$ often disagree.** The elbow, the silhouette, and
+  the gap statistic each answer a geometric question. Use them to find a short
+  list, then decide with the profiles and with someone who knows the domain.
+- **Profile your clusters.** A table of cluster medians on the original units
+  is what turns "cluster 2" into "hypothyroid".
+- **Linkage matters.** Single linkage chains. Ward behaves most like k-means.

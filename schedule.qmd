@@ -82,10 +82,10 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Oct 16</td>
-<td><strong>Clustering I</strong> — k-means, cluster evaluation<br><span class="quiz-dates">Quiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.</span></td>
+<td><strong><a href="lectures/07-clustering-kmeans/index.html">Clustering I</a></strong> — k-means, cluster evaluation<br><span class="quiz-dates">Quiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.</span></td>
 <td>ISLR §10.3</td>
-<td><em>TBD</em></td>
-<td><em>TBD</em></td>
+<td><a href="lectures/07-clustering-kmeans/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/07-clustering-kmeans/code/class7_lab1.html">Lab 7.1</a> (simulations)<br><a href="lectures/07-clustering-kmeans/code/class7_lab2.html">Lab 7.2</a> (real data)</td>
 <td>—</td>
 <td rowspan="2"><a href="assignments/hw3.qmd">HW3</a><br>Rel: Oct 16, 11:00 AM<br>Due: Oct 30, 11:59 PM</td>
 </tr>

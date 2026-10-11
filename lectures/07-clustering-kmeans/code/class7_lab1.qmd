@@ -1,0 +1,648 @@
+---
+title: "Class 7/Lab 1: Seeing k-means"
+subtitle: "Interactive Shiny simulations — runs in your browser"
+date: "Oct 16, 2026"
+format: html
+engine: markdown
+filters:
+  - shinylive
+---
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+In class we built k-means one idea at a time: the **within-cluster variation**
+we want to make small, **Lloyd's algorithm** that makes it smaller step by step,
+and **hierarchical clustering**, which does not need $K$ in advance. This lab
+lets you *see* each idea on simulated data.
+
+There is no code to run here. Each section is a small **Shiny app** that runs
+in your browser (via [Shinylive](https://posit-dev.github.io/r-shinylive/) and
+webR), so you do not need to install R. The first app takes 10–30 seconds to
+start while R and the packages download. The other apps start faster.
+
+On simulated data we know the true groups, so we can check every answer. The
+real data analysis, on thyroid patients, is in
+[Lab 2](class7_lab2.html){target="_blank"}.
+
+## 1. Lloyd's algorithm, one step at a time
+
+The slides give the algorithm in two steps:
+
+1. Randomly assign a number from 1 to $K$ to each observation.
+2. Repeat until the assignments stop changing:
+   a. **Update:** for each cluster, compute the centroid (the mean of its
+      points).
+   b. **Assign:** move each observation to the cluster with the closest
+      centroid.
+
+Click **Next step** to do one half-step at a time. The title says which step
+just happened. The right panel tracks the within-cluster sum of squares (WSS),
+$\sum_k \sum_{i \in C_k} \lVert x_i - \mu_k \rVert^2$, after every
+half-step. Here $\mu_k$ is the current centroid of cluster $k$ (the big X). Click **New random start** to begin again from a different random
+assignment.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 660
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+set.seed(42)
+ctr <- rbind(c(0, 0), c(4, 0.5), c(1.5, 3.5))
+pts <- data.frame(x1 = rnorm(150, ctr[rep(1:3, each = 50), 1], 0.8),
+                  x2 = rnorm(150, ctr[rep(1:3, each = 50), 2], 0.8))
+X <- as.matrix(pts)
+pal <- c("#3B4992", "#EE0000", "#008B45", "#631879", "#E69F00")
+
+centroids <- function(cl, K, old = NULL) {
+  t(sapply(1:K, function(k) {
+    if (any(cl == k)) colMeans(X[cl == k, , drop = FALSE])
+    else if (!is.null(old)) old[k, ] else colMeans(X)   # keep an empty cluster's old centroid
+  }))
+}
+wss_of <- function(cl, cen) sum((X - cen[cl, ])^2)
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    sliderInput("K", "number of clusters K", min = 2, max = 5, value = 3),
+    actionButton("restart", "New random start"),
+    actionButton("step", "Next step", class = "btn-primary"),
+    actionButton("finish", "Run to the end")
+  ),
+  layout_columns(col_widths = c(7, 5),
+    plotOutput("scatter", height = "560px"),
+    plotOutput("trace", height = "560px"))
+)
+
+server <- function(input, output, session) {
+  st <- reactiveValues()
+  init <- function() {
+    K <- input$K
+    st$cl <- sample(1:K, nrow(X), replace = TRUE)       # step 1: random labels
+    st$cen <- NULL
+    st$next_is <- "update"
+    st$iter <- 0
+    st$msg <- "Start: random labels, no centroids yet"
+    st$hist <- data.frame(step = 0, wss = wss_of(st$cl, centroids(st$cl, K)),
+                          kind = "start")
+    st$done <- FALSE
+  }
+  half_step <- function() {
+    if (st$done) return()
+    K <- input$K
+    if (st$next_is == "update") {
+      st$cen <- centroids(st$cl, K, st$cen)
+      st$iter <- st$iter + 1
+      st$msg <- sprintf("Iteration %d (a): update centroids", st$iter)
+      st$next_is <- "assign"
+      kind <- "update"
+    } else {
+      d <- sapply(1:K, function(k) colSums((t(X) - st$cen[k, ])^2))
+      new_cl <- max.col(-d, ties.method = "first")
+      changed <- sum(new_cl != st$cl)
+      st$cl <- new_cl
+      st$msg <- sprintf("Iteration %d (b): %d point(s) moved", st$iter, changed)
+      st$next_is <- "update"
+      if (changed == 0) { st$done <- TRUE; st$msg <- sprintf("Converged after %d iterations", st$iter) }
+      kind <- "assign"
+    }
+    cen <- if (is.null(st$cen)) centroids(st$cl, K) else st$cen
+    st$hist <- rbind(st$hist, data.frame(step = nrow(st$hist), wss = wss_of(st$cl, cen), kind = kind))
+  }
+  observeEvent(list(input$K, input$restart), init())
+  observeEvent(input$step, half_step())
+  observeEvent(input$finish, { for (i in 1:100) { if (st$done) break; half_step() } })
+
+  output$scatter <- renderPlot({
+    req(st$cl)
+    d <- cbind(pts, cluster = factor(st$cl, levels = 1:input$K))
+    p <- ggplot(d, aes(x1, x2, colour = cluster)) +
+      geom_point(size = 2.5, alpha = 0.8) +
+      scale_colour_manual(values = pal, drop = FALSE) +
+      coord_equal() +
+      labs(title = st$msg,
+           subtitle = sprintf("WSS = %.1f", tail(st$hist$wss, 1))) +
+      theme_bw(base_size = 15) + theme(legend.position = "bottom")
+    if (!is.null(st$cen)) {
+      cd <- data.frame(x1 = st$cen[, 1], x2 = st$cen[, 2],
+                       cluster = factor(1:input$K, levels = 1:input$K))
+      p <- p + geom_point(data = cd, shape = 4, size = 9, stroke = 2.5)
+    }
+    p
+  }, res = 96)
+
+  output$trace <- renderPlot({
+    req(st$hist)
+    ggplot(st$hist, aes(step, wss)) +
+      geom_line(colour = "grey50") +
+      geom_point(aes(shape = kind), size = 3) +
+      scale_shape_manual(values = c(start = 15, update = 16, assign = 17),
+                         name = NULL) +
+      labs(x = "half-step", y = "WSS", title = "WSS after each half-step") +
+      theme_bw(base_size = 15) + theme(legend.position = "bottom")
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+Things to notice:
+
+- **The first update moves every centroid to the middle.** Random labels mix
+  all groups, so every cluster mean starts near the overall mean. The centroids
+  then separate over the next few iterations.
+- **WSS never goes up.** Each half-step can only lower it, or leave it the
+  same. The update step puts each centroid at the point that minimizes the sum
+  of squares for its cluster. The assign step moves a point only when that
+  makes its own term smaller. This is why the algorithm must stop.
+- **Most of the gain comes early.** The first two or three iterations do most
+  of the work. The last iterations move a few points near the borders.
+- Set $K = 5$ on data with three groups. The algorithm still runs and still
+  converges. k-means always returns $K$ clusters, even when $K$ is wrong.
+
+## 2. Bad starts and local minima
+
+Lloyd's algorithm stops when no single step helps. That is a **local**
+minimum. It is not always the best possible clustering. These data have five
+groups: two pairs on the left and one group on the right. The app runs
+`kmeans()` with $K = 5$ from the random start you pick.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+set.seed(42)
+ctr <- rbind(c(0, 0), c(3, 0), c(0, 5), c(3, 5), c(8, 2.5))
+X <- do.call(rbind, lapply(1:5, function(i)
+  cbind(rnorm(40, ctr[i, 1], 0.6), rnorm(40, ctr[i, 2], 0.6))))
+colnames(X) <- c("x1", "x2")
+best <- kmeans(X, 5, nstart = 50)$tot.withinss
+pal <- c("#3B4992", "#EE0000", "#008B45", "#631879", "#E69F00")
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    sliderInput("seed", "random start number", min = 1, max = 30, value = 1,
+                step = 1, animate = animationOptions(interval = 1500)),
+    radioButtons("nstart", "nstart (starts per run, best one kept)",
+                 choices = c(1, 5, 25), selected = 1, inline = TRUE)
+  ),
+  plotOutput("plot", height = "560px")
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    set.seed(input$seed)
+    km <- kmeans(X, 5, nstart = as.integer(input$nstart))
+    worse <- 100 * (km$tot.withinss / best - 1)
+    d <- data.frame(X, cluster = factor(km$cluster))
+    cd <- data.frame(km$centers, cluster = factor(1:5))
+    ggplot(d, aes(x1, x2, colour = cluster)) +
+      geom_point(size = 2.5, alpha = 0.8) +
+      geom_point(data = cd, shape = 4, size = 9, stroke = 2.5) +
+      scale_colour_manual(values = pal) +
+      coord_equal() +
+      labs(title = sprintf("WSS = %.1f   (best possible: %.1f)", km$tot.withinss, best),
+           subtitle = if (worse > 1) sprintf("Local minimum: %.0f%% worse than the best", worse)
+                      else "This run found the best clustering") +
+      theme_bw(base_size = 15) + theme(legend.position = "none")
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+Press ▶ under the slider to step through the 30 starts. With `nstart = 1`:
+
+- **20 of the 30 starts stop at a local minimum.** A typical bad answer puts
+  two centroids in one group and makes one centroid cover two groups.
+- With `nstart = 5`, 2 of the 30 runs are still bad. With `nstart = 25`, none
+  are.
+
+A local minimum looks like a normal result. `kmeans()` gives no warning. The
+only protection is many starts. Use `nstart = 25` or more, and set a seed so
+that other people get the same clusters.
+
+## 3. Units change the clusters
+
+k-means uses Euclidean distance. A variable with a large spread contributes
+large distances, so it dominates. Below are 200 simulated patients, half with
+diabetes. Two lab values were measured:
+
+- **HbA1c** (%), which differs between the groups
+- **total cholesterol**, which does **not** differ between the groups
+
+Cholesterol can be reported in mg/dL or in mmol/L (1 mmol/L = 38.67 mg/dL).
+The patients and the measurements stay the same. Only the units change.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+set.seed(42)
+n <- 100
+group <- factor(rep(c("no diabetes", "diabetes"), each = n),
+                levels = c("no diabetes", "diabetes"))
+chol_mgdl <- rnorm(2 * n, 200, 40)                     # same in both groups
+a1c <- c(rnorm(n, 5.4, 0.35), rnorm(n, 7.6, 0.6))    # differs between groups
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    radioButtons("units", "cholesterol units",
+                 choices = c("mg/dL", "mmol/L"), selected = "mg/dL"),
+    checkboxInput("std", "standardize both variables first", FALSE),
+    checkboxInput("equal", "draw both axes on the same scale (what k-means sees)", FALSE)
+  ),
+  plotOutput("plot", height = "560px")
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    chol <- if (input$units == "mg/dL") chol_mgdl else chol_mgdl / 38.67
+    X <- cbind(chol = chol, a1c = a1c)
+    Xfit <- if (input$std) scale(X) else X
+    set.seed(42)
+    cl <- kmeans(Xfit, 2, nstart = 25)$cluster
+    agree <- max(mean(cl == as.integer(group)), mean(cl != as.integer(group)))
+    d <- data.frame(Xfit, cluster = factor(cl), group = group)
+    p <- ggplot(d, aes(chol, a1c, colour = cluster, shape = group)) +
+      geom_point(size = 2.5, alpha = 0.8) +
+      scale_colour_manual(values = c("#3B4992", "#EE0000")) +
+      labs(x = if (input$std) "cholesterol (standardized)" else paste0("cholesterol (", input$units, ")"),
+           y = if (input$std) "HbA1c (standardized)" else "HbA1c (%)",
+           title = sprintf("k-means, K = 2: %.0f%% of patients matched to their group",
+                           100 * agree)) +
+      theme_bw(base_size = 15) + theme(legend.position = "bottom")
+    if (input$equal) {
+      # same units on both axes: centre the y-axis on the data, with the x-axis span
+      span <- diff(range(d$chol)) / 2
+      p <- p + coord_equal(xlim = range(d$chol), ylim = mean(d$a1c) + c(-span, span))
+    }
+    p
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+Try the four combinations:
+
+| cholesterol units | standardize | patients matched |
+|---|---|---|
+| mg/dL | no | 52% (no better than chance) |
+| mmol/L | no | 100% |
+| mg/dL | yes | 99% |
+| mmol/L | yes | 99% |
+
+- In mg/dL, cholesterol has an SD near 40, and HbA1c has an SD near 1.2.
+  Tick "same scale" to see what k-means sees: a long horizontal band. k-means
+  cuts the band in half **along cholesterol**, the variable that has no
+  information.
+- In mmol/L, the cholesterol SD is about 1, so HbA1c can be seen. The clusters
+  now follow diabetes status.
+- **Standardizing makes the answer the same for any units.** This is why the
+  slides say: *always center and scale*.
+
+## 4. Choosing $K$
+
+Three tools from class and Lab 2:
+
+- **Elbow:** WSS against $K$. Look for the bend.
+- **Silhouette:** for each point, compare the mean distance to its own cluster
+  ($a$) with the mean distance to the nearest other cluster ($b$):
+  $s = (b - a)/\max(a, b)$. Choose the $K$ with the largest mean $s$. Lab 2
+  explains it in full.
+- **Gap statistic:** compare $\log(\text{WSS})$ with its value on reference
+  data with no clusters. Choose the smallest $K$ whose gap is within one
+  standard error of the next gap.
+
+Pick a data set, change the spread of the groups, and see which $K$ each tool
+picks. The left panel shows k-means with the $K$ from the slider. The gap
+statistic uses $B = 20$ reference sets, so give each change a few seconds.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 760
+library(shiny)
+library(bslib)
+library(ggplot2)
+library(cluster)
+
+make_data <- function(type, spread) {
+  set.seed(42)
+  if (type == "no groups") return(cbind(x1 = rnorm(150), x2 = rnorm(150)))
+  Kt <- if (type == "3 groups") 3 else 4
+  ang <- 2 * pi * (1:Kt) / Kt
+  y <- rep(1:Kt, each = 50)
+  cbind(x1 = rnorm(50 * Kt, 3 * cos(ang)[y], spread),
+        x2 = rnorm(50 * Kt, 3 * sin(ang)[y], spread))
+}
+pal <- c("#3B4992", "#EE0000", "#008B45", "#631879", "#E69F00",
+         "#008280", "#BB0021", "#5F559B")
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    radioButtons("type", "data", choices = c("3 groups", "4 groups", "no groups")),
+    sliderInput("spread", "spread of each group (SD)", min = 0.5, max = 1.5,
+                value = 0.5, step = 0.25),
+    sliderInput("K", "K for the left panel", min = 1, max = 8, value = 3)
+  ),
+  layout_columns(col_widths = c(6, 6),
+    plotOutput("scatter", height = "330px"),
+    plotOutput("elbow", height = "330px"),
+    plotOutput("sil", height = "330px"),
+    plotOutput("gap", height = "330px"))
+)
+
+server <- function(input, output, session) {
+  X <- reactive(make_data(input$type, input$spread))
+  fits <- reactive({
+    lapply(1:8, function(k) { set.seed(42); kmeans(X(), k, nstart = 10) })
+  })
+  sil <- reactive({
+    d <- dist(X())
+    sapply(2:8, function(k) mean(silhouette(fits()[[k]]$cluster, d)[, "sil_width"]))
+  })
+  gap <- reactive({
+    set.seed(42)
+    clusGap(X(), kmeans, K.max = 8, B = 20, nstart = 10)$Tab
+  })
+  base <- theme_bw(base_size = 14)
+  output$scatter <- renderPlot({
+    d <- data.frame(X(), cluster = factor(fits()[[input$K]]$cluster))
+    ggplot(d, aes(x1, x2, colour = cluster)) + geom_point(size = 1.8) +
+      scale_colour_manual(values = pal) + coord_equal() +
+      labs(title = sprintf("k-means with K = %d", input$K)) +
+      base + theme(legend.position = "none")
+  }, res = 96)
+  output$elbow <- renderPlot({
+    d <- data.frame(k = 1:8, wss = sapply(fits(), `[[`, "tot.withinss"))
+    ggplot(d, aes(k, wss)) + geom_line() + geom_point(size = 2) +
+      scale_x_continuous(breaks = 1:8) +
+      labs(x = "K", y = "WSS", title = "Elbow: look for the bend") + base
+  }, res = 96)
+  output$sil <- renderPlot({
+    d <- data.frame(k = 2:8, s = sil())
+    best <- d$k[which.max(d$s)]
+    ggplot(d, aes(k, s)) + geom_line() + geom_point(size = 2) +
+      geom_point(data = d[d$k == best, ], colour = "#EE0000", size = 4) +
+      scale_x_continuous(breaks = 1:8, limits = c(1, 8)) +
+      labs(x = "K", y = "average silhouette",
+           title = sprintf("Silhouette picks K = %d", best)) + base
+  }, res = 96)
+  output$gap <- renderPlot({
+    g <- gap()
+    best <- maxSE(g[, "gap"], g[, "SE.sim"], method = "firstSEmax")
+    d <- data.frame(k = 1:8, g)
+    ggplot(d, aes(k, gap)) + geom_line() + geom_point(size = 2) +
+      geom_errorbar(aes(ymin = gap - SE.sim, ymax = gap + SE.sim), width = 0.2) +
+      geom_point(data = d[d$k == best, ], colour = "#EE0000", size = 4) +
+      scale_x_continuous(breaks = 1:8) +
+      labs(x = "K", y = "Gap(K)", title = sprintf("Gap statistic picks K = %d", best)) + base
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+What the tools pick:
+
+| data | spread | silhouette | gap |
+|---|---|---|---|
+| 3 groups | 0.5 to 1.0 | 3 | 3 |
+| 3 groups | 1.25 or 1.5 | 3 | **1** |
+| 4 groups | 0.5 to 1.25 | 4 | 4 |
+| 4 groups | 1.5 | 4 | **1** |
+| no groups | — | **4** | 1 |
+
+- **Well-separated groups are easy.** All three tools agree.
+- **When the groups overlap, the gap statistic gives up first.** At spread 1.5
+  (1.25 for three groups) the groups touch, and the data no longer look very different from the
+  no-cluster reference. The gap says $K = 1$.
+- **The silhouette cannot say "no clusters".** It starts at $K = 2$, so on data
+  with no groups it still picks a $K$ (here 4). The gap statistic correctly
+  says $K = 1$. The two tools fail in opposite directions.
+- **The elbow is the least precise.** With overlap or no groups, the curve has
+  no clear bend.
+
+## 5. Shapes that k-means cannot find
+
+k-means puts each point with its closest centroid. So every cluster is a
+convex region around a centre, and the border between two clusters is a
+straight line halfway between their centroids. When the true groups have
+another shape, k-means cannot find them. Hierarchical clustering with a
+different linkage sometimes can.
+
+Pick a shape and a method. $K$ is set to the true number of groups. The title
+gives the share of points in a cluster that matches their true group.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+make <- function(type) {
+  set.seed(42)
+  switch(type,
+    "round, equal" = { y <- rep(1:3, each = 70)
+      data.frame(x1 = rnorm(210, c(0, 4, 2)[y], 0.7), x2 = rnorm(210, c(0, 0, 3.5)[y], 0.7), g = y) },
+    "unequal sizes" = { y <- rep(1:2, c(250, 30))
+      data.frame(x1 = rnorm(280, c(0, 4.2)[y], c(1.2, 0.4)[y]), x2 = rnorm(280, 0, c(1.2, 0.4)[y]), g = y) },
+    "elongated" = { y <- rep(1:2, each = 100)
+      u <- rnorm(200, 0, 3); v <- rnorm(200, c(-1.1, 1.1)[y], 0.35)   # long along u, apart along v
+      data.frame(x1 = (u - v) / sqrt(2), x2 = (u + v) / sqrt(2), g = y) },   # tilt by 45 degrees
+    "rings" = { y <- rep(1:2, c(80, 160)); th <- runif(240, 0, 2 * pi)
+      r <- c(1, 4)[y] + rnorm(240, 0, 0.25)
+      data.frame(x1 = r * cos(th), x2 = r * sin(th), g = y) },
+    "moons" = { y <- rep(1:2, each = 100); th <- runif(200, 0, pi)
+      data.frame(x1 = ifelse(y == 1, cos(th), 1 - cos(th)) + rnorm(200, 0, 0.07),
+                 x2 = ifelse(y == 1, sin(th), 0.5 - sin(th)) + rnorm(200, 0, 0.07), g = y) })
+}
+agree <- function(cl, g) { t <- table(cl, g); sum(apply(t, 1, max)) / length(g) }
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    radioButtons("type", "true groups",
+                 choices = c("round, equal", "unequal sizes", "elongated", "rings", "moons")),
+    radioButtons("method", "method",
+                 choices = c("k-means", "hierarchical: complete", "hierarchical: average",
+                             "hierarchical: single", "hierarchical: Ward"))
+  ),
+  plotOutput("plot", height = "560px")
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    d <- make(input$type)
+    X <- as.matrix(d[, c("x1", "x2")])
+    K <- length(unique(d$g))
+    cl <- if (input$method == "k-means") {
+      set.seed(42); kmeans(X, K, nstart = 25)$cluster
+    } else {
+      link <- c("hierarchical: complete" = "complete", "hierarchical: average" = "average",
+                "hierarchical: single" = "single", "hierarchical: Ward" = "ward.D2")[input$method]
+      cutree(hclust(dist(X), method = link), K)
+    }
+    d$cluster <- factor(cl)
+    ggplot(d, aes(x1, x2, colour = cluster)) +
+      geom_point(size = 2.2, alpha = 0.8) +
+      scale_colour_manual(values = c("#3B4992", "#EE0000", "#008B45")) +
+      coord_equal() +
+      labs(title = sprintf("%s, K = %d: %.0f%% matched", input$method, K, 100 * agree(cl, d$g))) +
+      theme_bw(base_size = 15) + theme(legend.position = "none")
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+Points matched to their true group:
+
+| shape | k-means | complete | average | single | Ward |
+|---|---|---|---|---|---|
+| round, equal | 100% | 100% | 100% | 67% | 100% |
+| unequal sizes | 89% | 89% | 89% | 89% | 100% |
+| elongated | 56% | 52% | 50% | 50% | 52% |
+| rings | 67% | 72% | 67% | **100%** | 68% |
+| moons | 76% | 87% | 74% | **100%** | 87% |
+
+- **Round, equal groups are what k-means is built for.** Every method except
+  single linkage does well.
+- **Unequal sizes:** the k-means border sits halfway between the two centroids.
+  The large, wide group reaches past that border, so k-means gives some of its
+  points to the small group.
+- **Elongated groups defeat every method here.** Each group is a long, thin,
+  tilted band. Cutting across both bands, into two halves along their length,
+  gives a WSS of 905. The true split gives 1716. k-means minimizes WSS, so it
+  picks the wrong cut. Scaling does not help: the bands are tilted, so both
+  variables have the same spread already. (Class 8's Gaussian mixture models
+  can fit long, tilted clusters.)
+- **Rings and moons: single linkage wins.** Single linkage joins two groups
+  when their two **closest** points are near. It follows a chain of near
+  neighbours around a curve. The same behaviour makes it fail on round groups:
+  a few points between groups are enough to chain them together.
+
+## 6. Reading a dendrogram
+
+Hierarchical clustering builds a tree. Each merge is drawn at the height of the
+distance between the two groups it joins. Cutting the tree with a horizontal
+line gives the clusters: each branch that the line crosses is one cluster.
+
+These 30 points come from three groups. The numbers on the points match the
+leaves of the tree.
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 640
+library(shiny)
+library(bslib)
+library(ggplot2)
+
+set.seed(42)
+ctr <- rbind(c(0, 0), c(3, 0.5), c(1.2, 3))
+d <- data.frame(x1 = rnorm(30, ctr[rep(1:3, each = 10), 1], 0.55),
+                x2 = rnorm(30, ctr[rep(1:3, each = 10), 2], 0.55),
+                id = 1:30)
+D <- dist(d[, c("x1", "x2")])
+pal <- c("#3B4992", "#EE0000", "#008B45", "#631879", "#E69F00", "#008280",
+         "#BB0021", "#5F559B")
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    radioButtons("link", "linkage", choices = c("complete", "average", "single", "ward.D2")),
+    sliderInput("K", "cut into K clusters", min = 1, max = 8, value = 3)
+  ),
+  layout_columns(col_widths = c(7, 5),
+    plotOutput("tree", height = "560px"),
+    plotOutput("scatter", height = "560px"))
+)
+
+server <- function(input, output, session) {
+  h <- reactive(hclust(D, method = input$link))
+  output$tree <- renderPlot({
+    hc <- h()
+    heights <- sort(hc$height, decreasing = TRUE)
+    cut_at <- if (input$K == 1) max(hc$height) * 1.05 else mean(heights[c(input$K - 1, input$K)])
+    par(mar = c(2, 4, 3, 1), cex = 1.1)
+    plot(hc, hang = -1, main = sprintf("%s linkage: cut at height %.2f", input$link, cut_at),
+         xlab = "", sub = "", ylab = "merge height")
+    abline(h = cut_at, col = "#EE0000", lwd = 2, lty = 2)
+    if (input$K > 1) rect.hclust(hc, k = input$K, border = pal[1:input$K])
+  }, res = 96)
+  output$scatter <- renderPlot({
+    cl <- cutree(h(), input$K)
+    # colour clusters in the left-to-right order of the tree, to match the boxes
+    ord <- unique(cl[h()$order])
+    d$cluster <- factor(match(cl, ord))
+    ggplot(d, aes(x1, x2, colour = cluster, label = id)) +
+      geom_point(size = 7, alpha = 0.35) + geom_text(size = 4, colour = "black") +
+      scale_colour_manual(values = pal) + coord_equal() +
+      labs(title = sprintf("K = %d", input$K)) +
+      theme_bw(base_size = 15) + theme(legend.position = "none")
+  }, res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+Things to try:
+
+- **Move the cut.** One tree gives every $K$ from 1 to 30. You choose $K$
+  after the fit, by choosing the height of the cut.
+- **Look for a long vertical gap.** With Ward linkage, the three groups merge
+  far above everything else. A cut anywhere in that long gap gives the same
+  three clusters, and here they match the true groups (one point off). This is
+  the "longest vertical line" rule from the slides. Complete linkage also
+  shows a gap at three clusters, but a shorter one, and its three clusters
+  misplace 4 points.
+- **Read heights, not left-to-right order.** Two leaves next to each other on
+  the axis are not always close. Only the height where their branches join
+  tells you how far apart they are.
+- **Compare the linkages.** Single linkage makes a flat, chained tree: below
+  the top merge, the merge heights are small and close together, so there is
+  no clear place to cut. Ward's merge heights are on another scale (they grow with the
+  increase in WSS), so compare the shape of the trees, not the numbers.
+
+## Things worth remembering
+
+- **Lloyd's algorithm never increases WSS**, so it always stops. But it stops
+  at a **local** minimum. Use `nstart = 25` or more, and set a seed.
+- **Distance depends on units.** A variable with a large spread dominates,
+  even when it carries no information. Standardize first.
+- **No single tool chooses $K$.** The silhouette cannot say "no clusters". The
+  gap statistic gives up when groups overlap. Use them together, and look at
+  the clusters.
+- **k-means finds round groups of similar size.** For long, curved, or nested
+  groups, it gives a confident but wrong answer. Hierarchical clustering with a
+  suitable linkage, or the mixture models of Class 8, can do better.
+
+Next: [Lab 2](class7_lab2.html){target="_blank"} applies these ideas to real
+thyroid patients.
