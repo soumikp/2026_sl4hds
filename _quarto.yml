@@ -5,6 +5,7 @@ project:
     - "**/*.qmd"
     - "!_solutions/**"
     - "!.claude/**"
+    - "!lectures/07-clustering-kmeans/code/class7_lab1.qmd"
     - "!lectures/08-clustering-gmm/**"
     - "!lectures/09-pca/**"
     - "!lectures/10-trees/**"

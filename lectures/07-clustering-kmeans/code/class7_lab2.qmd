@@ -45,9 +45,8 @@ include-after-body:
 
 ## Introduction
 
-[Lab 1](class7_lab1.html){target="_blank"} showed k-means on simulated data:
-Lloyd's algorithm step by step, bad starts, scaling, and choosing $K$. This lab
-uses real patients. The question is one a clinician could ask:
+In class we saw k-means on simulated data: Lloyd's algorithm step by step, bad
+starts, scaling, and choosing $K$. This lab uses real patients. The question is one a clinician could ask:
 
 > *If we give the algorithm only the lab results, and no diagnoses, does it
 > find the thyroid conditions by itself?*

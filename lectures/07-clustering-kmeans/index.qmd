@@ -17,7 +17,6 @@ k-means and Lloyd's algorithm; hierarchical clustering and linkage; choosing the
 
 ## 🧪 Labs
 
-Both labs run entirely in your browser, no local R install needed. Start with Lab 1.
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed.
 
-- 🎛️ [Lab 1: Seeing k-means (Shiny simulations)](code/class7_lab1.html){target="_blank"} — Lloyd's algorithm step by step, bad starts, units and scaling, choosing K, shapes k-means cannot find, and reading a dendrogram.
-- 🧪 [Lab 2: Thyroid patients (live R)](code/class7_lab2.html){target="_blank"} — edit and re-run any code cell: k-means and hierarchical clustering on five thyroid lab tests, with the silhouette and gap statistic for choosing K. A "Download my code" button captures whatever you've written before you leave.
+- 🧪 [Lab: Thyroid patients (live R)](code/class7_lab2.html){target="_blank"} — edit and re-run any code cell: k-means and hierarchical clustering on five thyroid lab tests, with the silhouette and gap statistic for choosing K. A "Download my code" button captures whatever you've written before you leave.

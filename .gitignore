@@ -128,13 +128,16 @@ _solutions/
 /lectures/06-classification-2/code/class6_lab1.html
 /lectures/06-classification-2/code/class6_lab1_files/
 
-# Lecture 7 is published: clean slides and the two labs go on the site. Keep
+# Lecture 7 is published: clean slides and the thyroid lab (class7_lab2) go on
+# the site. The Shiny simulations lab (class7_lab1) was pulled — it timed out
+# in the browser — and stays local until fixed. Keep
 # the rest local (readings, figure scripts, page-level data). The lab's own
 # data (code/data/thyroid.csv) IS shipped.
 /lectures/07-clustering-kmeans/readings/
 /lectures/07-clustering-kmeans/data/
 /lectures/07-clustering-kmeans/code/fig1.R
 /lectures/07-clustering-kmeans/code/fig2.R
+/lectures/07-clustering-kmeans/code/class7_lab1.qmd
 # Local render byproducts (see lecture 5)
 /lectures/07-clustering-kmeans/code/_extensions/
 /lectures/07-clustering-kmeans/code/class7_lab*.html
