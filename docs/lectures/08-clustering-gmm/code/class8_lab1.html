@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-23">
+
+<title>Class 8/Lab: Gaussian Mixture Models on Diabetes Patients – BIOST 2155</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6a53539d8ec9bfc63628230de0690b95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
+<link href="../../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">BIOST 2155</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../syllabus.html"> 
+<span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../assignments/index.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Class 8/Lab: Gaussian Mixture Models on Diabetes Patients</h1>
+<p class="subtitle lead">Live in-browser R — edit and re-run any cell</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 23, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In Lab 7, k-means put every thyroid patient in exactly one cluster. At the end we said that a patient on the border between two groups needs a different tool. This lab uses that tool, the <strong>Gaussian mixture model (GMM)</strong>, on a classic clinical question:</p>
+<blockquote class="blockquote">
+<p><em>Can glucose and insulin tests, with no diagnosis given, separate normal patients from patients with early and with full diabetes? And can the method tell us which patients are hard to place?</em></p>
+</blockquote>
+<p>We know the diagnosis for these patients, so we can check the answer. In real unsupervised work there is no answer key. The lab shows what to look at then.</p>
+<p>The plan:</p>
+<ol type="1">
+<li><strong>Look at the data.</strong> Three tests, and clusters that are long and thin.</li>
+<li><strong>k-means first.</strong> Where it goes wrong, and why.</li>
+<li><strong>EM by hand.</strong> We write the E-step and the M-step from the slides, and watch the fit improve.</li>
+<li><strong>Read the fitted model.</strong> Weights, means, and covariances in clinical units.</li>
+<li><strong>Soft assignment.</strong> The probability that each patient belongs to each cluster, and who is uncertain.</li>
+<li><strong>Choosing <span class="math inline">\(K\)</span>.</strong> BIC against the silhouette.</li>
+<li><strong>Choosing the covariance shape.</strong> Full, diagonal, or spherical.</li>
+<li><strong>Starting points.</strong> EM can stop at a bad answer.</li>
+</ol>
+<p>Every code cell runs live in your browser via webR, so you do not need to install R. Packages and data load once when the page opens. Give it a few seconds on first load. Click <strong>Run Code</strong> to run a cell. Run the cells in order from the top, because later cells use objects that earlier cells make.</p>
+</section>
+<section id="a-note-on-the-tools" class="level2">
+<h2 class="anchored" data-anchor-id="a-note-on-the-tools">A note on the tools</h2>
+<p>Two choices in this lab differ from earlier labs.</p>
+<ul>
+<li><strong><code>caret</code> does the preprocessing.</strong> As in Lab 7, clustering has no outcome, so <code>train()</code> does not apply. We use <code>preProcess()</code> to center and scale.</li>
+<li><strong>We write EM ourselves.</strong> The <code>mclust</code> package fits GMMs in one line, but it is not available in the browser. So we code the algorithm from the slides, using <code>dmvnorm()</code> from the <code>mvtnorm</code> package for the normal density. It is about 30 lines. We checked the code against <code>mclust</code> on these data: the log-likelihood and BIC agree.</li>
+</ul>
+</section>
+<section id="the-data-glucose-tolerance-in-145-adults" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-glucose-tolerance-in-145-adults">The data: glucose tolerance in 145 adults</h2>
+<p>Reaven and Miller (1979) studied 145 non-obese adults. Each person had three measurements:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Test</th>
+<th>What it measures</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>glucose</code></td>
+<td>glucose response</td>
+<td>area under the plasma glucose curve during a 3-hour oral glucose tolerance test</td>
+</tr>
+<tr class="even">
+<td><code>insulin</code></td>
+<td>insulin response</td>
+<td>area under the plasma insulin curve during the same test</td>
+</tr>
+<tr class="odd">
+<td><code>sspg</code></td>
+<td>steady-state plasma glucose</td>
+<td>how well the body responds to insulin. A <strong>high</strong> value means <strong>insulin resistance</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Doctors also gave each person a diagnosis: <strong>Normal</strong>, <strong>Chemical</strong> diabetes (an abnormal glucose test but no symptoms yet), or <strong>Overt</strong> diabetes (clinical diabetes). We hide the diagnosis from the algorithm and use it only to check.</p>
+<div class="cell">
+<div>
+<div id="webr-1" class="exercise-cell">
+
+</div>
+<script type="webr-1-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShkcGx5cilcbmxpYnJhcnkoZ2dwbG90MilcblxuZGlhIDwtIHJlYWQuY3N2KFwiZGF0YS9kaWFiZXRlcy5jc3ZcIikgfD5cbiAgbXV0YXRlKGNsYXNzID0gZmFjdG9yKGNsYXNzLCBsZXZlbHMgPSBjKFwiTm9ybWFsXCIsIFwiQ2hlbWljYWxcIiwgXCJPdmVydFwiKSkpXG5cbnRlc3RzIDwtIGRpYSB8PiBzZWxlY3QoLWNsYXNzKSAgICMgdGhlIHRocmVlIHRlc3RzOiBhbGwgdGhlIGFsZ29yaXRobSBzZWVzXG5cbmRpbShkaWEpXG50YWJsZShkaWEkY2xhc3MpIn0=
+</script>
+</div>
+</div>
+<section id="what-a-clinician-expects" class="level3">
+<h3 class="anchored" data-anchor-id="what-a-clinician-expects">What a clinician expects</h3>
+<p>The median of each test, by diagnosis:</p>
+<div class="cell">
+<div>
+<div id="webr-2" class="exercise-cell">
+
+</div>
+<script type="webr-2-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlhIHw+XG4gIGdyb3VwX2J5KGNsYXNzKSB8PlxuICBzdW1tYXJpc2UoYWNyb3NzKGV2ZXJ5dGhpbmcoKSwgbWVkaWFuKSwgbiA9IG4oKSkifQ==
+</script>
+</div>
+</div>
+<p>Overt patients have the highest glucose and insulin responses, by a wide margin. Chemical patients have a glucose response close to normal, but their <code>sspg</code> is the highest. Their cells respond poorly to insulin. This is the early stage of the disease. Normal patients are low on all three tests.</p>
+</section>
+<section id="the-shape-of-the-groups" class="level3">
+<h3 class="anchored" data-anchor-id="the-shape-of-the-groups">The shape of the groups</h3>
+<div class="cell">
+<div>
+<div id="webr-3" class="exercise-cell">
+
+</div>
+<script type="webr-3-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShncmlkRXh0cmEpXG5cbnAxIDwtIGdncGxvdChkaWEsIGFlcyhnbHVjb3NlLCBpbnN1bGluLCBjb2xvdXIgPSBjbGFzcykpICtcbiAgZ2VvbV9wb2ludChzaXplID0gMiwgYWxwaGEgPSAwLjgpICsgZ2dzY2k6OnNjYWxlX2NvbG9yX2FhYXMoKSArXG4gIGxhYnModGl0bGUgPSBcImdsdWNvc2UgdnMgaW5zdWxpblwiKSArIHRoZW1lX2J3KCkgK1xuICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKVxucDIgPC0gZ2dwbG90KGRpYSwgYWVzKGluc3VsaW4sIHNzcGcsIGNvbG91ciA9IGNsYXNzKSkgK1xuICBnZW9tX3BvaW50KHNpemUgPSAyLCBhbHBoYSA9IDAuOCkgKyBnZ3NjaTo6c2NhbGVfY29sb3JfYWFhcygpICtcbiAgbGFicyh0aXRsZSA9IFwiaW5zdWxpbiB2cyBzc3BnXCIpICsgdGhlbWVfYncoKSArXG4gIHRoZW1lKGxlZ2VuZC5wb3NpdGlvbiA9IFwiYm90dG9tXCIpXG5cbmdyaWQuYXJyYW5nZShwMSwgcDIsIG5yb3cgPSAxKVxucm91bmQoc2FwcGx5KHRlc3RzLCBzZCksIDEpIn0=
+</script>
+</div>
+</div>
+<p>Three things are visible:</p>
+<ul>
+<li><strong>The scales differ.</strong> The SD of <code>insulin</code> is 320. The SD of <code>glucose</code> is 64. We scale before clustering, as in Lab 7.</li>
+<li><strong>The groups are not round.</strong> The overt patients lie along a long, thin band. The normal patients form a small blob with a thin tail. The groups have different sizes and different orientations.</li>
+<li><strong>The chemical and normal groups overlap</strong> in <code>glucose</code>, and the chemical and overt groups overlap in <code>insulin</code>.</li>
+</ul>
+<p>A clinician would say: some patients are borderline. We will check whether the algorithm finds them.</p>
+<div class="cell">
+<div>
+<div id="webr-4" class="exercise-cell">
+
+</div>
+<script type="webr-4-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShjYXJldClcblxucHAgPC0gcHJlUHJvY2Vzcyh0ZXN0cywgbWV0aG9kID0gYyhcImNlbnRlclwiLCBcInNjYWxlXCIpKVxueiAgPC0gYXMubWF0cml4KHByZWRpY3QocHAsIHRlc3RzKSkgICAgICMgc2NhbGVkIHRlc3RzOiBuID0gMTQ1LCBwID0gM1xubiAgPC0gbnJvdyh6KVxucCAgPC0gbmNvbCh6KSJ9
+</script>
+</div>
+</div>
+</section>
+</section>
+<section id="part-1-k-means-first" class="level1">
+<h1>Part 1 — k-means first</h1>
+<p>Lab 7 gave us k-means, so we start there. We use <span class="math inline">\(K = 3\)</span> and many starts. To compare cluster numbers with diagnoses, we give the clusters a fixed order: from the lowest to the highest mean <code>glucose</code>. This puts “Normal, Chemical, Overt” in the same order as the diagnoses.</p>
+<div class="cell">
+<div>
+<div id="webr-5" class="exercise-cell">
+
+</div>
+<script type="webr-5-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBudW1iZXIgY2x1c3RlcnMgMSwgMiwgMyBieSBpbmNyZWFzaW5nIG1lYW4gZ2x1Y29zZSwgc28gbGFiZWxzIGFyZSBjb21wYXJhYmxlXG5yZWxhYmVsIDwtIGZ1bmN0aW9uKGNsKSB7XG4gIG9yZCA8LSBvcmRlcih0YXBwbHkodGVzdHMkZ2x1Y29zZSwgY2wsIG1lYW4pKVxuICBtYXRjaChjbCwgb3JkKVxufVxuXG5zZXQuc2VlZCg0MilcbmttIDwtIGttZWFucyh6LCBjZW50ZXJzID0gMywgbnN0YXJ0ID0gMjUpXG5rbV9jbCA8LSByZWxhYmVsKGttJGNsdXN0ZXIpXG5cbnRhYmxlKGRpYWdub3NpcyA9IGRpYSRjbGFzcywgY2x1c3RlciA9IGttX2NsKVxubWVhbihrbV9jbCA9PSBhcy5pbnRlZ2VyKGRpYSRjbGFzcykpICAgIyBzaGFyZSBvZiBwYXRpZW50cyBpbiB0aGUgXCJyaWdodFwiIGNsdXN0ZXIifQ==
+</script>
+</div>
+</div>
+<p>About three patients in four are in the “right” cluster. The mistakes are large. Only 13 of the 36 chemical patients land in their own cluster, and 23 go into the normal cluster. Also, 9 of the 33 overt patients end up in the normal cluster. Here is the picture:</p>
+<div class="cell">
+<div>
+<div id="webr-6" class="exercise-cell">
+
+</div>
+<script type="webr-6-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlhIHw+XG4gIG11dGF0ZShjbHVzdGVyID0gZmFjdG9yKGttX2NsKSkgfD5cbiAgZ2dwbG90KGFlcyhnbHVjb3NlLCBpbnN1bGluLCBjb2xvdXIgPSBjbHVzdGVyLCBzaGFwZSA9IGNsYXNzKSkgK1xuICBnZW9tX3BvaW50KHNpemUgPSAyLjUsIGFscGhhID0gMC44KSArXG4gIGdnc2NpOjpzY2FsZV9jb2xvcl9hYWFzKCkgK1xuICBsYWJzKHRpdGxlID0gXCJrLW1lYW5zIGNsdXN0ZXJzIChjb2xvdXIpIHZzLiBkaWFnbm9zaXMgKHNoYXBlKVwiKSArXG4gIHRoZW1lX2J3KCkgKyB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKSJ9
+</script>
+</div>
+</div>
+<p><strong>Why does k-means fail?</strong> k-means assigns each patient to the nearest centroid by Euclidean distance. The boundary between two clusters is a straight line halfway between their centroids. So k-means implicitly assumes that every cluster is a round ball of the same size. These clusters are long and thin, and they have different sizes. A long thin cluster is cut in two, or it takes patients from its neighbours.</p>
+<p>A GMM fixes this by giving each cluster its <strong>own</strong> mean, its <strong>own</strong> covariance matrix (size, shape, and orientation), and its <strong>own</strong> weight.</p>
+</section>
+<section id="part-2-em-by-hand" class="level1">
+<h1>Part 2 — EM by hand</h1>
+<p>The slides define the model: each cluster <span class="math inline">\(k\)</span> has a weight <span class="math inline">\(\pi_k\)</span>, a mean <span class="math inline">\(\mu_k\)</span>, and a covariance <span class="math inline">\(\Sigma_k\)</span>. The density of a patient is <span class="math display">\[p(x) = \sum_{k=1}^{K} \pi_k \, N(x \mid \mu_k, \Sigma_k).\]</span> We do not know the cluster of any patient, so we use EM. It alternates two steps.</p>
+<p><strong>E-step.</strong> Given the parameters, compute for each patient <span class="math inline">\(n\)</span> and cluster <span class="math inline">\(k\)</span> the probability that the patient belongs to the cluster (the <strong>responsibility</strong>): <span class="math display">\[r_{nk} = \hat P(Y = k \mid x_n) =
+\frac{\pi_k \, N(x_n \mid \mu_k, \Sigma_k)}{\sum_j \pi_j \, N(x_n \mid \mu_j, \Sigma_j)}.\]</span></p>
+<p><strong>M-step.</strong> Given the responsibilities, update the parameters. Each patient counts in cluster <span class="math inline">\(k\)</span> with weight <span class="math inline">\(r_{nk}\)</span>: <span class="math display">\[N_k = \sum_n r_{nk}, \quad
+\hat\mu_k = \frac{1}{N_k}\sum_n r_{nk}\, x_n, \quad
+\hat\Sigma_k = \frac{1}{N_k}\sum_n r_{nk}\,(x_n - \hat\mu_k)(x_n - \hat\mu_k)^\top, \quad
+\hat\pi_k = \frac{N_k}{N}.\]</span></p>
+<p>The code follows these formulas line by line.</p>
+<div class="cell">
+<div>
+<div id="webr-7" class="exercise-cell">
+
+</div>
+<script type="webr-7-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShtdnRub3JtKVxuXG4jIEUtc3RlcDogcmVzcG9uc2liaWxpdGllcyByW24sIGtdLCBhbmQgdGhlIGxvZy1saWtlbGlob29kIG9mIHRoZSBkYXRhXG5lX3N0ZXAgPC0gZnVuY3Rpb24oeiwgcGlfaywgbXUsIFNpZ21hKSB7XG4gIEsgPC0gbGVuZ3RoKHBpX2spXG4gIGRlbnMgPC0gc2FwcGx5KDE6SywgZnVuY3Rpb24oaykgcGlfa1trXSAqIGRtdm5vcm0oeiwgbXVbaywgXSwgU2lnbWFbW2tdXSkpXG4gIGRlbnMgPC0gbWF0cml4KGRlbnMsIG5yb3coeiksIEspXG4gIGxpc3QociA9IGRlbnMgLyByb3dTdW1zKGRlbnMpLCAgICAgICAgICAgICMgbm9ybWFsaXplIGVhY2ggcm93IHRvIHN1bSB0byAxXG4gICAgICAgbG9nbGlrID0gc3VtKGxvZyhyb3dTdW1zKGRlbnMpKSkpXG59XG5cbiMgTS1zdGVwOiB3ZWlnaHRlZCBtZWFucywgY292YXJpYW5jZXMgYW5kIHdlaWdodHNcbiMgKGNvdl90eXBlIGlzIHVzZWQgaW4gUGFydCA2OyBcImZ1bGxcIiBpcyB0aGUgdXN1YWwgR01NKVxubV9zdGVwIDwtIGZ1bmN0aW9uKHosIHIsIGNvdl90eXBlID0gXCJmdWxsXCIpIHtcbiAgSyAgPC0gbmNvbChyKVxuICBOayA8LSBjb2xTdW1zKHIpXG4gIG11IDwtIHQoc2FwcGx5KDE6SywgZnVuY3Rpb24oaykgY29sU3VtcyhyWywga10gKiB6KSAvIE5rW2tdKSlcbiAgU2lnbWEgPC0gbGFwcGx5KDE6SywgZnVuY3Rpb24oaykge1xuICAgIGQgPC0gc3dlZXAoeiwgMiwgbXVbaywgXSlcbiAgICBTIDwtIGNyb3NzcHJvZChkICogclssIGtdLCBkKSAvIE5rW2tdXG4gICAgaWYgKGNvdl90eXBlID09IFwiZGlhZ1wiKSAgICAgIFMgPC0gZGlhZyhkaWFnKFMpKVxuICAgIGlmIChjb3ZfdHlwZSA9PSBcInNwaGVyaWNhbFwiKSBTIDwtIGRpYWcobWVhbihkaWFnKFMpKSwgbmNvbCh6KSlcbiAgICBTICsgZGlhZygxZS02LCBuY29sKHopKSAgICAgICAgICAgICAgICAgIyB0aW55IHJpZGdlIGtlZXBzIFMgaW52ZXJ0aWJsZVxuICB9KVxuICBsaXN0KHBpX2sgPSBOayAvIG5yb3coeiksIG11ID0gbXUsIFNpZ21hID0gU2lnbWEpXG59In0=
+</script>
+</div>
+</div>
+<p>Now the loop. EM needs a starting point. We start from the k-means clusters: we treat them as hard responsibilities (0 or 1), run one M-step to get starting parameters, and then alternate E and M until the log-likelihood stops changing. At the end we number the clusters by increasing <code>glucose</code>, as before.</p>
+<div class="cell">
+<div>
+<div id="webr-8" class="exercise-cell">
+
+</div>
+<script type="webr-8-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZml0X2dtbSA8LSBmdW5jdGlvbih6LCBLLCBjb3ZfdHlwZSA9IFwiZnVsbFwiLCBpbml0ID0gTlVMTCxcbiAgICAgICAgICAgICAgICAgICAgbWF4X2l0ZXIgPSA1MDAsIHRvbCA9IDFlLTgpIHtcbiAgaWYgKGlzLm51bGwoaW5pdCkpXG4gICAgaW5pdCA8LSBpZiAoSyA9PSAxKSByZXAoMSwgbnJvdyh6KSkgZWxzZSBrbWVhbnMoeiwgSywgbnN0YXJ0ID0gMTApJGNsdXN0ZXJcbiAgciAgIDwtIGRpYWcoSylbaW5pdCwgLCBkcm9wID0gRkFMU0VdICAgICAgIyBoYXJkIDAvMSByZXNwb25zaWJpbGl0aWVzXG4gIHBhciA8LSBtX3N0ZXAoeiwgciwgY292X3R5cGUpXG4gIGxsICA8LSBudW1lcmljKDApXG4gIGZvciAoaSBpbiAxOm1heF9pdGVyKSB7XG4gICAgZSAgPC0gZV9zdGVwKHosIHBhciRwaV9rLCBwYXIkbXUsIHBhciRTaWdtYSlcbiAgICBsbCA8LSBjKGxsLCBlJGxvZ2xpaylcbiAgICBpZiAoaSA+IDEgJiYgYWJzKGxsW2ldIC0gbGxbaSAtIDFdKSA8IHRvbCkgYnJlYWsgICAjIGNvbnZlcmdlZFxuICAgIGlmIChpID09IG1heF9pdGVyKSBicmVha1xuICAgIHBhciA8LSBtX3N0ZXAoeiwgZSRyLCBjb3ZfdHlwZSlcbiAgfVxuICBvIDwtIG9yZGVyKHBhciRtdVssIDFdKSAgICAgICAgICAgICAgICAgICAjIG51bWJlciBjbHVzdGVycyBieSBtZWFuIGdsdWNvc2VcbiAgbGlzdChwaV9rID0gcGFyJHBpX2tbb10sIG11ID0gcGFyJG11W28sICwgZHJvcCA9IEZBTFNFXSxcbiAgICAgICBTaWdtYSA9IHBhciRTaWdtYVtvXSwgciA9IGUkclssIG8sIGRyb3AgPSBGQUxTRV0sXG4gICAgICAgbG9nbGlrID0gbGwsIGNvdl90eXBlID0gY292X3R5cGUpXG59XG5cbnNldC5zZWVkKDQyKVxuZ21tMyA8LSBmaXRfZ21tKHosIEsgPSAzKVxuXG5sZW5ndGgoZ21tMyRsb2dsaWspICAgICAjIG51bWJlciBvZiBFTSBpdGVyYXRpb25zXG50YWlsKGdtbTMkbG9nbGlrLCAxKSAgICAjIGZpbmFsIGxvZy1saWtlbGlob29kIn0=
+</script>
+</div>
+</div>
+<p>EM stopped after a few dozen iterations. The log-likelihood is the quantity EM increases at every step, never decreases:</p>
+<div class="cell">
+<div>
+<div id="webr-9" class="exercise-cell">
+
+</div>
+<script type="webr-9-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZ2dwbG90KGRhdGEuZnJhbWUoaXRlciA9IHNlcV9hbG9uZyhnbW0zJGxvZ2xpayksIGxvZ2xpayA9IGdtbTMkbG9nbGlrKSxcbiAgICAgICBhZXMoaXRlciwgbG9nbGlrKSkgK1xuICBnZW9tX2xpbmUoKSArIGdlb21fcG9pbnQoc2l6ZSA9IDEuNSkgK1xuICBsYWJzKHggPSBcIkVNIGl0ZXJhdGlvblwiLCB5ID0gXCJsb2ctbGlrZWxpaG9vZFwiLFxuICAgICAgIHRpdGxlID0gXCJFTSBuZXZlciBkZWNyZWFzZXMgdGhlIGxvZy1saWtlbGlob29kXCIpICtcbiAgdGhlbWVfYncoKVxuXG5hbGwoZGlmZihnbW0zJGxvZ2xpaykgPj0gLTFlLTgpIn0=
+</script>
+</div>
+</div>
+<p>It rises fast at first, then slowly. EM is guaranteed to climb, but it climbs to a <strong>local</strong> maximum. Part 7 returns to this.</p>
+<section id="watching-the-clusters-move" class="level3">
+<h3 class="anchored" data-anchor-id="watching-the-clusters-move">Watching the clusters move</h3>
+<p>We stop EM after 1, 3, 10 and 45 iterations, and draw each cluster as an ellipse (the 95% region of its normal distribution). Iteration 1 is the k-means start, with its hard assignments.</p>
+<div class="cell">
+<div>
+<div id="webr-10" class="exercise-cell">
+
+</div>
+<script type="webr-10-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBwb2ludHMgb24gdGhlIDk1JSBlbGxpcHNlIG9mIE4obXUsIFNpZ21hKSwgbWFwcGVkIGJhY2sgdG8gY2xpbmljYWwgdW5pdHNcbmVsbGlwc2VfZGYgPC0gZnVuY3Rpb24obXUsIFNpZ21hLCBsZXZlbCA9IDAuOTUsIG5wdHMgPSAxMDApIHtcbiAgdGggIDwtIHNlcSgwLCAyICogcGksIGxlbmd0aC5vdXQgPSBucHRzKVxuICBlICAgPC0gZWlnZW4oU2lnbWEpXG4gIHB0cyA8LSBzcXJ0KHFjaGlzcShsZXZlbCwgZGYgPSAyKSkgKlxuICAgIGNiaW5kKGNvcyh0aCksIHNpbih0aCkpICUqJSBkaWFnKHNxcnQoZSR2YWx1ZXMpKSAlKiUgdChlJHZlY3RvcnMpXG4gIHB0cyA8LSBzd2VlcChwdHMsIDIsIG11LCBcIitcIilcbiAgZGF0YS5mcmFtZSh4ID0gcHRzWywgMV0gKiBwcCRzdGRbMV0gKyBwcCRtZWFuWzFdLFxuICAgICAgICAgICAgIHkgPSBwdHNbLCAyXSAqIHBwJHN0ZFsyXSArIHBwJG1lYW5bMl0pXG59XG5cbmVsbGlwc2VzX29mIDwtIGZ1bmN0aW9uKGYsIGNvbHMgPSBjKDEsIDIpKSB7XG4gIGJpbmRfcm93cyhsYXBwbHkoc2VxX2Fsb25nKGYkcGlfayksIGZ1bmN0aW9uKGspIHtcbiAgICBlbGxpcHNlX2RmKGYkbXVbaywgY29sc10sIGYkU2lnbWFbW2tdXVtjb2xzLCBjb2xzXSkgfD5cbiAgICAgIG11dGF0ZShjbHVzdGVyID0gZmFjdG9yKGspKVxuICB9KSlcbn1cblxuc25hcCA8LSBmdW5jdGlvbih0KSB7XG4gIHNldC5zZWVkKDQyKVxuICBmIDwtIGZpdF9nbW0oeiwgSyA9IDMsIG1heF9pdGVyID0gdClcbiAgZWxsaXBzZXNfb2YoZikgfD4gbXV0YXRlKHN0ZXAgPSBwYXN0ZShcIml0ZXJhdGlvblwiLCB0KSlcbn1cblxuZWxsIDwtIGJpbmRfcm93cyhzbmFwKDEpLCBzbmFwKDMpLCBzbmFwKDEwKSwgc25hcCg0NSkpIHw+XG4gIG11dGF0ZShzdGVwID0gZmFjdG9yKHN0ZXAsIGxldmVscyA9IHBhc3RlKFwiaXRlcmF0aW9uXCIsIGMoMSwgMywgMTAsIDQ1KSkpKVxuXG5nZ3Bsb3QoKSArXG4gIGdlb21fcG9pbnQoZGF0YSA9IGRpYSwgYWVzKGdsdWNvc2UsIGluc3VsaW4pLCBjb2xvdXIgPSBcImdyZXk1MFwiLCBzaXplID0gMS41KSArXG4gIGdlb21fcGF0aChkYXRhID0gZWxsLCBhZXMoeCwgeSwgY29sb3VyID0gY2x1c3RlciksIGxpbmV3aWR0aCA9IDEuMSkgK1xuICBmYWNldF93cmFwKH4gc3RlcCwgbnJvdyA9IDEpICtcbiAgZ2dzY2k6OnNjYWxlX2NvbG9yX2FhYXMoKSArXG4gIGxhYnMoeCA9IFwiZ2x1Y29zZVwiLCB5ID0gXCJpbnN1bGluXCIpICtcbiAgdGhlbWVfYncoKSArIHRoZW1lKGxlZ2VuZC5wb3NpdGlvbiA9IFwiYm90dG9tXCIpIn0=
+</script>
+</div>
+</div>
+<p>Iteration 1 is the fit to the k-means labels. Over the next iterations, the big ellipse (overt) widens to cover the whole band, including the patients that k-means gave away. The two small ellipses (normal and chemical) overlap, and they keep overlapping at the end, because the two groups do overlap in the data. A hard-assignment method cannot represent that overlap. A GMM can.</p>
+</section>
+</section>
+<section id="part-3-reading-the-fitted-model" class="level1">
+<h1>Part 3 — Reading the fitted model</h1>
+<p>First, does the GMM recover the diagnoses?</p>
+<div class="cell">
+<div>
+<div id="webr-11" class="exercise-cell">
+
+</div>
+<script type="webr-11-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZ21tX2NsIDwtIGFwcGx5KGdtbTMkciwgMSwgd2hpY2gubWF4KSAgICMgaGFyZCBsYWJlbDogbW9zdCBwcm9iYWJsZSBjbHVzdGVyXG5cbnRhYmxlKGRpYWdub3NpcyA9IGRpYSRjbGFzcywgY2x1c3RlciA9IGdtbV9jbClcbm1lYW4oZ21tX2NsID09IGFzLmludGVnZXIoZGlhJGNsYXNzKSkifQ==
+</script>
+</div>
+</div>
+<p>Compare with k-means in Part 1. The share of patients in the “right” cluster rises from 75% to 86%. 26 of the 36 chemical patients are in their own cluster, up from 13. No overt patient is lost to the normal cluster any more.</p>
+<div class="cell">
+<div>
+<div id="webr-12" class="exercise-cell">
+
+</div>
+<script type="webr-12-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlhIHw+XG4gIG11dGF0ZShjbHVzdGVyID0gZmFjdG9yKGdtbV9jbCkpIHw+XG4gIGdncGxvdChhZXMoZ2x1Y29zZSwgaW5zdWxpbikpICtcbiAgZ2VvbV9wb2ludChhZXMoY29sb3VyID0gY2x1c3Rlciwgc2hhcGUgPSBjbGFzcyksIHNpemUgPSAyLjUsIGFscGhhID0gMC44KSArXG4gIGdlb21fcGF0aChkYXRhID0gZWxsaXBzZXNfb2YoZ21tMyksIGFlcyh4LCB5LCBjb2xvdXIgPSBjbHVzdGVyKSxcbiAgICAgICAgICAgIGxpbmV3aWR0aCA9IDEpICtcbiAgZ2dzY2k6OnNjYWxlX2NvbG9yX2FhYXMoKSArXG4gIGxhYnModGl0bGUgPSBcIkdNTSBjbHVzdGVycyAoY29sb3VyKSB2cy4gZGlhZ25vc2lzIChzaGFwZSlcIikgK1xuICB0aGVtZV9idygpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJib3R0b21cIikifQ==
+</script>
+</div>
+</div>
+<section id="the-cluster-descriptions" class="level3">
+<h3 class="anchored" data-anchor-id="the-cluster-descriptions">The cluster descriptions</h3>
+<p>A GMM gives three deliverables (from the slides): labels, probabilities, and <strong>descriptions</strong> of each cluster. The weights <span class="math inline">\(\hat\pi_k\)</span> say how common each cluster is. The means <span class="math inline">\(\hat\mu_k\)</span> say where it sits. We map the means back to clinical units:</p>
+<div class="cell">
+<div>
+<div id="webr-13" class="exercise-cell">
+
+</div>
+<script type="webr-13-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibXVfY2xpbmljYWwgPC0gc3dlZXAoc3dlZXAoZ21tMyRtdSwgMiwgcHAkc3RkLCBcIipcIiksIDIsIHBwJG1lYW4sIFwiK1wiKVxuY29sbmFtZXMobXVfY2xpbmljYWwpIDwtIGNvbG5hbWVzKHopXG5cbmRhdGEuZnJhbWUoY2x1c3RlciA9IDE6MyxcbiAgICAgICAgICAgd2VpZ2h0ID0gcm91bmQoZ21tMyRwaV9rLCAzKSxcbiAgICAgICAgICAgcm91bmQobXVfY2xpbmljYWwsIDApKSJ9
+</script>
+</div>
+</div>
+<p>The covariance matrices tell us how the tests move together <strong>inside</strong> each cluster. The correlations:</p>
+<div class="cell">
+<div>
+<div id="webr-14" class="exercise-cell">
+
+</div>
+<script type="webr-14-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZm9yIChrIGluIDE6Mykge1xuICBjYXQoXCJcXG5DbHVzdGVyXCIsIGssIFwiLSBjb3JyZWxhdGlvbiBtYXRyaXhcXG5cIilcbiAgcHJpbnQocm91bmQoY292MmNvcihnbW0zJFNpZ21hW1trXV0pLCAyKSlcbn0ifQ==
+</script>
+</div>
+</div>
+<p>Inside a cluster, the tests are related, and the relations differ by cluster. In the normal cluster, the tests are nearly unrelated (correlations 0.22 or less). In the overt cluster, glucose and insulin responses move together (correlation 0.95), and both fall as <code>sspg</code> rises (about -0.7). A model that forces the correlations to zero, or the clusters to be round, misses this. Part 6 tests that.</p>
+</section>
+</section>
+<section id="part-4-soft-assignment-who-is-hard-to-place" class="level1">
+<h1>Part 4 — Soft assignment: who is hard to place?</h1>
+<p>So far we used only the most probable cluster. The full output is the matrix of responsibilities <span class="math inline">\(r_{nk}\)</span>, one row per patient. The <strong>highest</strong> probability in a row measures how sure the model is. Here are patient 1 and the three patients the model is least sure about:</p>
+<div class="cell">
+<div>
+<div id="webr-15" class="exercise-cell">
+
+</div>
+<script type="webr-15-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiY29uZiA8LSBhcHBseShnbW0zJHIsIDEsIG1heClcblxubGVhc3Rfc3VyZSA8LSBvcmRlcihjb25mKVsxOjNdXG5yb3VuZChnbW0zJHJbYygxLCBsZWFzdF9zdXJlKSwgXSwgMylcbmRpYSRjbGFzc1tjKDEsIGxlYXN0X3N1cmUpXSJ9
+</script>
+</div>
+</div>
+<p>Each row sums to 1. Patient 1 has a row like (0.99, 0.01, 0.00): clearly in one cluster. The other three have probability split between two clusters: they sit on a border.</p>
+<p>Over all patients:</p>
+<div class="cell">
+<div>
+<div id="webr-16" class="exercise-cell">
+
+</div>
+<script type="webr-16-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZ2dwbG90KGRhdGEuZnJhbWUoY29uZiksIGFlcyhjb25mKSkgK1xuICBnZW9tX2hpc3RvZ3JhbShiaW5zID0gMzAsIGZpbGwgPSBcImdyZXk2MFwiLCBjb2xvdXIgPSBcIndoaXRlXCIpICtcbiAgZ2VvbV92bGluZSh4aW50ZXJjZXB0ID0gMC45LCBjb2xvdXIgPSBcIiNFRTAwMDBcIikgK1xuICBsYWJzKHggPSBcImhpZ2hlc3QgbWVtYmVyc2hpcCBwcm9iYWJpbGl0eVwiLCB5ID0gXCJwYXRpZW50c1wiKSArXG4gIHRoZW1lX2J3KClcblxuc3VtKGNvbmYgPCAwLjkpICAgICAgICAgICAjIHBhdGllbnRzIHRoZSBtb2RlbCBpcyBsZXNzIHRoYW4gOTAlIHN1cmUgYWJvdXRcbnRhYmxlKGRpYSRjbGFzc1tjb25mIDwgMC45XSkifQ==
+</script>
+</div>
+</div>
+<p>Most patients have a probability near 1. A group of 23 patients, left of the red line, are uncertain. Which diagnosis do they have? 12 of the 23 are <strong>chemical</strong> diabetes, the intermediate stage. That is one third of all chemical patients. This is the clinical story: chemical diabetes sits between normal and overt, and the model says so by splitting the probability of those patients across clusters.</p>
+<div class="cell">
+<div>
+<div id="webr-17" class="exercise-cell">
+
+</div>
+<script type="webr-17-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlhIHw+XG4gIG11dGF0ZShjb25mID0gY29uZikgfD5cbiAgZ2dwbG90KGFlcyhnbHVjb3NlLCBpbnN1bGluLCBjb2xvdXIgPSBjb25mKSkgK1xuICBnZW9tX3BvaW50KHNpemUgPSAyLjgpICtcbiAgc2NhbGVfY29sb3VyX3ZpcmlkaXNfYyhvcHRpb24gPSBcIkRcIiwgZGlyZWN0aW9uID0gLTEsIGVuZCA9IDAuOSxcbiAgICAgICAgICAgICAgICAgICAgICAgICBuYW1lID0gXCJoaWdoZXN0XFxucHJvYmFiaWxpdHlcIikgK1xuICBsYWJzKHRpdGxlID0gXCJEYXJrIHBvaW50cyBhcmUgdGhlIHBhdGllbnRzIHRoZSBtb2RlbCBjYW5ub3QgcGxhY2VcIikgK1xuICB0aGVtZV9idygpIn0=
+</script>
+</div>
+</div>
+<p>k-means has no such output. It assigns every patient with full confidence, including the ones that a clinician would call borderline. In practice, we can use this: send patients below a probability threshold for a second look, and treat the confident ones as settled.</p>
+<p><strong>A warning.</strong> The probabilities come from the model. They are only as good as the assumption that each cluster is a normal distribution. A model with a wrong shape gives confident but wrong probabilities.</p>
+</section>
+<section id="part-5-choosing-k" class="level1">
+<h1>Part 5 — Choosing <span class="math inline">\(K\)</span></h1>
+<p>So far we used <span class="math inline">\(K = 3\)</span> because we know there are three diagnoses. In real work we do not. The slides give two tools: BIC (parametric) and the silhouette (non-parametric).</p>
+<p><strong>BIC</strong> rewards fit and penalizes parameters: <span class="math display">\[\text{BIC} = 2\,\ell(\hat\theta) - d \log N,\]</span> where <span class="math inline">\(\ell\)</span> is the log-likelihood and <span class="math inline">\(d\)</span> is the number of free parameters. A full-covariance GMM with <span class="math inline">\(K\)</span> clusters in <span class="math inline">\(p\)</span> dimensions has <span class="math inline">\(d = K\left(p + \tfrac{p(p+1)}{2}\right) + (K - 1)\)</span>: a mean, a covariance, and a weight per cluster (the weights sum to 1). <strong>Higher BIC is better.</strong></p>
+<div class="cell">
+<div>
+<div id="webr-18" class="exercise-cell">
+
+</div>
+<script type="webr-18-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiYmljIDwtIGZ1bmN0aW9uKGYpIHtcbiAgSyA8LSBsZW5ndGgoZiRwaV9rKVxuICBxIDwtIHN3aXRjaChmJGNvdl90eXBlLCBmdWxsID0gcCAqIChwICsgMSkgLyAyLCBkaWFnID0gcCwgc3BoZXJpY2FsID0gMSlcbiAgZCA8LSBLICogKHAgKyBxKSArIChLIC0gMSlcbiAgMiAqIHRhaWwoZiRsb2dsaWssIDEpIC0gZCAqIGxvZyhuKVxufVxuXG5LcyAgIDwtIDE6NlxuZml0cyA8LSBsYXBwbHkoS3MsIGZ1bmN0aW9uKEspIHsgc2V0LnNlZWQoNDIpOyBmaXRfZ21tKHosIEspIH0pXG5iaWNfayA8LSBzYXBwbHkoZml0cywgYmljKVxuXG5kYXRhLmZyYW1lKEsgPSBLcywgbG9nbGlrID0gcm91bmQoc2FwcGx5KGZpdHMsIGZ1bmN0aW9uKGYpIHRhaWwoZiRsb2dsaWssIDEpKSwgMSksXG4gICAgICAgICAgIEJJQyA9IHJvdW5kKGJpY19rLCAxKSkifQ==
+</script>
+</div>
+</div>
+<p>The log-likelihood always rises with <span class="math inline">\(K\)</span>. BIC peaks at <span class="math inline">\(K = 3\)</span> and then falls, because extra clusters cost more in parameters than they gain in fit.</p>
+<p>The silhouette needs hard labels. We use the GMM’s most probable cluster, and for comparison k-means labels:</p>
+<div class="cell">
+<div>
+<div id="webr-19" class="exercise-cell">
+
+</div>
+<script type="webr-19-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShjbHVzdGVyKVxuZCA8LSBkaXN0KHopXG5cbnNpbF9nbW0gPC0gc2FwcGx5KDI6NiwgZnVuY3Rpb24oSylcbiAgbWVhbihzaWxob3VldHRlKGFwcGx5KGZpdHNbW0tdXSRyLCAxLCB3aGljaC5tYXgpLCBkKVssIFwic2lsX3dpZHRoXCJdKSlcbnNpbF9rbSA8LSBzYXBwbHkoMjo2LCBmdW5jdGlvbihLKSB7XG4gIHNldC5zZWVkKDQyKVxuICBtZWFuKHNpbGhvdWV0dGUoa21lYW5zKHosIEssIG5zdGFydCA9IDI1KSRjbHVzdGVyLCBkKVssIFwic2lsX3dpZHRoXCJdKVxufSlcblxucF9iaWMgPC0gZ2dwbG90KGRhdGEuZnJhbWUoSyA9IEtzLCBCSUMgPSBiaWNfayksIGFlcyhLLCBCSUMpKSArXG4gIGdlb21fbGluZSgpICsgZ2VvbV9wb2ludChzaXplID0gMikgKyBzY2FsZV94X2NvbnRpbnVvdXMoYnJlYWtzID0gS3MpICtcbiAgbGFicyh0aXRsZSA9IFwiQklDIChHTU0pOiBsYXJnZXIgaXMgYmV0dGVyXCIpICsgdGhlbWVfYncoKVxucF9zaWwgPC0gZ2dwbG90KGRhdGEuZnJhbWUoSyA9IHJlcCgyOjYsIDIpLCBzaWwgPSBjKHNpbF9nbW0sIHNpbF9rbSksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSByZXAoYyhcIkdNTVwiLCBcImstbWVhbnNcIiksIGVhY2ggPSA1KSksXG4gICAgICAgICAgICAgICAgYWVzKEssIHNpbCwgY29sb3VyID0gbGFiZWxzKSkgK1xuICBnZW9tX2xpbmUoKSArIGdlb21fcG9pbnQoc2l6ZSA9IDIpICsgc2NhbGVfeF9jb250aW51b3VzKGJyZWFrcyA9IDI6NikgK1xuICBnZ3NjaTo6c2NhbGVfY29sb3JfYWFhcygpICtcbiAgbGFicyh5ID0gXCJhdmVyYWdlIHNpbGhvdWV0dGUgd2lkdGhcIixcbiAgICAgICB0aXRsZSA9IFwiU2lsaG91ZXR0ZTogbGFyZ2VyIGlzIGJldHRlclwiKSArXG4gIHRoZW1lX2J3KCkgKyB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKVxuXG5ncmlkLmFycmFuZ2UocF9iaWMsIHBfc2lsLCBucm93ID0gMSlcbnJvdW5kKHJiaW5kKEdNTSA9IHNpbF9nbW0sIGttZWFucyA9IHNpbF9rbSksIDMpIn0=
+</script>
+</div>
+</div>
+<p>BIC says <span class="math inline">\(K = 3\)</span>. The silhouette says <span class="math inline">\(K = 2\)</span>, for both methods, and gives <span class="math inline">\(K = 3\)</span> a clearly lower value. Why?</p>
+<p>The silhouette measures <strong>compact, well-separated blobs</strong>. The cleanest split of these data is “overt” against “everyone else”, because the overt group is far away. The chemical and normal groups overlap, so splitting them lowers the silhouette. BIC asks a different question: does a three-cluster <em>model</em> explain the data better, given the cost of its parameters? Overlapping groups with different shapes are exactly what a mixture model can represent.</p>
+<p>Neither tool is always right. When they disagree, look at the clusters, and ask someone who knows the domain. Here a clinician would not accept “overt against everyone else”, because chemical diabetes is a known, separate stage.</p>
+</section>
+<section id="part-6-choosing-the-covariance-shape" class="level1">
+<h1>Part 6 — Choosing the covariance shape</h1>
+<p>A GMM has a second choice that k-means does not have: the <strong>shape</strong> of each cluster’s covariance. The code from Part 2 supports three:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>cov_type</code></th>
+<th>Each cluster is</th>
+<th>Free covariance parameters per cluster</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>"spherical"</code></td>
+<td>a round ball, with its own size</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td><code>"diag"</code></td>
+<td>an ellipse aligned with the axes (tests uncorrelated)</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td><code>"full"</code></td>
+<td>any ellipse, any tilt</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+<p>k-means is close to the first row, with all clusters the same size, and hard assignments. We fit all three for <span class="math inline">\(K = 1, \dots, 6\)</span>:</p>
+<div class="cell">
+<div>
+<div id="webr-20" class="exercise-cell">
+
+</div>
+<script type="webr-20-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiYmljX2J5X3NoYXBlIDwtIGJpbmRfcm93cyhsYXBwbHkoYyhcInNwaGVyaWNhbFwiLCBcImRpYWdcIiwgXCJmdWxsXCIpLCBmdW5jdGlvbihjdCkge1xuICBiIDwtIHNhcHBseShLcywgZnVuY3Rpb24oSykgeyBzZXQuc2VlZCg0Mik7IGJpYyhmaXRfZ21tKHosIEssIGNvdl90eXBlID0gY3QpKSB9KVxuICBkYXRhLmZyYW1lKEsgPSBLcywgQklDID0gYiwgc2hhcGUgPSBjdClcbn0pKVxuXG5nZ3Bsb3QoYmljX2J5X3NoYXBlLCBhZXMoSywgQklDLCBjb2xvdXIgPSBzaGFwZSkpICtcbiAgZ2VvbV9saW5lKCkgKyBnZW9tX3BvaW50KHNpemUgPSAyKSArIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSBLcykgK1xuICBnZ3NjaTo6c2NhbGVfY29sb3JfYWFhcygpICtcbiAgbGFicyh0aXRsZSA9IFwiQklDIGJ5IG51bWJlciBvZiBjbHVzdGVycyBhbmQgY292YXJpYW5jZSBzaGFwZVwiKSArXG4gIHRoZW1lX2J3KCkgKyB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBcImJvdHRvbVwiKVxuXG5iaWNfYnlfc2hhcGUgfD4gZmlsdGVyKEsgPT0gMykgfD4gbXV0YXRlKEJJQyA9IHJvdW5kKEJJQywgMSkpIn0=
+</script>
+</div>
+</div>
+<p>The full-covariance model has the best BIC by a wide margin, at <span class="math inline">\(K = 3\)</span> (-483, against -559 for diagonal and -759 for spherical). Look at the other two curves:</p>
+<ul>
+<li><strong>Diagonal</strong> peaks later, around <span class="math inline">\(K = 4\)</span>.</li>
+<li><strong>Spherical</strong> is still rising at <span class="math inline">\(K = 6\)</span>. A round ball is the wrong shape for a long thin cluster, so the model uses several balls to cover one band.</li>
+</ul>
+<p><strong>The wrong covariance shape inflates the number of clusters.</strong> This is the GMM version of what happened to k-means in Part 1.</p>
+<p>The three shapes also give different clusterings at <span class="math inline">\(K = 3\)</span>:</p>
+<div class="cell">
+<div>
+<div id="webr-21" class="exercise-cell">
+
+</div>
+<script type="webr-21-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiYWdyZWUgPC0gc2FwcGx5KGMoXCJzcGhlcmljYWxcIiwgXCJkaWFnXCIsIFwiZnVsbFwiKSwgZnVuY3Rpb24oY3QpIHtcbiAgc2V0LnNlZWQoNDIpXG4gIGYgPC0gZml0X2dtbSh6LCAzLCBjb3ZfdHlwZSA9IGN0KVxuICBtZWFuKGFwcGx5KGYkciwgMSwgd2hpY2gubWF4KSA9PSBhcy5pbnRlZ2VyKGRpYSRjbGFzcykpXG59KVxucm91bmQoYWdyZWUsIDMpIn0=
+</script>
+</div>
+</div>
+<p>Round clusters do about as badly as k-means (79% against 75%). Allowing each cluster to stretch, with or without a tilt, gives 86%. The diagonal and full models agree equally well with the diagnoses at <span class="math inline">\(K = 3\)</span>. BIC still prefers the full model. The three extra parameters per cluster (the correlations) buy a much better fit, and the diagonal model needs a fourth cluster to make up for the tilt it cannot represent.</p>
+</section>
+<section id="part-7-starting-points" class="level1">
+<h1>Part 7 — Starting points</h1>
+<p>EM climbs to a local maximum of the log-likelihood, so the start matters, just as for k-means in Lab 7. We started from k-means, which is a good start. How bad is a random one? We run EM 30 times from random cluster labels:</p>
+<div class="cell" data-timelimit="300">
+<div>
+<div id="webr-22" class="exercise-cell">
+
+</div>
+<script type="webr-22-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsInRpbWVsaW1pdCI6MzAwfSwiY29kZSI6ImZpbmFsX2xsIDwtIHNhcHBseSgxOjMwLCBmdW5jdGlvbihzKSB7XG4gIHNldC5zZWVkKHMpXG4gIHJhbmRvbV9zdGFydCA8LSBzYW1wbGUoMTozLCBuLCByZXBsYWNlID0gVFJVRSlcbiAgdGFpbChmaXRfZ21tKHosIEsgPSAzLCBpbml0ID0gcmFuZG9tX3N0YXJ0KSRsb2dsaWssIDEpXG59KVxuXG5nZ3Bsb3QoZGF0YS5mcmFtZShsbCA9IGZpbmFsX2xsKSwgYWVzKGxsKSkgK1xuICBnZW9tX2hpc3RvZ3JhbShiaW5zID0gMzAsIGZpbGwgPSBcImdyZXk2MFwiLCBjb2xvdXIgPSBcIndoaXRlXCIpICtcbiAgZ2VvbV92bGluZSh4aW50ZXJjZXB0ID0gdGFpbChnbW0zJGxvZ2xpaywgMSksIGNvbG91ciA9IFwiI0VFMDAwMFwiLFxuICAgICAgICAgICAgIGxpbmV3aWR0aCA9IDEpICtcbiAgbGFicyh4ID0gXCJmaW5hbCBsb2ctbGlrZWxpaG9vZFwiLCB5ID0gXCJydW5zIChvdXQgb2YgMzApXCIsXG4gICAgICAgdGl0bGUgPSBcIkVNIGZyb20gMzAgcmFuZG9tIHN0YXJ0cyAocmVkIGxpbmU6IHRoZSBrLW1lYW5zIHN0YXJ0KVwiKSArXG4gIHRoZW1lX2J3KClcblxubWVhbihmaW5hbF9sbCA+IHRhaWwoZ21tMyRsb2dsaWssIDEpIC0gMC4wMSkgICAjIHNoYXJlIG9mIHJ1bnMgdGhhdCByZWFjaCB0aGUgYmVzdCBmaXQifQ==
+</script>
+</div>
+</div>
+<p>Only about <strong>one run in five</strong> reaches the best solution. The others stop at worse local maxima, each with a different set of clusters, and nothing in the output warns you. So:</p>
+<ul>
+<li>Start from several different initial clusterings, and keep the fit with the highest log-likelihood.</li>
+<li>Initializing from k-means is a common and good default.</li>
+<li>Set a seed so that you and your readers get the same clusters.</li>
+</ul>
+<section id="try-it-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="try-it-yourself">Try it yourself</h2>
+<p><strong>1. A responsibility by hand.</strong> For the least certain patient (<code>i</code>), compute <span class="math inline">\(r_{nk}\)</span> directly from the formula, using <code>dmvnorm()</code>, and check that it equals that patient’s row of <code>gmm3$r</code>.</p>
+<div class="cell" data-exercise="ex_one_patient">
+<div>
+<div id="webr-23" class="exercise-cell">
+
+</div>
+<script type="webr-23-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfb25lX3BhdGllbnQifSwiY29kZSI6ImkgICAgIDwtIGxlYXN0X3N1cmVbMV1cbnhfaSAgIDwtIHpbaSwgXVxuZGVucyAgPC0gc2FwcGx5KDE6MywgZnVuY3Rpb24oaylcbiAgZ21tMyRwaV9rW2tdICogZG12bm9ybSh4X2ksIGdtbTMkbXVbaywgXSwgZ21tMyRTaWdtYVtba11dKSlcbnJfaSAgIDwtIGRlbnMgLyBzdW0oX19fX19fKVxucm91bmQocl9pLCAzKVxucm91bmQoZ21tMyRyW2ksIF0sIDMpIn0=
+</script>
+</div>
+</div>
+<p><strong>2. Four clusters.</strong> Fit <span class="math inline">\(K = 4\)</span> with full covariances (<code>fits[[4]]</code>). Cross the clusters with the diagnoses. Which diagnosis is split in two? Profile the clusters in clinical units (copy the code from Part 3). Does the new cluster make clinical sense?</p>
+<div class="cell" data-exercise="ex_k4">
+<div>
+<div id="webr-24" class="exercise-cell">
+
+</div>
+<script type="webr-24-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfazQifSwiY29kZSI6ImY0IDwtIGZpdF9nbW0oeiwgSyA9IF9fX19fXylcbnRhYmxlKGRpYWdub3NpcyA9IGRpYSRjbGFzcywgY2x1c3RlciA9IGFwcGx5KGY0JHIsIDEsIHdoaWNoLm1heCkpXG5yb3VuZChmNCRwaV9rLCAzKSJ9
+</script>
+</div>
+</div>
+<p><strong>3. A different threshold.</strong> In Part 4, how many patients have a highest probability below 0.7? Below 0.99? What is the diagnosis mix at each threshold? What would be a sensible rule for sending patients for a second look?</p>
+<p><strong>4. Fewer tests.</strong> A clinic may measure only glucose and insulin. Fit a GMM to <code>z[, 1:2]</code> with <span class="math inline">\(K = 3\)</span> (the E-step and M-step work for any number of columns, but <code>bic()</code> uses <code>p</code>, so skip BIC). How do the clusters compare with the three-test fit?</p>
+</section>
+<section id="things-worth-remembering" class="level2">
+<h2 class="anchored" data-anchor-id="things-worth-remembering">Things worth remembering</h2>
+<ul>
+<li><strong>A GMM models the clusters; k-means only partitions the points.</strong> Each cluster has a weight, a mean, and its own covariance matrix.</li>
+<li><strong>Soft assignment is the main gain.</strong> The probability of belonging to each cluster shows who is borderline. Here the borderline patients were mostly the chemical, intermediate stage.</li>
+<li><strong>EM alternates two easy steps.</strong> The E-step computes responsibilities. The M-step re-estimates parameters with those responsibilities as weights. The log-likelihood never goes down.</li>
+<li><strong>EM finds local maxima.</strong> Use several starts and keep the best.</li>
+<li><strong>BIC and the silhouette answer different questions.</strong> BIC asked whether a model fits well for its size. The silhouette asked whether the blobs are compact. They disagreed here, and a domain expert settles it.</li>
+<li><strong>The covariance shape is a modelling choice.</strong> Too restrictive a shape (round, or axis-aligned) needs extra clusters to cover the data. Compare shapes by BIC.</li>
+<li><strong>The model is an assumption.</strong> The probabilities are only as good as the normal-cluster assumption.</li>
+</ul>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Reaven, G. M., and Miller, R. G. (1979). An attempt to define the nature of chemical diabetes using a multidimensional analysis. <em>Diabetologia</em>, 16, 17–24.</p>
+
+
+<script type="webr-data">
+eyJvcHRpb25zIjp7ImJhc2VVcmwiOiJodHRwczovL3dlYnIuci13YXNtLm9yZy92MC42LjAvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsiZXZhbHVhdGUiLCJrbml0ciIsImh0bWx0b29scyIsImdncGxvdDIiLCJkcGx5ciIsInRpZHlyIiwiY2FyZXQiLCJyZWNpcGVzIiwiY2x1c3RlciIsIm12dG5vcm0iLCJncmlkRXh0cmEiLCJnZ3NjaSJdLCJyZXBvcyI6W119LCJyZW5kZXJfZGYiOiJkZWZhdWx0In0=
+</script>
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjQ7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzI0ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwid2Vici0yNC1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF93ZWJyX3ZhbHVlXzI0ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yNCwge30pO1xuX3dlYnJfZmVlZGJhY2tfMjQgPSB7XG4gIGNvbnN0IHsgV2ViUkdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBXZWJSR3JhZGVyKF93ZWJyX3ZhbHVlXzI0LmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjM7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIzID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjMtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwid2Vici0yMy1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF93ZWJyX3ZhbHVlXzIzID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yMywge30pO1xuX3dlYnJfZmVlZGJhY2tfMjMgPSB7XG4gIGNvbnN0IHsgV2ViUkdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBXZWJSR3JhZGVyKF93ZWJyX3ZhbHVlXzIzLmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjI7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIyID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjItY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0yMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yMiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMjIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIxID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0yMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yMSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMjEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjA7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIwID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjAtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0yMC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yMCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMjAsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTk7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE5ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTktY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xOS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xOSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTksIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTg7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE4ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTgtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xOC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xOCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTgsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTc7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE3ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNyA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTcsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTY7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE2ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTYtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTYsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTU7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE1ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTUtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTUsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTQ7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE0ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTQsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTM7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzEzID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTMtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMyA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTMsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTI7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzEyID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTItY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzExID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTA7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzEwID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTAtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTAsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC05IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV85O1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzkgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItOS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV85ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl85LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfODtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTgiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl84ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItOC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTgtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfOCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfOCwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTciLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzc7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici03IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfNyA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici03LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzcgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzcsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC02IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV82O1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzYgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici02LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItNi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV82ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl82LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtNSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfNTtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl81ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTUtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfNSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfNSwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTQiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzQ7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici00LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzQgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzQsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8zO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzMgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0zLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8zID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8yID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMiwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xLWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzEgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ3ZWJST2pzID0ge1xuICBjb25zdCB7IFdlYlIsIENoYW5uZWxUeXBlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lLldlYlI7XG4gIGNvbnN0IHtcbiAgICBXZWJSRXZhbHVhdG9yLFxuICAgIFdlYlJFbnZpcm9ubWVudE1hbmFnZXIsXG4gICAgc2V0dXBSLFxuICAgIGI2NERlY29kZSxcbiAgICBjb2xsYXBzZVBhdGhcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIHdlYlIgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgLy8gSW5pdGlhbGlzZSB3ZWJSIGFuZCBzZXR1cCBmb3IgUiBjb2RlIGV2YWx1YXRpb25cbiAgbGV0IHdlYlJQcm9taXNlID0gKGFzeW5jICh3ZWJSKSA9PiB7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyB3ZWJSYDtcbiAgICBhd2FpdCB3ZWJSLmluaXQoKTtcblxuICAgIC8vIEluc3RhbGwgcHJvdmlkZWQgbGlzdCBvZiBwYWNrYWdlc1xuICAgIC8vIEVuc3VyZSB3ZWJSIGRlZmF1bHQgcmVwbyBpcyBpbmNsdWRlZFxuICAgIGRhdGEucGFja2FnZXMucmVwb3MucHVzaChcImh0dHBzOi8vcmVwby5yLXdhc20ub3JnXCIpXG4gICAgYXdhaXQgZGF0YS5wYWNrYWdlcy5wa2dzLm1hcCgocGtnKSA9PiAoKSA9PiB7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHBhY2thZ2U6ICR7cGtnfWA7XG4gICAgICByZXR1cm4gd2ViUi5ldmFsUlZvaWQoYFxuICAgICAgICB3ZWJyOjppbnN0YWxsKHBrZywgcmVwb3MgPSByZXBvcylcbiAgICAgICAgbGlicmFyeShwa2csIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSlcbiAgICAgIGAsIHsgZW52OiB7XG4gICAgICAgIHBrZzogcGtnLFxuICAgICAgICByZXBvczogZGF0YS5wYWNrYWdlcy5yZXBvcyxcbiAgICAgIH19KTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcblxuICAgIC8vIERvd25sb2FkIGFuZCBpbnN0YWxsIHJlc291cmNlc1xuICAgIGF3YWl0IGZpbGVzLm1hcCgoZmlsZSkgPT4gYXN5bmMgKCkgPT4ge1xuICAgICAgY29uc3QgbmFtZSA9IGZpbGUuc3Vic3RyaW5nKGZpbGUubGFzdEluZGV4T2YoJy8nKSArIDEpO1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyByZXNvdXJjZTogJHtuYW1lfWA7XG4gICAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IGZldGNoKGZpbGUpO1xuICAgICAgaWYgKCFyZXNwb25zZS5vaykge1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYENhbid0IGRvd25sb2FkIFxcYCR7ZmlsZX1cXGAuIEVycm9yICR7cmVzcG9uc2Uuc3RhdHVzfTogXCIke3Jlc3BvbnNlLnN0YXR1c1RleHR9XCIuYCk7XG4gICAgICB9XG4gICAgICBjb25zdCBkYXRhID0gYXdhaXQgcmVzcG9uc2UuYXJyYXlCdWZmZXIoKTtcblxuICAgICAgLy8gU3RvcmUgVVJMcyBpbiB0aGUgY3dkIHdpdGhvdXQgYW55IHN1YmRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGlmIChmaWxlLmluY2x1ZGVzKFwiOi8vXCIpKSB7XG4gICAgICAgIGZpbGUgPSBuYW1lO1xuICAgICAgfVxuXG4gICAgICAvLyBDb2xsYXBzZSBoaWdoZXIgZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgZmlsZSA9IGNvbGxhcHNlUGF0aChmaWxlKTtcblxuICAgICAgLy8gQ3JlYXRlIGRpcmVjdG9yeSB0cmVlLCBpZ25vcmluZyBcImRpcmVjdG9yeSBleGlzdHNcIiBWRlMgZXJyb3JzXG4gICAgICBjb25zdCBwYXJ0cyA9IGZpbGUuc3BsaXQoJy8nKS5zbGljZSgwLCAtMSk7XG4gICAgICBsZXQgcGF0aCA9ICcnO1xuICAgICAgd2hpbGUgKHBhcnRzLmxlbmd0aCA+IDApIHtcbiAgICAgICAgcGF0aCArPSBwYXJ0cy5zaGlmdCgpICsgJy8nO1xuICAgICAgICBjb25zdCBhbmFseXNpcyA9IGF3YWl0IHdlYlIuRlMuYW5hbHl6ZVBhdGgocGF0aCk7XG4gICAgICAgIGlmICghYW5hbHlzaXMuZXhpc3RzKSB7XG4gICAgICAgICAgdHJ5IHtcbiAgICAgICAgICAgIGF3YWl0IHdlYlIuRlMubWtkaXIocGF0aCk7XG4gICAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yOiBcIiR7ZS5tZXNzYWdlfVwiLmApO1xuICAgICAgICAgIH1cbiAgICAgICAgfVxuICAgICAgfVxuXG4gICAgICAvLyBXcml0ZSB0aGlzIGZpbGUgdG8gdGhlIFZGU1xuICAgICAgcmV0dXJuIGF3YWl0IHdlYlIuRlMud3JpdGVGaWxlKGZpbGUsIG5ldyBVaW50OEFycmF5KGRhdGEpKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgSW5zdGFsbGluZyB3ZWJSIHNoaW1zYDtcbiAgICBhd2FpdCB3ZWJSLmV2YWxSVm9pZChgd2Vicjo6c2hpbV9pbnN0YWxsKClgKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgV2ViUiBlbnZpcm9ubWVudCBzZXR1cGA7XG4gICAgYXdhaXQgc2V0dXBSKHdlYlIsIGRhdGEpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHdlYlI7XG4gIH0pKG5ldyBXZWJSKGRhdGEub3B0aW9ucykpO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCB3ZWJSID0gYXdhaXQgd2ViUlByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFdlYlJFdmFsdWF0b3Iod2ViUiwgY29udGV4dClcbiAgICBhd2FpdCBldmFsdWF0b3IucHJvY2VzcyhpbnB1dHMpO1xuICAgIHJldHVybiBldmFsdWF0b3IuY29udGFpbmVyO1xuICB9XG5cbiAgcmV0dXJuIHtcbiAgICBwcm9jZXNzLFxuICAgIHdlYlJQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICB9O1xufVxuIn1dfQ==
+</script>
+<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
+<div id="exercise-loading-status" class="d-flex gap-2">
+
+</div>
+<div class="spinner-grow spinner-grow-sm">
+
+</div>
+</div>
+<script type="vfs-file">
+WyJkYXRhL2RpYWJldGVzLmNzdiJd
+</script>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W119
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../lectures/08-clustering-gmm/code";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/soumikp\.github\.io\/2026_sl4hds\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Soumik Purkayastha</p>
+</div>   
+    <div class="nav-footer-center">
+<p>Department of Biostatistics &amp; Health Data Science · University of Pittsburgh</p>
+</div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a></p>
+</div>
+  </div>
+</footer>
+<script src="../../../site_libs/quarto-contrib/quarto-project/r-wasm/live/resources/download-code.js"></script>
+
+
+
+
+</body></html>

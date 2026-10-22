@@ -14,3 +14,9 @@ Gaussian mixture models as soft clustering; the EM algorithm; model selection vi
 ## 📊 Slides
 
 - 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed.
+
+- 🧪 [Lab: Diabetes patients (live R)](code/class8_lab1.html){target="_blank"} — edit and re-run any code cell: EM written by hand, soft assignment, and choosing K and the covariance shape with BIC, on glucose and insulin tests from 145 adults. A "Download my code" button captures whatever you've written before you leave.

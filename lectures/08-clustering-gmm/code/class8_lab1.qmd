@@ -1,0 +1,724 @@
+---
+title: "Class 8/Lab: Gaussian Mixture Models on Diabetes Patients"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 23, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - caret
+    - recipes
+    - cluster
+    - mvtnorm
+    - gridExtra
+    - ggsci
+  resources:
+    - data/diabetes.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+In Lab 7, k-means put every thyroid patient in exactly one cluster. At the end
+we said that a patient on the border between two groups needs a different
+tool. This lab uses that tool, the **Gaussian mixture model (GMM)**, on a
+classic clinical question:
+
+> *Can glucose and insulin tests, with no diagnosis given, separate normal
+> patients from patients with early and with full diabetes? And can the method
+> tell us which patients are hard to place?*
+
+We know the diagnosis for these patients, so we can check the answer. In real
+unsupervised work there is no answer key. The lab shows what to look at then.
+
+The plan:
+
+1. **Look at the data.** Three tests, and clusters that are long and thin.
+2. **k-means first.** Where it goes wrong, and why.
+3. **EM by hand.** We write the E-step and the M-step from the slides, and
+   watch the fit improve.
+4. **Read the fitted model.** Weights, means, and covariances in clinical
+   units.
+5. **Soft assignment.** The probability that each patient belongs to each
+   cluster, and who is uncertain.
+6. **Choosing $K$.** BIC against the silhouette.
+7. **Choosing the covariance shape.** Full, diagonal, or spherical.
+8. **Starting points.** EM can stop at a bad answer.
+
+Every code cell runs live in your browser via webR, so you do not need to
+install R. Packages and data load once when the page opens. Give it a few
+seconds on first load. Click **Run Code** to run a cell. Run the cells in
+order from the top, because later cells use objects that earlier cells make.
+
+## A note on the tools
+
+Two choices in this lab differ from earlier labs.
+
+- **`caret` does the preprocessing.** As in Lab 7, clustering has no outcome,
+  so `train()` does not apply. We use `preProcess()` to center and scale.
+- **We write EM ourselves.** The `mclust` package fits GMMs in one line, but
+  it is not available in the browser. So we code the algorithm from the
+  slides, using `dmvnorm()` from the `mvtnorm` package for the normal density.
+  It is about 30 lines. We checked the code against `mclust` on these data:
+  the log-likelihood and BIC agree.
+
+## The data: glucose tolerance in 145 adults
+
+Reaven and Miller (1979) studied 145 non-obese adults. Each person had
+three measurements:
+
+| Column | Test | What it measures |
+|---|---|---|
+| `glucose` | glucose response | area under the plasma glucose curve during a 3-hour oral glucose tolerance test |
+| `insulin` | insulin response | area under the plasma insulin curve during the same test |
+| `sspg` | steady-state plasma glucose | how well the body responds to insulin. A **high** value means **insulin resistance** |
+
+Doctors also gave each person a diagnosis: **Normal**, **Chemical** diabetes
+(an abnormal glucose test but no symptoms yet), or **Overt** diabetes (clinical
+diabetes). We hide the diagnosis from the algorithm and use it only to check.
+
+```{webr}
+library(dplyr)
+library(ggplot2)
+
+dia <- read.csv("data/diabetes.csv") |>
+  mutate(class = factor(class, levels = c("Normal", "Chemical", "Overt")))
+
+tests <- dia |> select(-class)   # the three tests: all the algorithm sees
+
+dim(dia)
+table(dia$class)
+```
+
+### What a clinician expects
+
+The median of each test, by diagnosis:
+
+```{webr}
+dia |>
+  group_by(class) |>
+  summarise(across(everything(), median), n = n())
+```
+
+Overt patients have the highest glucose and insulin responses, by a wide
+margin. Chemical patients have a glucose response close to normal, but their
+`sspg` is the highest. Their cells respond poorly to insulin. This is the
+early stage of the disease. Normal patients are low on all three tests.
+
+### The shape of the groups
+
+```{webr}
+library(gridExtra)
+
+p1 <- ggplot(dia, aes(glucose, insulin, colour = class)) +
+  geom_point(size = 2, alpha = 0.8) + ggsci::scale_color_aaas() +
+  labs(title = "glucose vs insulin") + theme_bw() +
+  theme(legend.position = "bottom")
+p2 <- ggplot(dia, aes(insulin, sspg, colour = class)) +
+  geom_point(size = 2, alpha = 0.8) + ggsci::scale_color_aaas() +
+  labs(title = "insulin vs sspg") + theme_bw() +
+  theme(legend.position = "bottom")
+
+grid.arrange(p1, p2, nrow = 1)
+round(sapply(tests, sd), 1)
+```
+
+Three things are visible:
+
+- **The scales differ.** The SD of `insulin` is 320. The SD of `glucose` is 64.
+  We scale before clustering, as in Lab 7.
+- **The groups are not round.** The overt patients lie along a long, thin
+  band. The normal patients form a small blob with a thin tail. The groups
+  have different sizes and different orientations.
+- **The chemical and normal groups overlap** in `glucose`, and the chemical
+  and overt groups overlap in `insulin`.
+
+A clinician would say: some patients are borderline. We will check whether the
+algorithm finds them.
+
+```{webr}
+library(caret)
+
+pp <- preProcess(tests, method = c("center", "scale"))
+z  <- as.matrix(predict(pp, tests))     # scaled tests: n = 145, p = 3
+n  <- nrow(z)
+p  <- ncol(z)
+```
+
+# Part 1 — k-means first
+
+Lab 7 gave us k-means, so we start there. We use $K = 3$ and many starts.
+To compare cluster numbers with diagnoses, we give the clusters a fixed
+order: from the lowest to the highest mean `glucose`. This puts "Normal,
+Chemical, Overt" in the same order as the diagnoses.
+
+```{webr}
+# number clusters 1, 2, 3 by increasing mean glucose, so labels are comparable
+relabel <- function(cl) {
+  ord <- order(tapply(tests$glucose, cl, mean))
+  match(cl, ord)
+}
+
+set.seed(42)
+km <- kmeans(z, centers = 3, nstart = 25)
+km_cl <- relabel(km$cluster)
+
+table(diagnosis = dia$class, cluster = km_cl)
+mean(km_cl == as.integer(dia$class))   # share of patients in the "right" cluster
+```
+
+About three patients in four are in the "right" cluster. The mistakes are
+large. Only 13 of the 36 chemical patients land in their own cluster, and 23
+go into the normal cluster. Also, 9 of the 33 overt patients end up in the
+normal cluster. Here is the picture:
+
+```{webr}
+dia |>
+  mutate(cluster = factor(km_cl)) |>
+  ggplot(aes(glucose, insulin, colour = cluster, shape = class)) +
+  geom_point(size = 2.5, alpha = 0.8) +
+  ggsci::scale_color_aaas() +
+  labs(title = "k-means clusters (colour) vs. diagnosis (shape)") +
+  theme_bw() + theme(legend.position = "bottom")
+```
+
+**Why does k-means fail?** k-means assigns each patient to the nearest
+centroid by Euclidean distance. The boundary between two clusters is a
+straight line halfway between their centroids. So k-means implicitly assumes
+that every cluster is a round ball of the same size. These clusters are long
+and thin, and they have different sizes. A long thin cluster is cut in two,
+or it takes patients from its neighbours.
+
+A GMM fixes this by giving each cluster its **own** mean, its **own**
+covariance matrix (size, shape, and orientation), and its **own** weight.
+
+# Part 2 — EM by hand
+
+The slides define the model: each cluster $k$ has a weight $\pi_k$, a mean
+$\mu_k$, and a covariance $\Sigma_k$. The density of a patient is
+$$p(x) = \sum_{k=1}^{K} \pi_k \, N(x \mid \mu_k, \Sigma_k).$$
+We do not know the cluster of any patient, so we use EM. It alternates two
+steps.
+
+**E-step.** Given the parameters, compute for each patient $n$ and cluster $k$
+the probability that the patient belongs to the cluster (the
+**responsibility**):
+$$r_{nk} = \hat P(Y = k \mid x_n) =
+\frac{\pi_k \, N(x_n \mid \mu_k, \Sigma_k)}{\sum_j \pi_j \, N(x_n \mid \mu_j, \Sigma_j)}.$$
+
+**M-step.** Given the responsibilities, update the parameters. Each patient
+counts in cluster $k$ with weight $r_{nk}$:
+$$N_k = \sum_n r_{nk}, \quad
+\hat\mu_k = \frac{1}{N_k}\sum_n r_{nk}\, x_n, \quad
+\hat\Sigma_k = \frac{1}{N_k}\sum_n r_{nk}\,(x_n - \hat\mu_k)(x_n - \hat\mu_k)^\top, \quad
+\hat\pi_k = \frac{N_k}{N}.$$
+
+The code follows these formulas line by line.
+
+```{webr}
+library(mvtnorm)
+
+# E-step: responsibilities r[n, k], and the log-likelihood of the data
+e_step <- function(z, pi_k, mu, Sigma) {
+  K <- length(pi_k)
+  dens <- sapply(1:K, function(k) pi_k[k] * dmvnorm(z, mu[k, ], Sigma[[k]]))
+  dens <- matrix(dens, nrow(z), K)
+  list(r = dens / rowSums(dens),            # normalize each row to sum to 1
+       loglik = sum(log(rowSums(dens))))
+}
+
+# M-step: weighted means, covariances and weights
+# (cov_type is used in Part 6; "full" is the usual GMM)
+m_step <- function(z, r, cov_type = "full") {
+  K  <- ncol(r)
+  Nk <- colSums(r)
+  mu <- t(sapply(1:K, function(k) colSums(r[, k] * z) / Nk[k]))
+  Sigma <- lapply(1:K, function(k) {
+    d <- sweep(z, 2, mu[k, ])
+    S <- crossprod(d * r[, k], d) / Nk[k]
+    if (cov_type == "diag")      S <- diag(diag(S))
+    if (cov_type == "spherical") S <- diag(mean(diag(S)), ncol(z))
+    S + diag(1e-6, ncol(z))                 # tiny ridge keeps S invertible
+  })
+  list(pi_k = Nk / nrow(z), mu = mu, Sigma = Sigma)
+}
+```
+
+Now the loop. EM needs a starting point. We start from the k-means clusters:
+we treat them as hard responsibilities (0 or 1), run one M-step to get
+starting parameters, and then alternate E and M until the log-likelihood stops
+changing. At the end we number the clusters by increasing `glucose`, as before.
+
+```{webr}
+fit_gmm <- function(z, K, cov_type = "full", init = NULL,
+                    max_iter = 500, tol = 1e-8) {
+  if (is.null(init))
+    init <- if (K == 1) rep(1, nrow(z)) else kmeans(z, K, nstart = 10)$cluster
+  r   <- diag(K)[init, , drop = FALSE]      # hard 0/1 responsibilities
+  par <- m_step(z, r, cov_type)
+  ll  <- numeric(0)
+  for (i in 1:max_iter) {
+    e  <- e_step(z, par$pi_k, par$mu, par$Sigma)
+    ll <- c(ll, e$loglik)
+    if (i > 1 && abs(ll[i] - ll[i - 1]) < tol) break   # converged
+    if (i == max_iter) break
+    par <- m_step(z, e$r, cov_type)
+  }
+  o <- order(par$mu[, 1])                   # number clusters by mean glucose
+  list(pi_k = par$pi_k[o], mu = par$mu[o, , drop = FALSE],
+       Sigma = par$Sigma[o], r = e$r[, o, drop = FALSE],
+       loglik = ll, cov_type = cov_type)
+}
+
+set.seed(42)
+gmm3 <- fit_gmm(z, K = 3)
+
+length(gmm3$loglik)     # number of EM iterations
+tail(gmm3$loglik, 1)    # final log-likelihood
+```
+
+EM stopped after a few dozen iterations. The log-likelihood is the quantity
+EM increases at every step, never decreases:
+
+```{webr}
+ggplot(data.frame(iter = seq_along(gmm3$loglik), loglik = gmm3$loglik),
+       aes(iter, loglik)) +
+  geom_line() + geom_point(size = 1.5) +
+  labs(x = "EM iteration", y = "log-likelihood",
+       title = "EM never decreases the log-likelihood") +
+  theme_bw()
+
+all(diff(gmm3$loglik) >= -1e-8)
+```
+
+It rises fast at first, then slowly. EM is guaranteed to climb, but it
+climbs to a **local** maximum. Part 7 returns to this.
+
+### Watching the clusters move
+
+We stop EM after 1, 3, 10 and 45 iterations, and draw each cluster as an
+ellipse (the 95% region of its normal distribution). Iteration 1 is the
+k-means start, with its hard assignments.
+
+```{webr}
+# points on the 95% ellipse of N(mu, Sigma), mapped back to clinical units
+ellipse_df <- function(mu, Sigma, level = 0.95, npts = 100) {
+  th  <- seq(0, 2 * pi, length.out = npts)
+  e   <- eigen(Sigma)
+  pts <- sqrt(qchisq(level, df = 2)) *
+    cbind(cos(th), sin(th)) %*% diag(sqrt(e$values)) %*% t(e$vectors)
+  pts <- sweep(pts, 2, mu, "+")
+  data.frame(x = pts[, 1] * pp$std[1] + pp$mean[1],
+             y = pts[, 2] * pp$std[2] + pp$mean[2])
+}
+
+ellipses_of <- function(f, cols = c(1, 2)) {
+  bind_rows(lapply(seq_along(f$pi_k), function(k) {
+    ellipse_df(f$mu[k, cols], f$Sigma[[k]][cols, cols]) |>
+      mutate(cluster = factor(k))
+  }))
+}
+
+snap <- function(t) {
+  set.seed(42)
+  f <- fit_gmm(z, K = 3, max_iter = t)
+  ellipses_of(f) |> mutate(step = paste("iteration", t))
+}
+
+ell <- bind_rows(snap(1), snap(3), snap(10), snap(45)) |>
+  mutate(step = factor(step, levels = paste("iteration", c(1, 3, 10, 45))))
+
+ggplot() +
+  geom_point(data = dia, aes(glucose, insulin), colour = "grey50", size = 1.5) +
+  geom_path(data = ell, aes(x, y, colour = cluster), linewidth = 1.1) +
+  facet_wrap(~ step, nrow = 1) +
+  ggsci::scale_color_aaas() +
+  labs(x = "glucose", y = "insulin") +
+  theme_bw() + theme(legend.position = "bottom")
+```
+
+Iteration 1 is the fit to the k-means labels. Over the next iterations, the
+big ellipse (overt) widens to cover the whole band, including the patients
+that k-means gave away. The two small ellipses (normal and chemical) overlap,
+and they keep overlapping at the end, because the two groups do overlap in the
+data. A hard-assignment method cannot represent that overlap. A GMM can.
+
+# Part 3 — Reading the fitted model
+
+First, does the GMM recover the diagnoses?
+
+```{webr}
+gmm_cl <- apply(gmm3$r, 1, which.max)   # hard label: most probable cluster
+
+table(diagnosis = dia$class, cluster = gmm_cl)
+mean(gmm_cl == as.integer(dia$class))
+```
+
+Compare with k-means in Part 1. The share of patients in the "right" cluster
+rises from 75% to 86%. 26 of the 36 chemical patients are in their own
+cluster, up from 13. No overt patient is lost to the normal cluster any more.
+
+```{webr}
+dia |>
+  mutate(cluster = factor(gmm_cl)) |>
+  ggplot(aes(glucose, insulin)) +
+  geom_point(aes(colour = cluster, shape = class), size = 2.5, alpha = 0.8) +
+  geom_path(data = ellipses_of(gmm3), aes(x, y, colour = cluster),
+            linewidth = 1) +
+  ggsci::scale_color_aaas() +
+  labs(title = "GMM clusters (colour) vs. diagnosis (shape)") +
+  theme_bw() + theme(legend.position = "bottom")
+```
+
+### The cluster descriptions
+
+A GMM gives three deliverables (from the slides): labels, probabilities, and
+**descriptions** of each cluster. The weights $\hat\pi_k$ say how common each
+cluster is. The means $\hat\mu_k$ say where it sits. We map the means back to
+clinical units:
+
+```{webr}
+mu_clinical <- sweep(sweep(gmm3$mu, 2, pp$std, "*"), 2, pp$mean, "+")
+colnames(mu_clinical) <- colnames(z)
+
+data.frame(cluster = 1:3,
+           weight = round(gmm3$pi_k, 3),
+           round(mu_clinical, 0))
+```
+
+The covariance matrices tell us how the tests move together **inside** each
+cluster. The correlations:
+
+```{webr}
+for (k in 1:3) {
+  cat("\nCluster", k, "- correlation matrix\n")
+  print(round(cov2cor(gmm3$Sigma[[k]]), 2))
+}
+```
+
+Inside a cluster, the tests are related, and the relations differ by cluster.
+In the normal cluster, the tests are nearly unrelated (correlations 0.22 or
+less). In the overt cluster, glucose and insulin responses move together
+(correlation 0.95), and both fall as `sspg` rises (about -0.7). A model that
+forces the correlations to zero, or the clusters to be round, misses this.
+Part 6 tests that.
+
+# Part 4 — Soft assignment: who is hard to place?
+
+So far we used only the most probable cluster. The full output is the matrix of
+responsibilities $r_{nk}$, one row per patient. The **highest** probability in
+a row measures how sure the model is. Here are patient 1 and the three
+patients the model is least sure about:
+
+```{webr}
+conf <- apply(gmm3$r, 1, max)
+
+least_sure <- order(conf)[1:3]
+round(gmm3$r[c(1, least_sure), ], 3)
+dia$class[c(1, least_sure)]
+```
+
+Each row sums to 1. Patient 1 has a row like (0.99, 0.01, 0.00): clearly in
+one cluster. The other three have probability split between two clusters:
+they sit on a border.
+
+Over all patients:
+
+```{webr}
+ggplot(data.frame(conf), aes(conf)) +
+  geom_histogram(bins = 30, fill = "grey60", colour = "white") +
+  geom_vline(xintercept = 0.9, colour = "#EE0000") +
+  labs(x = "highest membership probability", y = "patients") +
+  theme_bw()
+
+sum(conf < 0.9)           # patients the model is less than 90% sure about
+table(dia$class[conf < 0.9])
+```
+
+Most patients have a probability near 1. A group of 23 patients, left of the
+red line, are uncertain. Which diagnosis do they have? 12 of the 23 are
+**chemical** diabetes, the intermediate stage. That is one third of all
+chemical patients. This is the clinical story: chemical diabetes sits
+between normal and overt, and the model says so by splitting the probability
+of those patients across clusters.
+
+```{webr}
+dia |>
+  mutate(conf = conf) |>
+  ggplot(aes(glucose, insulin, colour = conf)) +
+  geom_point(size = 2.8) +
+  scale_colour_viridis_c(option = "D", direction = -1, end = 0.9,
+                         name = "highest\nprobability") +
+  labs(title = "Dark points are the patients the model cannot place") +
+  theme_bw()
+```
+
+k-means has no such output. It assigns every patient with full confidence,
+including the ones that a clinician would call borderline. In practice, we can
+use this: send patients below a probability threshold for a second look,
+and treat the confident ones as settled.
+
+**A warning.** The probabilities come from the model. They are only as good
+as the assumption that each cluster is a normal distribution. A model with a
+wrong shape gives confident but wrong probabilities.
+
+# Part 5 — Choosing $K$
+
+So far we used $K = 3$ because we know there are three diagnoses. In real
+work we do not. The slides give two tools: BIC (parametric) and the silhouette
+(non-parametric).
+
+**BIC** rewards fit and penalizes parameters:
+$$\text{BIC} = 2\,\ell(\hat\theta) - d \log N,$$
+where $\ell$ is the log-likelihood and $d$ is the number of free parameters.
+A full-covariance GMM with $K$ clusters in $p$ dimensions has
+$d = K\left(p + \tfrac{p(p+1)}{2}\right) + (K - 1)$: a mean, a covariance, and
+a weight per cluster (the weights sum to 1). **Higher BIC is better.**
+
+```{webr}
+bic <- function(f) {
+  K <- length(f$pi_k)
+  q <- switch(f$cov_type, full = p * (p + 1) / 2, diag = p, spherical = 1)
+  d <- K * (p + q) + (K - 1)
+  2 * tail(f$loglik, 1) - d * log(n)
+}
+
+Ks   <- 1:6
+fits <- lapply(Ks, function(K) { set.seed(42); fit_gmm(z, K) })
+bic_k <- sapply(fits, bic)
+
+data.frame(K = Ks, loglik = round(sapply(fits, function(f) tail(f$loglik, 1)), 1),
+           BIC = round(bic_k, 1))
+```
+
+The log-likelihood always rises with $K$. BIC peaks at $K = 3$ and then falls,
+because extra clusters cost more in parameters than they gain in fit.
+
+The silhouette needs hard labels. We use the GMM's most probable cluster, and
+for comparison k-means labels:
+
+```{webr}
+library(cluster)
+d <- dist(z)
+
+sil_gmm <- sapply(2:6, function(K)
+  mean(silhouette(apply(fits[[K]]$r, 1, which.max), d)[, "sil_width"]))
+sil_km <- sapply(2:6, function(K) {
+  set.seed(42)
+  mean(silhouette(kmeans(z, K, nstart = 25)$cluster, d)[, "sil_width"])
+})
+
+p_bic <- ggplot(data.frame(K = Ks, BIC = bic_k), aes(K, BIC)) +
+  geom_line() + geom_point(size = 2) + scale_x_continuous(breaks = Ks) +
+  labs(title = "BIC (GMM): larger is better") + theme_bw()
+p_sil <- ggplot(data.frame(K = rep(2:6, 2), sil = c(sil_gmm, sil_km),
+                           labels = rep(c("GMM", "k-means"), each = 5)),
+                aes(K, sil, colour = labels)) +
+  geom_line() + geom_point(size = 2) + scale_x_continuous(breaks = 2:6) +
+  ggsci::scale_color_aaas() +
+  labs(y = "average silhouette width",
+       title = "Silhouette: larger is better") +
+  theme_bw() + theme(legend.position = "bottom")
+
+grid.arrange(p_bic, p_sil, nrow = 1)
+round(rbind(GMM = sil_gmm, kmeans = sil_km), 3)
+```
+
+BIC says $K = 3$. The silhouette says $K = 2$, for both methods, and gives
+$K = 3$ a clearly lower value. Why?
+
+The silhouette measures **compact, well-separated blobs**. The cleanest split
+of these data is "overt" against "everyone else", because the overt group is
+far away. The chemical and normal groups overlap, so splitting them lowers the
+silhouette. BIC asks a different question: does a three-cluster *model* explain
+the data better, given the cost of its parameters? Overlapping groups with
+different shapes are exactly what a mixture model can represent.
+
+Neither tool is always right. When they disagree, look at the clusters, and
+ask someone who knows the domain. Here a clinician would not accept "overt
+against everyone else", because chemical diabetes is a known, separate stage.
+
+# Part 6 — Choosing the covariance shape
+
+A GMM has a second choice that k-means does not have: the **shape** of each
+cluster's covariance. The code from Part 2 supports three:
+
+| `cov_type` | Each cluster is | Free covariance parameters per cluster |
+|---|---|---|
+| `"spherical"` | a round ball, with its own size | 1 |
+| `"diag"` | an ellipse aligned with the axes (tests uncorrelated) | 3 |
+| `"full"` | any ellipse, any tilt | 6 |
+
+k-means is close to the first row, with all clusters the same size, and hard
+assignments. We fit all three for $K = 1, \dots, 6$:
+
+```{webr}
+bic_by_shape <- bind_rows(lapply(c("spherical", "diag", "full"), function(ct) {
+  b <- sapply(Ks, function(K) { set.seed(42); bic(fit_gmm(z, K, cov_type = ct)) })
+  data.frame(K = Ks, BIC = b, shape = ct)
+}))
+
+ggplot(bic_by_shape, aes(K, BIC, colour = shape)) +
+  geom_line() + geom_point(size = 2) + scale_x_continuous(breaks = Ks) +
+  ggsci::scale_color_aaas() +
+  labs(title = "BIC by number of clusters and covariance shape") +
+  theme_bw() + theme(legend.position = "bottom")
+
+bic_by_shape |> filter(K == 3) |> mutate(BIC = round(BIC, 1))
+```
+
+The full-covariance model has the best BIC by a wide margin, at $K = 3$ (-483,
+against -559 for diagonal and -759 for spherical). Look at the other two
+curves:
+
+- **Diagonal** peaks later, around $K = 4$.
+- **Spherical** is still rising at $K = 6$. A round ball is the wrong shape for
+  a long thin cluster, so the model uses several balls to cover one band.
+
+**The wrong covariance shape inflates the number of clusters.** This is the
+GMM version of what happened to k-means in Part 1.
+
+The three shapes also give different clusterings at $K = 3$:
+
+```{webr}
+agree <- sapply(c("spherical", "diag", "full"), function(ct) {
+  set.seed(42)
+  f <- fit_gmm(z, 3, cov_type = ct)
+  mean(apply(f$r, 1, which.max) == as.integer(dia$class))
+})
+round(agree, 3)
+```
+
+Round clusters do about as badly as k-means (79% against 75%). Allowing
+each cluster to stretch, with or without a tilt, gives 86%. The diagonal and
+full models agree equally well with the diagnoses at $K = 3$. BIC still
+prefers the full model. The three extra parameters per cluster (the
+correlations) buy a much better fit, and the diagonal model needs a fourth
+cluster to make up for the tilt it cannot represent.
+
+# Part 7 — Starting points
+
+EM climbs to a local maximum of the log-likelihood, so the start matters, just
+as for k-means in Lab 7. We started from k-means, which is a good start. How
+bad is a random one? We run EM 30 times from random cluster labels:
+
+```{webr}
+#| timelimit: 300
+final_ll <- sapply(1:30, function(s) {
+  set.seed(s)
+  random_start <- sample(1:3, n, replace = TRUE)
+  tail(fit_gmm(z, K = 3, init = random_start)$loglik, 1)
+})
+
+ggplot(data.frame(ll = final_ll), aes(ll)) +
+  geom_histogram(bins = 30, fill = "grey60", colour = "white") +
+  geom_vline(xintercept = tail(gmm3$loglik, 1), colour = "#EE0000",
+             linewidth = 1) +
+  labs(x = "final log-likelihood", y = "runs (out of 30)",
+       title = "EM from 30 random starts (red line: the k-means start)") +
+  theme_bw()
+
+mean(final_ll > tail(gmm3$loglik, 1) - 0.01)   # share of runs that reach the best fit
+```
+
+Only about **one run in five** reaches the best solution. The others stop at
+worse local maxima, each with a different set of clusters, and nothing in the
+output warns you. So:
+
+- Start from several different initial clusterings, and keep the fit with the
+  highest log-likelihood.
+- Initializing from k-means is a common and good default.
+- Set a seed so that you and your readers get the same clusters.
+
+## Try it yourself
+
+**1. A responsibility by hand.** For the least certain patient (`i`), compute $r_{nk}$ directly
+from the formula, using `dmvnorm()`, and check that it equals that
+patient's row of `gmm3$r`.
+
+```{webr}
+#| exercise: ex_one_patient
+i     <- least_sure[1]
+x_i   <- z[i, ]
+dens  <- sapply(1:3, function(k)
+  gmm3$pi_k[k] * dmvnorm(x_i, gmm3$mu[k, ], gmm3$Sigma[[k]]))
+r_i   <- dens / sum(______)
+round(r_i, 3)
+round(gmm3$r[i, ], 3)
+```
+
+**2. Four clusters.** Fit $K = 4$ with full covariances (`fits[[4]]`). Cross
+the clusters with the diagnoses. Which diagnosis is split in two? Profile the
+clusters in clinical units (copy the code from Part 3). Does the new cluster
+make clinical sense?
+
+```{webr}
+#| exercise: ex_k4
+f4 <- fit_gmm(z, K = ______)
+table(diagnosis = dia$class, cluster = apply(f4$r, 1, which.max))
+round(f4$pi_k, 3)
+```
+
+**3. A different threshold.** In Part 4, how many patients have a highest
+probability below 0.7? Below 0.99? What is the diagnosis mix at each
+threshold? What would be a sensible rule for sending patients for a second
+look?
+
+**4. Fewer tests.** A clinic may measure only glucose and insulin. Fit a GMM
+to `z[, 1:2]` with $K = 3$ (the E-step and M-step work for any number of
+columns, but `bic()` uses `p`, so skip BIC). How do the clusters compare with
+the three-test fit?
+
+## Things worth remembering
+
+- **A GMM models the clusters; k-means only partitions the points.** Each
+  cluster has a weight, a mean, and its own covariance matrix.
+- **Soft assignment is the main gain.** The probability of belonging to each
+  cluster shows who is borderline. Here the borderline patients were mostly
+  the chemical, intermediate stage.
+- **EM alternates two easy steps.** The E-step computes responsibilities.
+  The M-step re-estimates parameters with those responsibilities as weights.
+  The log-likelihood never goes down.
+- **EM finds local maxima.** Use several starts and keep the best.
+- **BIC and the silhouette answer different questions.** BIC asked whether a
+  model fits well for its size. The silhouette asked whether the blobs are
+  compact. They disagreed here, and a domain expert settles it.
+- **The covariance shape is a modelling choice.** Too restrictive a shape
+  (round, or axis-aligned) needs extra clusters to cover the data. Compare
+  shapes by BIC.
+- **The model is an assumption.** The probabilities are only as good as the
+  normal-cluster assumption.
+
+## References
+
+Reaven, G. M., and Miller, R. G. (1979). An attempt to define the nature of
+chemical diabetes using a multidimensional analysis. *Diabetologia*, 16,
+17–24.
