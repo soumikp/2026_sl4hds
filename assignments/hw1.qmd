@@ -8,6 +8,7 @@ subtitle: "Training models; Regression I"
 - 📝 [Template (.Rmd)](hw1/assignment1_blank.Rmd) — start here; fill in each section
 - 📄 [Assignment (PDF)](hw1/assignment1_blank.pdf) — readable version of the questions
 - 📊 [Data (assign1_regData.csv)](hw1/assign1_regData.csv)
+- ✅ [Solutions (PDF)](hw1/assignment1_solutions.pdf)
 
 ## Instructions
 

@@ -160,3 +160,6 @@ _solutions/
 /lectures/10-trees/
 /lectures/11-ensemble/
 /lectures/12-hyptest/
+
+# Student submissions and grading records — local only, never publish
+/grading/
