@@ -1,0 +1,16 @@
+---
+title: "Clustering II"
+subtitle: "Gaussian mixture models"
+date: "Oct 23, 2026"
+date-format: long
+---
+
+Gaussian mixture models as soft clustering; the EM algorithm; model selection via BIC; comparing GMMs to k-means.
+
+📖 **Assigned reading:** PRML §9.1–9.2
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)

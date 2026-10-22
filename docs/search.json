@@ -154,11 +154,74 @@
     "text": "Key dates\n\n\n\n\n\n\n\nDate\nWhat\n\n\n\n\nFri 10/30\nGroups formed. Email the instructor your group members. Anyone without a group by then will be assigned to one.\n\n\nFri 11/06, 11:59 PM\nProposal due (one PDF per group)\n\n\nFri 11/13, 11:59 PM\nLast day to submit a proposal and still get feedback\n\n\nFri 12/04, 8:59 AM\nSlides due (one PDF per group)\n\n\nFri 12/04, 9:00–10:50 AM\nIn-class presentations\n\n\nWed 12/09, 11:59 PM\nFinal report due: final slide deck (one PDF per group)"
   },
   {
+    "objectID": "project.html#proposal-required-completeincomplete",
+    "href": "project.html#proposal-required-completeincomplete",
+    "title": "Final Project",
+    "section": "0. Proposal (required, complete/incomplete)",
+    "text": "0. Proposal (required, complete/incomplete)\nOne page (references may go on a second page). List the group members and a working title, then:\n\nQuestion. What you want to learn and why it matters. Reproduction track: the question the paper asks.\nData. Name, source, and link. Number of observations, predictors, and outcome (if any). Confirm you already have access.\nMethods. The methods you plan to use and why they fit the question. Applied track: at least two course methods to compare, and how you will judge them (e.g. test-set AUC, cross-validated RMSE). Reproduction track: the paper’s method, the course method(s) you will compare it with, and the paper’s full citation.\n\nInclude references for every source you cite. Every reference must be real, and you must have read it.\nThe proposal is not part of the course grade, but it is required. It is marked complete if it has all three parts. An incomplete proposal gets comments and one week to resubmit. Proposals submitted after 11/13 get no feedback. A group without a complete proposal by the start of class on 12/04 loses 10% of its presentation grade."
+  },
+  {
+    "objectID": "project.html#presentation-20",
+    "href": "project.html#presentation-20",
+    "title": "Final Project",
+    "section": "1. Presentation (20%)",
+    "text": "1. Presentation (20%)\n12 minutes of talk plus 3 minutes of questions. Follow this structure:\n\nBackground — the scientific context, and why the problem matters.\nQuestion — the specific question you set out to answer.\nMethod(s) — the data, any preprocessing, the methods, and how you evaluated them.\nResults — what you found. Use figures and tables, not raw output.\nConclusions — what the results mean for the question.\n\nReproduction track: under Results, show what you reproduced and where it differs from the paper.\nEach of the following is scored 0 (poor) to 5 (excellent):\n\n\n\nItem\nWhat we look for\n\n\n\n\nBackground\nContext is clear and motivates the question\n\n\nQuestion\nSpecific and answerable with the data\n\n\nMethod(s)\nMethods fit the question; evaluation is sound\n\n\nResults\nClear figures/tables; results are correctly interpreted\n\n\nConclusions\nFollow from the results; no overreach\n\n\nDelivery\nClear slides, good pace, ends within 12 minutes\n\n\nQ&A\nQuestions answered directly and correctly\n\n\n\nAll members of a group receive the same grade."
+  },
+  {
+    "objectID": "project.html#report-10",
+    "href": "project.html#report-10",
+    "title": "Final Project",
+    "section": "2. Report (10%)",
+    "text": "2. Report (10%)\nThe report is your presentation slides, revised after the talk, with two extra slides at the end:\n\nLimitations — what weakens your conclusions (data, methods, sample size, assumptions).\nNext steps — what you would do with more time or more data.\n\nUse the questions and comments from the 12/04 talks to fix or improve the other slides. End with a references slide. Submit one PDF per group. The deck is scored 0–5 on each of Background, Question, Method(s), Results, Conclusions, Limitations, and Next steps. Late reports follow the homework late policy."
+  },
+  {
     "objectID": "project.html#tips-on-choosing-a-project",
     "href": "project.html#tips-on-choosing-a-project",
     "title": "Final Project",
     "section": "Tips on choosing a project",
     "text": "Tips on choosing a project\n\nApplied track: pick a dataset where at least two methods from the course are plausibly relevant — that gives you something to compare. Public health data, genomic/single-cell, EHR-derived, or NHANES-style cohorts all work well. Places to look: UCI Machine Learning Repository, NHANES, Kaggle.\nReproduction track: pick a paper whose data and analysis are described well enough to repeat. Check that you can download the data before you submit the proposal.\nScope honestly: 12 minutes is about 8–10 slides. Plan the talk first, then do the analysis the talk needs."
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html",
+    "href": "lectures/07-clustering-kmeans/index.html",
+    "title": "Clustering I",
+    "section": "",
+    "text": "k-means and Lloyd’s algorithm; hierarchical clustering and linkage; choosing the number of clusters with the elbow, the silhouette, and the gap statistic.\n📖 Assigned reading: ISLR §10.3"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#slides",
+    "href": "lectures/07-clustering-kmeans/index.html#slides",
+    "title": "Clustering I",
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/07-clustering-kmeans/index.html#labs",
+    "href": "lectures/07-clustering-kmeans/index.html#labs",
+    "title": "Clustering I",
+    "section": "🧪 Labs",
+    "text": "🧪 Labs\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed.\n\n🧪 Lab: Thyroid patients (live R) — edit and re-run any code cell: k-means and hierarchical clustering on five thyroid lab tests, with the silhouette and gap statistic for choosing K. A “Download my code” button captures whatever you’ve written before you leave."
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html",
+    "href": "lectures/06-classification-2/index.html",
+    "title": "Classification II",
+    "section": "",
+    "text": "Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries. The lab goes further than the slides: interactive simulations of hyperplanes, support vectors, and kernels, and variable selection for classification with the lasso.\n📖 Assigned reading: ISLR ch. 9"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#slides",
+    "href": "lectures/06-classification-2/index.html#slides",
+    "title": "Classification II",
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
+  },
+  {
+    "objectID": "lectures/06-classification-2/index.html#labs",
+    "href": "lectures/06-classification-2/index.html#labs",
+    "title": "Classification II",
+    "section": "🧪 Labs",
+    "text": "🧪 Labs\nBoth labs run entirely in your browser, no local R install needed. Start with Lab 1.\n\n🎛️ Lab 1: Seeing SVMs (Shiny simulations) — sliders on simulated data: hyperplanes, support vectors, the cost dial, kernels, multi-class.\n🧪 Lab 2: Real tumor data (live R) — edit and re-run any code cell: SVMs on biopsy data, then variable selection with the lasso. A “Download my code” button captures whatever you’ve written before you leave."
   },
   {
     "objectID": "lectures/06-classification-2/code/class6_lab1.html",
@@ -210,11 +273,11 @@
     "text": "4. Kernels: when a straight line won’t do\nHere class +1 sits inside a ring and class -1 outside it — no straight line can separate them. We fit on 200 training points and report the error on 1,000 fresh test points from the same process. Try each kernel; for the radial kernel, also slide \\(\\gamma\\) (kernlab calls it sigma).\n#| '!! shinylive warning !!': |\n#|   shinylive does not work in self-contained HTML documents.\n#|   Please set `embed-resources: false` in your metadata.\n#| standalone: true\n#| viewerHeight: 680\nlibrary(shiny)\nlibrary(bslib)\nlibrary(ggplot2)\nlibrary(kernlab)\n\nmake_ring &lt;- function(n, noise) {\n  X1 &lt;- runif(n, -2, 2)\n  X2 &lt;- runif(n, -2, 2)\n  inside &lt;- sqrt(X1^2 + X2^2) + rnorm(n, 0, noise) &lt; 1.2\n  data.frame(X1, X2, y = factor(ifelse(inside, 1, -1), levels = c(-1, 1)))\n}\ngrid &lt;- expand.grid(X1 = seq(-2, 2, length.out = 150),\n                    X2 = seq(-2, 2, length.out = 150))\nring_colours &lt;- scale_colour_manual(\n  values = c(`-1` = \"#3B4992\", `1` = \"#EE0000\"),\n  labels = c(\"y = -1 (outside)\", \"y = +1 (inside)\"), name = NULL)\n\nui &lt;- page_sidebar(\n  sidebar = sidebar(\n    selectInput(\"kern\", \"kernel\",\n                c(\"linear\", \"polynomial, degree 2\", \"polynomial, degree 3\",\n                  \"radial\")),\n    conditionalPanel(\n      \"input.kern == 'radial'\",\n      sliderInput(\"log10gamma\", \"log₁₀(γ)\", min = -1, max = 2,\n                  value = 0, step = 0.25)\n    ),\n    sliderInput(\"noise\", \"label noise near the ring (SD)\", min = 0.05,\n                max = 0.5, value = 0.15, step = 0.05)\n  ),\n  navset_card_tab(\n    nav_panel(\"Original space: X₁, X₂\",\n              plotOutput(\"fit_plot\", height = \"520px\")),\n    nav_panel(\"Enlarged space: X₁², X₂²\",\n              plotOutput(\"enlarged_plot\", height = \"520px\"))\n  )\n)\n\nserver &lt;- function(input, output, session) {\n  ring_train &lt;- reactive({ set.seed(4); make_ring(200, input$noise) })\n  ring_test  &lt;- reactive({ set.seed(5); make_ring(1000, input$noise) })\n\n  output$fit_plot &lt;- renderPlot({\n    d &lt;- ring_train()\n    gamma &lt;- 10^input$log10gamma\n    m &lt;- switch(input$kern,\n      \"linear\"               = ksvm(y ~ ., d, kernel = \"vanilladot\",\n                                    kpar = list(), C = 1),\n      \"polynomial, degree 2\" = ksvm(y ~ ., d, kernel = \"polydot\",\n                                    kpar = list(degree = 2), C = 1),\n      \"polynomial, degree 3\" = ksvm(y ~ ., d, kernel = \"polydot\",\n                                    kpar = list(degree = 3), C = 1),\n      \"radial\"               = ksvm(y ~ ., d, kernel = \"rbfdot\",\n                                    kpar = list(sigma = gamma), C = 1))\n\n    train_err &lt;- mean(predict(m, d) != d$y)\n    test_err  &lt;- mean(predict(m, ring_test()) != ring_test()$y)\n    grid$pred &lt;- predict(m, grid)\n\n    ggplot() +\n      geom_raster(data = grid, aes(X1, X2, fill = pred), alpha = 0.25) +\n      geom_point(data = d, aes(X1, X2, colour = y), size = 2) +\n      scale_fill_manual(values = c(`-1` = \"#3B4992\", `1` = \"#EE0000\"),\n                        guide = \"none\") +\n      ring_colours +\n      coord_equal(expand = FALSE) +\n      labs(title = sprintf(\"%s%s\", input$kern,\n                           if (input$kern == \"radial\") sprintf(\" (γ = %.2f)\", gamma) else \"\"),\n           subtitle = sprintf(\"training error %.1f%%   |   test error %.1f%%\",\n                              100 * train_err, 100 * test_err)) +\n      theme_bw(base_size = 15) +\n      theme(legend.position = \"bottom\")\n  }, res = 96)\n\n  output$enlarged_plot &lt;- renderPlot({\n    d &lt;- ring_train()\n    ggplot(d, aes(X1^2, X2^2, colour = y)) +\n      geom_point(size = 2) +\n      geom_abline(intercept = 1.44, slope = -1, linetype = \"dashed\") +\n      ring_colours +\n      labs(x = expression(X[1]^2), y = expression(X[2]^2),\n           title = \"The ring becomes (almost) linearly separable\",\n           subtitle = \"dashed line: X1² + X2² = 1.44, the true boundary\") +\n      theme_bw(base_size = 15) +\n      theme(legend.position = \"bottom\")\n  }, res = 96)\n}\n\nshinyApp(ui, server)\nThings to try (at the default noise, 0.15):\n\n\n\nkernel\ntraining error\ntest error\n\n\n\n\nlinear\n30.5%\n28.5%\n\n\npolynomial, degree 2\n7.0%\n7.4%\n\n\nradial, γ = 1\n8.5%\n6.3%\n\n\nradial, γ = 100\n3.0%\n21.0%\n\n\n\n\nlinear gives up and calls everything “outside” — one straight cut can’t carve out a disc, so it misclassifies the whole inside class.\npolynomial, degree 2 gets close to the best possible: the true boundary \\(X_1^2 + X_2^2 = 1.2^2\\) is a degree-2 curve. (Nothing reaches 0% — the labels near the ring are noisy on purpose.)\nradial, then slide \\(\\gamma\\) all the way right. The training error keeps falling while the test error climbs as the boundary shrink-wraps individual points. Large \\(\\gamma\\) = very local kernel = overfitting. \\(\\gamma\\) is a flexibility dial, just like \\(k\\) in k-NN.\n\nWhy the degree-2 kernel works. Open the Enlarged space tab. The slides’ trick was to add transformed features and fit a linear classifier in the bigger space. On \\(X_1^2\\) and \\(X_2^2\\) instead of \\(X_1\\) and \\(X_2\\), a straight line does the job. The polynomial kernel gets the same result without ever building those columns: it only needs inner products, which is what makes kernels cheap even when the enlarged space is huge (or, for the radial kernel, infinite-dimensional).\nBreak the ring. Raise the noise slider to 0.4. The test error of the degree-2 kernel climbs, and switching kernels does not bring it back down. Why can no kernel fix this?"
   },
   {
-    "objectID": "lectures/06-classification-2/code/class6_lab1.html#try-it-yourself",
-    "href": "lectures/06-classification-2/code/class6_lab1.html#try-it-yourself",
-    "title": "Class 6/Lab 1: Support Vector Machines and Variable Selection for Classification",
-    "section": "Try it yourself",
-    "text": "Try it yourself\n1. Elastic net. alpha between 0 and 1 mixes the lasso and ridge penalties. Correlated features (radius, perimeter, and area are nearly the same measurement) tend to enter together under the elastic net, where the lasso picks one and drops the rest. Fill in an alpha and compare how many features survive — and whether the test accuracy changes at all.\n\n\n\n\n\n\n\n\n2. A different split. In Part 2, change set.seed(2155) before createDataPartition() to another number and re-run the part. Does the linear kernel still hold its own against the radial one?\n3. Break the ring. In §1.4, the ring’s noise is rnorm(n, 0, 0.15). There is no slider for it — edit the cell, raise it to 0.4, and re-run. What happens to the test error of the degree-2 kernel, and why can no kernel fix it?"
+    "objectID": "lectures/06-classification-2/code/class6_lab1.html#more-than-two-classes",
+    "href": "lectures/06-classification-2/code/class6_lab1.html#more-than-two-classes",
+    "title": "Class 6/Lab 1: Seeing Support Vector Machines",
+    "section": "5. More than two classes",
+    "text": "5. More than two classes\nSVMs are binary by construction. The slides gave two ways round that: one-versus-all (fit \\(K\\) classifiers, each class against the rest) and one-versus-one (fit all \\(\\binom{K}{2}\\) pairwise classifiers and let them vote). kernlab uses one-versus-one. With three iris species that means \\(\\binom{3}{2} = 3\\) binary SVMs inside one fitted model — the subtitle counts them from the fitted object.\nThe app shows the combined vote as three-colored decision regions. The two feature pairs give very different problems:\n#| '!! shinylive warning !!': |\n#|   shinylive does not work in self-contained HTML documents.\n#|   Please set `embed-resources: false` in your metadata.\n#| standalone: true\n#| viewerHeight: 640\nlibrary(shiny)\nlibrary(bslib)\nlibrary(ggplot2)\nlibrary(kernlab)\n\nui &lt;- page_sidebar(\n  sidebar = sidebar(\n    radioButtons(\"features\", \"features\", c(\"petal\", \"sepal\")),\n    radioButtons(\"kernel\", \"kernel\", c(\"linear\", \"radial\"))\n  ),\n  plotOutput(\"plot\", height = \"560px\")\n)\n\nserver &lt;- function(input, output, session) {\n  output$plot &lt;- renderPlot({\n    vars &lt;- if (input$features == \"petal\") c(\"Petal.Length\", \"Petal.Width\") else\n                                           c(\"Sepal.Length\", \"Sepal.Width\")\n    d &lt;- data.frame(x1 = iris[[vars[1]]], x2 = iris[[vars[2]]],\n                    Species = iris$Species)\n\n    set.seed(1)\n    m &lt;- if (input$kernel == \"linear\") {\n      ksvm(Species ~ x1 + x2, data = d, kernel = \"vanilladot\", kpar = list(),\n           C = 1, cross = 10)\n    } else {\n      ksvm(Species ~ x1 + x2, data = d, kernel = \"rbfdot\", C = 1, cross = 10)\n    }\n\n    grid &lt;- expand.grid(x1 = seq(min(d$x1) - 0.3, max(d$x1) + 0.3, length.out = 150),\n                        x2 = seq(min(d$x2) - 0.3, max(d$x2) + 0.3, length.out = 150))\n    grid$pred &lt;- predict(m, grid)\n    species_cols &lt;- c(setosa = \"#3B4992\", versicolor = \"#EE0000\",\n                      virginica = \"#008B45\")\n\n    ggplot() +\n      geom_raster(data = grid, aes(x1, x2, fill = pred), alpha = 0.25) +\n      geom_jitter(data = d, aes(x1, x2, colour = Species, shape = Species),\n                  width = 0.03, height = 0.03, size = 2.5) +\n      scale_colour_manual(values = species_cols) +\n      scale_fill_manual(values = species_cols, guide = \"none\") +\n      coord_cartesian(expand = FALSE) +\n      labs(x = vars[1], y = vars[2],\n           title = sprintf(\"%s kernel on %s features   |   10-fold CV error %.1f%%\",\n                           input$kernel, input$features, 100 * cross(m)),\n           subtitle = sprintf(\"one-versus-one: %d pairwise classifiers in this model\",\n                              length(coef(m)))) +\n      theme_bw(base_size = 15) +\n      theme(legend.position = \"bottom\")\n  }, res = 96)\n}\n\nshinyApp(ui, server)\n\nPetal features: both kernels separate the three species almost perfectly (10-fold CV error 4.7% linear, 4.0% radial). Setosa sits far off on its own; the two classifiers that involve it are easy.\nSepal features: the error jumps to about 21% (linear) and 25% (radial). Versicolor and virginica overlap heavily on sepal measurements, and no kernel can separate points that sit on top of each other — the radial kernel just draws a more contorted boundary through the overlap and does worse. Better features beat a fancier kernel."
   },
   {
     "objectID": "lectures/06-classification-2/code/class6_lab1.html#things-worth-remembering",
@@ -742,41 +805,6 @@
     "text": "⭐ Extras\nOptional supplementary material:\n\n📄 Classification Summary"
   },
   {
-    "objectID": "lectures/06-classification-2/index.html",
-    "href": "lectures/06-classification-2/index.html",
-    "title": "Classification II",
-    "section": "",
-    "text": "Maximum margin classifiers; the soft-margin extension; kernel SVMs for non-linear decision boundaries. The lab goes further than the slides: interactive simulations of hyperplanes, support vectors, and kernels, and variable selection for classification with the lasso.\n📖 Assigned reading: ISLR ch. 9"
-  },
-  {
-    "objectID": "lectures/06-classification-2/index.html#slides",
-    "href": "lectures/06-classification-2/index.html#slides",
-    "title": "Classification II",
-    "section": "📊 Slides",
-    "text": "📊 Slides\n\n🖥️ Clean slides\n✏️ Annotated slides (in-class version)"
-  },
-  {
-    "objectID": "lectures/06-classification-2/index.html#lab",
-    "href": "lectures/06-classification-2/index.html#lab",
-    "title": "Classification II",
-    "section": "🧪 Lab",
-    "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed. Edit any code cell and re-run it; a “Download my code” button captures whatever you’ve written before you leave.\n\n🧪 Lab 6 (interactive)"
-  },
-  {
-    "objectID": "schedule.html",
-    "href": "schedule.html",
-    "title": "Schedule",
-    "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nExtras\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\nLab 2\n\n\nbootstrappermutation test\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\nLab 3\n\n\nmodel selectionshrinkage methodspartial least squares\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\nnonlinear methods\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nslidesannotated\n\n\nLab 5\n\n\nclassification summary\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nslidesannotated\n\n\nLab 6.1 (simulations)Lab 6.2 (real data)\n\n\n—\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nslides\n\n\nLab 7\n\n\n—\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations (9:00–10:50 AM)\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\nProjectSlides due: Dec 4, 8:59 AMReport due: Dec 9, 11:59 PM\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
-  },
-  {
-    "objectID": "lectures/06-classification-2/code/class6_lab1.html#more-than-two-classes",
-    "href": "lectures/06-classification-2/code/class6_lab1.html#more-than-two-classes",
-    "title": "Class 6/Lab 1: Seeing Support Vector Machines",
-    "section": "5. More than two classes",
-    "text": "5. More than two classes\nSVMs are binary by construction. The slides gave two ways round that: one-versus-all (fit \\(K\\) classifiers, each class against the rest) and one-versus-one (fit all \\(\\binom{K}{2}\\) pairwise classifiers and let them vote). kernlab uses one-versus-one. With three iris species that means \\(\\binom{3}{2} = 3\\) binary SVMs inside one fitted model — the subtitle counts them from the fitted object.\nThe app shows the combined vote as three-colored decision regions. The two feature pairs give very different problems:\n#| '!! shinylive warning !!': |\n#|   shinylive does not work in self-contained HTML documents.\n#|   Please set `embed-resources: false` in your metadata.\n#| standalone: true\n#| viewerHeight: 640\nlibrary(shiny)\nlibrary(bslib)\nlibrary(ggplot2)\nlibrary(kernlab)\n\nui &lt;- page_sidebar(\n  sidebar = sidebar(\n    radioButtons(\"features\", \"features\", c(\"petal\", \"sepal\")),\n    radioButtons(\"kernel\", \"kernel\", c(\"linear\", \"radial\"))\n  ),\n  plotOutput(\"plot\", height = \"560px\")\n)\n\nserver &lt;- function(input, output, session) {\n  output$plot &lt;- renderPlot({\n    vars &lt;- if (input$features == \"petal\") c(\"Petal.Length\", \"Petal.Width\") else\n                                           c(\"Sepal.Length\", \"Sepal.Width\")\n    d &lt;- data.frame(x1 = iris[[vars[1]]], x2 = iris[[vars[2]]],\n                    Species = iris$Species)\n\n    set.seed(1)\n    m &lt;- if (input$kernel == \"linear\") {\n      ksvm(Species ~ x1 + x2, data = d, kernel = \"vanilladot\", kpar = list(),\n           C = 1, cross = 10)\n    } else {\n      ksvm(Species ~ x1 + x2, data = d, kernel = \"rbfdot\", C = 1, cross = 10)\n    }\n\n    grid &lt;- expand.grid(x1 = seq(min(d$x1) - 0.3, max(d$x1) + 0.3, length.out = 150),\n                        x2 = seq(min(d$x2) - 0.3, max(d$x2) + 0.3, length.out = 150))\n    grid$pred &lt;- predict(m, grid)\n    species_cols &lt;- c(setosa = \"#3B4992\", versicolor = \"#EE0000\",\n                      virginica = \"#008B45\")\n\n    ggplot() +\n      geom_raster(data = grid, aes(x1, x2, fill = pred), alpha = 0.25) +\n      geom_jitter(data = d, aes(x1, x2, colour = Species, shape = Species),\n                  width = 0.03, height = 0.03, size = 2.5) +\n      scale_colour_manual(values = species_cols) +\n      scale_fill_manual(values = species_cols, guide = \"none\") +\n      coord_cartesian(expand = FALSE) +\n      labs(x = vars[1], y = vars[2],\n           title = sprintf(\"%s kernel on %s features   |   10-fold CV error %.1f%%\",\n                           input$kernel, input$features, 100 * cross(m)),\n           subtitle = sprintf(\"one-versus-one: %d pairwise classifiers in this model\",\n                              length(coef(m)))) +\n      theme_bw(base_size = 15) +\n      theme(legend.position = \"bottom\")\n  }, res = 96)\n}\n\nshinyApp(ui, server)\n\nPetal features: both kernels separate the three species almost perfectly (10-fold CV error 4.7% linear, 4.0% radial). Setosa sits far off on its own; the two classifiers that involve it are easy.\nSepal features: the error jumps to about 21% (linear) and 25% (radial). Versicolor and virginica overlap heavily on sepal measurements, and no kernel can separate points that sit on top of each other — the radial kernel just draws a more contorted boundary through the overlap and does worse. Better features beat a fancier kernel."
-  },
-  {
     "objectID": "lectures/06-classification-2/code/class6_lab2.html",
     "href": "lectures/06-classification-2/code/class6_lab2.html",
     "title": "Class 6/Lab 2: SVMs and Variable Selection on Real Tumor Data",
@@ -803,34 +831,6 @@
     "title": "Class 6/Lab 2: SVMs and Variable Selection on Real Tumor Data",
     "section": "Things worth remembering",
     "text": "Things worth remembering\n\nCost C in software is the opposite of the budget \\(C\\) on the slides. Tune it by cross-validation on a log-spaced grid, never by training error.\nTry the linear kernel first. On the tumor data a straight line is already as good as anything fancier; reach for a kernel only when CV says it helps.\nWith many correlated features, penalize. Unpenalized logistic regression broke on 30 correlated features; the lasso kept the coefficients sane and selected a short list."
-  },
-  {
-    "objectID": "lectures/06-classification-2/index.html#labs",
-    "href": "lectures/06-classification-2/index.html#labs",
-    "title": "Classification II",
-    "section": "🧪 Labs",
-    "text": "🧪 Labs\nBoth labs run entirely in your browser, no local R install needed. Start with Lab 1.\n\n🎛️ Lab 1: Seeing SVMs (Shiny simulations) — sliders on simulated data: hyperplanes, support vectors, the cost dial, kernels, multi-class.\n🧪 Lab 2: Real tumor data (live R) — edit and re-run any code cell: SVMs on biopsy data, then variable selection with the lasso. A “Download my code” button captures whatever you’ve written before you leave."
-  },
-  {
-    "objectID": "lectures/07-clustering-kmeans/index.html",
-    "href": "lectures/07-clustering-kmeans/index.html",
-    "title": "Clustering I",
-    "section": "",
-    "text": "k-means and Lloyd’s algorithm; hierarchical clustering and linkage; choosing the number of clusters with the elbow, the silhouette, and the gap statistic.\n📖 Assigned reading: ISLR §10.3"
-  },
-  {
-    "objectID": "lectures/07-clustering-kmeans/index.html#slides",
-    "href": "lectures/07-clustering-kmeans/index.html#slides",
-    "title": "Clustering I",
-    "section": "📊 Slides",
-    "text": "📊 Slides\n\n🖥️ Clean slides"
-  },
-  {
-    "objectID": "lectures/07-clustering-kmeans/index.html#labs",
-    "href": "lectures/07-clustering-kmeans/index.html#labs",
-    "title": "Clustering I",
-    "section": "🧪 Labs",
-    "text": "🧪 Labs\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed.\n\n🧪 Lab: Thyroid patients (live R) — edit and re-run any code cell: k-means and hierarchical clustering on five thyroid lab tests, with the silhouette and gap statistic for choosing K. A “Download my code” button captures whatever you’ve written before you leave."
   },
   {
     "objectID": "lectures/07-clustering-kmeans/code/class7_lab2.html",
@@ -875,24 +875,31 @@
     "text": "Things worth remembering\n\nPreprocessing is part of the model. Raw, scaled, and transformed data gave three different clusterings. Always scale. Check for skew, and transform when one tail dominates.\nUse many starts and set a seed. One start can stop at a worse local minimum, and nothing warns you.\nThe tools for choosing \\(K\\) often disagree. The elbow, the silhouette, and the gap statistic each answer a geometric question. Use them to find a short list, then decide with the profiles and with someone who knows the domain.\nProfile your clusters. A table of cluster medians on the original units is what turns “cluster 2” into “hypothyroid”.\nLinkage matters. Single linkage chains. Ward behaves most like k-means."
   },
   {
-    "objectID": "project.html#proposal-required-completeincomplete",
-    "href": "project.html#proposal-required-completeincomplete",
-    "title": "Final Project",
-    "section": "0. Proposal (required, complete/incomplete)",
-    "text": "0. Proposal (required, complete/incomplete)\nOne page (references may go on a second page). List the group members and a working title, then:\n\nQuestion. What you want to learn and why it matters. Reproduction track: the question the paper asks.\nData. Name, source, and link. Number of observations, predictors, and outcome (if any). Confirm you already have access.\nMethods. The methods you plan to use and why they fit the question. Applied track: at least two course methods to compare, and how you will judge them (e.g. test-set AUC, cross-validated RMSE). Reproduction track: the paper’s method, the course method(s) you will compare it with, and the paper’s full citation.\n\nInclude references for every source you cite. Every reference must be real, and you must have read it.\nThe proposal is not part of the course grade, but it is required. It is marked complete if it has all three parts. An incomplete proposal gets comments and one week to resubmit. Proposals submitted after 11/13 get no feedback. A group without a complete proposal by the start of class on 12/04 loses 10% of its presentation grade."
+    "objectID": "lectures/08-clustering-gmm/index.html",
+    "href": "lectures/08-clustering-gmm/index.html",
+    "title": "Clustering II",
+    "section": "",
+    "text": "Gaussian mixture models as soft clustering; the EM algorithm; model selection via BIC; comparing GMMs to k-means.\n📖 Assigned reading: PRML §9.1–9.2"
   },
   {
-    "objectID": "project.html#presentation-20",
-    "href": "project.html#presentation-20",
-    "title": "Final Project",
-    "section": "1. Presentation (20%)",
-    "text": "1. Presentation (20%)\n12 minutes of talk plus 3 minutes of questions. Follow this structure:\n\nBackground — the scientific context, and why the problem matters.\nQuestion — the specific question you set out to answer.\nMethod(s) — the data, any preprocessing, the methods, and how you evaluated them.\nResults — what you found. Use figures and tables, not raw output.\nConclusions — what the results mean for the question.\n\nReproduction track: under Results, show what you reproduced and where it differs from the paper.\nEach of the following is scored 0 (poor) to 5 (excellent):\n\n\n\nItem\nWhat we look for\n\n\n\n\nBackground\nContext is clear and motivates the question\n\n\nQuestion\nSpecific and answerable with the data\n\n\nMethod(s)\nMethods fit the question; evaluation is sound\n\n\nResults\nClear figures/tables; results are correctly interpreted\n\n\nConclusions\nFollow from the results; no overreach\n\n\nDelivery\nClear slides, good pace, ends within 12 minutes\n\n\nQ&A\nQuestions answered directly and correctly\n\n\n\nAll members of a group receive the same grade."
+    "objectID": "lectures/08-clustering-gmm/index.html#slides",
+    "href": "lectures/08-clustering-gmm/index.html#slides",
+    "title": "Clustering II",
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides"
   },
   {
-    "objectID": "project.html#report-10",
-    "href": "project.html#report-10",
-    "title": "Final Project",
-    "section": "2. Report (10%)",
-    "text": "2. Report (10%)\nThe report is your presentation slides, revised after the talk, with two extra slides at the end:\n\nLimitations — what weakens your conclusions (data, methods, sample size, assumptions).\nNext steps — what you would do with more time or more data.\n\nUse the questions and comments from the 12/04 talks to fix or improve the other slides. End with a references slide. Submit one PDF per group. The deck is scored 0–5 on each of Background, Question, Method(s), Results, Conclusions, Limitations, and Next steps. Late reports follow the homework late policy."
+    "objectID": "lectures/08-clustering-gmm/index.html#readings",
+    "href": "lectures/08-clustering-gmm/index.html#readings",
+    "title": "Clustering II",
+    "section": "📚 Readings",
+    "text": "📚 Readings\n\n📄 Altman and Krzywinski (2017)\n📄 Garcia-Vidal et al. (2024)"
+  },
+  {
+    "objectID": "schedule.html",
+    "href": "schedule.html",
+    "title": "Schedule",
+    "section": "",
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nExtras\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\nLab 2\n\n\nbootstrappermutation test\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\nLab 3\n\n\nmodel selectionshrinkage methodspartial least squares\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\nnonlinear methods\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nslidesannotated\n\n\nLab 5\n\n\nclassification summary\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nslidesannotated\n\n\nLab 6.1 (simulations)Lab 6.2 (real data)\n\n\n—\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nslidesannotated\n\n\nLab 7\n\n\n—\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nslides\n\n\nTBD\n\n\n—\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations (9:00–10:50 AM)\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\nProjectSlides due: Dec 4, 8:59 AMReport due: Dec 9, 11:59 PM\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
   }
 ]
