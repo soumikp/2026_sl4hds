@@ -14,6 +14,7 @@ Gaussian mixture models as soft clustering; the EM algorithm; model selection vi
 ## 📊 Slides
 
 - 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
 ## 🧪 Lab
 

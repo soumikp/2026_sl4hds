@@ -94,7 +94,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>Oct 23</td>
 <td><strong><a href="lectures/08-clustering-gmm/index.html">Clustering II</a></strong> — Gaussian mixture models<br><span class="quiz-dates">Quiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.</span></td>
 <td>PRML §9.1–9.2</td>
-<td><a href="lectures/08-clustering-gmm/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/08-clustering-gmm/slides_clean.pdf">slides</a><br><a href="lectures/08-clustering-gmm/slides_annotated.pdf">annotated</a></td>
 <td><a href="lectures/08-clustering-gmm/code/class8_lab1.html">Lab 8</a></td>
 <td>—</td>
 </tr>

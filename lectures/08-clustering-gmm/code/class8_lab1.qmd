@@ -228,6 +228,24 @@ $$p(x) = \sum_{k=1}^{K} \pi_k \, N(x \mid \mu_k, \Sigma_k).$$
 We do not know the cluster of any patient, so we use EM. It alternates two
 steps.
 
+::: {.callout-tip}
+## Do this on paper first
+
+In class we derived the E-step and the M-step for **two** clusters. Before you
+read the code, write them out for **three** clusters ($K = 3$):
+
+1. Write the model: the three weights $\pi_1, \pi_2, \pi_3$ (what must they
+   add up to?), the three means, and the three covariances.
+2. Write the E-step for $r_{n1}$, $r_{n2}$ and $r_{n3}$. How many terms are in
+   the denominator now? What must $r_{n1} + r_{n2} + r_{n3}$ equal?
+3. Write the M-step for $N_k$, $\hat\mu_k$, $\hat\Sigma_k$ and $\hat\pi_k$.
+   Check that $N_1 + N_2 + N_3 = N$.
+4. Which lines changed from the two-cluster case? (Only the number of terms
+   changes. The formulas keep the same form for any $K$.)
+
+Then compare your answer with the formulas and the code below.
+:::
+
 **E-step.** Given the parameters, compute for each patient $n$ and cluster $k$
 the probability that the patient belongs to the cluster (the
 **responsibility**):
@@ -241,16 +259,20 @@ $$N_k = \sum_n r_{nk}, \quad
 \hat\Sigma_k = \frac{1}{N_k}\sum_n r_{nk}\,(x_n - \hat\mu_k)(x_n - \hat\mu_k)^\top, \quad
 \hat\pi_k = \frac{N_k}{N}.$$
 
-The code follows these formulas line by line.
+The formulas hold for any $K$, and the code follows them line by line. The
+comments in the code show what happens when $K = 3$.
 
 ```{webr}
 library(mvtnorm)
 
 # E-step: responsibilities r[n, k], and the log-likelihood of the data
 e_step <- function(z, pi_k, mu, Sigma) {
-  K <- length(pi_k)
+  K <- length(pi_k)                         # K = 3: pi_k has 3 numbers
+  # numerator of r[n, k] for every k: pi_k * N(x_n | mu_k, Sigma_k)
+  # K = 3: one column per cluster, so dens has 3 columns
   dens <- sapply(1:K, function(k) pi_k[k] * dmvnorm(z, mu[k, ], Sigma[[k]]))
   dens <- matrix(dens, nrow(z), K)
+  # denominator = sum over k of the numerators; K = 3: a sum of 3 terms
   list(r = dens / rowSums(dens),            # normalize each row to sum to 1
        loglik = sum(log(rowSums(dens))))
 }
@@ -258,17 +280,18 @@ e_step <- function(z, pi_k, mu, Sigma) {
 # M-step: weighted means, covariances and weights
 # (cov_type is used in Part 6; "full" is the usual GMM)
 m_step <- function(z, r, cov_type = "full") {
-  K  <- ncol(r)
-  Nk <- colSums(r)
+  K  <- ncol(r)                             # K = 3: r has 3 columns
+  Nk <- colSums(r)                          # N_k; K = 3: N_1 + N_2 + N_3 = N
+  # mu_k = (1 / N_k) * sum_n r[n, k] * x_n, one row per cluster
   mu <- t(sapply(1:K, function(k) colSums(r[, k] * z) / Nk[k]))
-  Sigma <- lapply(1:K, function(k) {
-    d <- sweep(z, 2, mu[k, ])
+  Sigma <- lapply(1:K, function(k) {        # K = 3: a list of 3 matrices
+    d <- sweep(z, 2, mu[k, ])               # x_n - mu_k for every patient
     S <- crossprod(d * r[, k], d) / Nk[k]
     if (cov_type == "diag")      S <- diag(diag(S))
     if (cov_type == "spherical") S <- diag(mean(diag(S)), ncol(z))
     S + diag(1e-6, ncol(z))                 # tiny ridge keeps S invertible
   })
-  list(pi_k = Nk / nrow(z), mu = mu, Sigma = Sigma)
+  list(pi_k = Nk / nrow(z), mu = mu, Sigma = Sigma)   # pi_k = N_k / N
 }
 ```
 

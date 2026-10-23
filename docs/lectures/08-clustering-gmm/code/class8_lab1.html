@@ -352,20 +352,40 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlhIHw+XG4gIG11dGF0ZShj
 <section id="part-2-em-by-hand" class="level1">
 <h1>Part 2 — EM by hand</h1>
 <p>The slides define the model: each cluster <span class="math inline">\(k\)</span> has a weight <span class="math inline">\(\pi_k\)</span>, a mean <span class="math inline">\(\mu_k\)</span>, and a covariance <span class="math inline">\(\Sigma_k\)</span>. The density of a patient is <span class="math display">\[p(x) = \sum_{k=1}^{K} \pi_k \, N(x \mid \mu_k, \Sigma_k).\]</span> We do not know the cluster of any patient, so we use EM. It alternates two steps.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Do this on paper first
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In class we derived the E-step and the M-step for <strong>two</strong> clusters. Before you read the code, write them out for <strong>three</strong> clusters (<span class="math inline">\(K = 3\)</span>):</p>
+<ol type="1">
+<li>Write the model: the three weights <span class="math inline">\(\pi_1, \pi_2, \pi_3\)</span> (what must they add up to?), the three means, and the three covariances.</li>
+<li>Write the E-step for <span class="math inline">\(r_{n1}\)</span>, <span class="math inline">\(r_{n2}\)</span> and <span class="math inline">\(r_{n3}\)</span>. How many terms are in the denominator now? What must <span class="math inline">\(r_{n1} + r_{n2} + r_{n3}\)</span> equal?</li>
+<li>Write the M-step for <span class="math inline">\(N_k\)</span>, <span class="math inline">\(\hat\mu_k\)</span>, <span class="math inline">\(\hat\Sigma_k\)</span> and <span class="math inline">\(\hat\pi_k\)</span>. Check that <span class="math inline">\(N_1 + N_2 + N_3 = N\)</span>.</li>
+<li>Which lines changed from the two-cluster case? (Only the number of terms changes. The formulas keep the same form for any <span class="math inline">\(K\)</span>.)</li>
+</ol>
+<p>Then compare your answer with the formulas and the code below.</p>
+</div>
+</div>
 <p><strong>E-step.</strong> Given the parameters, compute for each patient <span class="math inline">\(n\)</span> and cluster <span class="math inline">\(k\)</span> the probability that the patient belongs to the cluster (the <strong>responsibility</strong>): <span class="math display">\[r_{nk} = \hat P(Y = k \mid x_n) =
 \frac{\pi_k \, N(x_n \mid \mu_k, \Sigma_k)}{\sum_j \pi_j \, N(x_n \mid \mu_j, \Sigma_j)}.\]</span></p>
 <p><strong>M-step.</strong> Given the responsibilities, update the parameters. Each patient counts in cluster <span class="math inline">\(k\)</span> with weight <span class="math inline">\(r_{nk}\)</span>: <span class="math display">\[N_k = \sum_n r_{nk}, \quad
 \hat\mu_k = \frac{1}{N_k}\sum_n r_{nk}\, x_n, \quad
 \hat\Sigma_k = \frac{1}{N_k}\sum_n r_{nk}\,(x_n - \hat\mu_k)(x_n - \hat\mu_k)^\top, \quad
 \hat\pi_k = \frac{N_k}{N}.\]</span></p>
-<p>The code follows these formulas line by line.</p>
+<p>The formulas hold for any <span class="math inline">\(K\)</span>, and the code follows them line by line. The comments in the code show what happens when <span class="math inline">\(K = 3\)</span>.</p>
 <div class="cell">
 <div>
 <div id="webr-7" class="exercise-cell">
 
 </div>
 <script type="webr-7-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShtdnRub3JtKVxuXG4jIEUtc3RlcDogcmVzcG9uc2liaWxpdGllcyByW24sIGtdLCBhbmQgdGhlIGxvZy1saWtlbGlob29kIG9mIHRoZSBkYXRhXG5lX3N0ZXAgPC0gZnVuY3Rpb24oeiwgcGlfaywgbXUsIFNpZ21hKSB7XG4gIEsgPC0gbGVuZ3RoKHBpX2spXG4gIGRlbnMgPC0gc2FwcGx5KDE6SywgZnVuY3Rpb24oaykgcGlfa1trXSAqIGRtdm5vcm0oeiwgbXVbaywgXSwgU2lnbWFbW2tdXSkpXG4gIGRlbnMgPC0gbWF0cml4KGRlbnMsIG5yb3coeiksIEspXG4gIGxpc3QociA9IGRlbnMgLyByb3dTdW1zKGRlbnMpLCAgICAgICAgICAgICMgbm9ybWFsaXplIGVhY2ggcm93IHRvIHN1bSB0byAxXG4gICAgICAgbG9nbGlrID0gc3VtKGxvZyhyb3dTdW1zKGRlbnMpKSkpXG59XG5cbiMgTS1zdGVwOiB3ZWlnaHRlZCBtZWFucywgY292YXJpYW5jZXMgYW5kIHdlaWdodHNcbiMgKGNvdl90eXBlIGlzIHVzZWQgaW4gUGFydCA2OyBcImZ1bGxcIiBpcyB0aGUgdXN1YWwgR01NKVxubV9zdGVwIDwtIGZ1bmN0aW9uKHosIHIsIGNvdl90eXBlID0gXCJmdWxsXCIpIHtcbiAgSyAgPC0gbmNvbChyKVxuICBOayA8LSBjb2xTdW1zKHIpXG4gIG11IDwtIHQoc2FwcGx5KDE6SywgZnVuY3Rpb24oaykgY29sU3VtcyhyWywga10gKiB6KSAvIE5rW2tdKSlcbiAgU2lnbWEgPC0gbGFwcGx5KDE6SywgZnVuY3Rpb24oaykge1xuICAgIGQgPC0gc3dlZXAoeiwgMiwgbXVbaywgXSlcbiAgICBTIDwtIGNyb3NzcHJvZChkICogclssIGtdLCBkKSAvIE5rW2tdXG4gICAgaWYgKGNvdl90eXBlID09IFwiZGlhZ1wiKSAgICAgIFMgPC0gZGlhZyhkaWFnKFMpKVxuICAgIGlmIChjb3ZfdHlwZSA9PSBcInNwaGVyaWNhbFwiKSBTIDwtIGRpYWcobWVhbihkaWFnKFMpKSwgbmNvbCh6KSlcbiAgICBTICsgZGlhZygxZS02LCBuY29sKHopKSAgICAgICAgICAgICAgICAgIyB0aW55IHJpZGdlIGtlZXBzIFMgaW52ZXJ0aWJsZVxuICB9KVxuICBsaXN0KHBpX2sgPSBOayAvIG5yb3coeiksIG11ID0gbXUsIFNpZ21hID0gU2lnbWEpXG59In0=
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShtdnRub3JtKVxuXG4jIEUtc3RlcDogcmVzcG9uc2liaWxpdGllcyByW24sIGtdLCBhbmQgdGhlIGxvZy1saWtlbGlob29kIG9mIHRoZSBkYXRhXG5lX3N0ZXAgPC0gZnVuY3Rpb24oeiwgcGlfaywgbXUsIFNpZ21hKSB7XG4gIEsgPC0gbGVuZ3RoKHBpX2spICAgICAgICAgICAgICAgICAgICAgICAgICMgSyA9IDM6IHBpX2sgaGFzIDMgbnVtYmVyc1xuICAjIG51bWVyYXRvciBvZiByW24sIGtdIGZvciBldmVyeSBrOiBwaV9rICogTih4X24gfCBtdV9rLCBTaWdtYV9rKVxuICAjIEsgPSAzOiBvbmUgY29sdW1uIHBlciBjbHVzdGVyLCBzbyBkZW5zIGhhcyAzIGNvbHVtbnNcbiAgZGVucyA8LSBzYXBwbHkoMTpLLCBmdW5jdGlvbihrKSBwaV9rW2tdICogZG12bm9ybSh6LCBtdVtrLCBdLCBTaWdtYVtba11dKSlcbiAgZGVucyA8LSBtYXRyaXgoZGVucywgbnJvdyh6KSwgSylcbiAgIyBkZW5vbWluYXRvciA9IHN1bSBvdmVyIGsgb2YgdGhlIG51bWVyYXRvcnM7IEsgPSAzOiBhIHN1bSBvZiAzIHRlcm1zXG4gIGxpc3QociA9IGRlbnMgLyByb3dTdW1zKGRlbnMpLCAgICAgICAgICAgICMgbm9ybWFsaXplIGVhY2ggcm93IHRvIHN1bSB0byAxXG4gICAgICAgbG9nbGlrID0gc3VtKGxvZyhyb3dTdW1zKGRlbnMpKSkpXG59XG5cbiMgTS1zdGVwOiB3ZWlnaHRlZCBtZWFucywgY292YXJpYW5jZXMgYW5kIHdlaWdodHNcbiMgKGNvdl90eXBlIGlzIHVzZWQgaW4gUGFydCA2OyBcImZ1bGxcIiBpcyB0aGUgdXN1YWwgR01NKVxubV9zdGVwIDwtIGZ1bmN0aW9uKHosIHIsIGNvdl90eXBlID0gXCJmdWxsXCIpIHtcbiAgSyAgPC0gbmNvbChyKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBLID0gMzogciBoYXMgMyBjb2x1bW5zXG4gIE5rIDwtIGNvbFN1bXMocikgICAgICAgICAgICAgICAgICAgICAgICAgICMgTl9rOyBLID0gMzogTl8xICsgTl8yICsgTl8zID0gTlxuICAjIG11X2sgPSAoMSAvIE5faykgKiBzdW1fbiByW24sIGtdICogeF9uLCBvbmUgcm93IHBlciBjbHVzdGVyXG4gIG11IDwtIHQoc2FwcGx5KDE6SywgZnVuY3Rpb24oaykgY29sU3VtcyhyWywga10gKiB6KSAvIE5rW2tdKSlcbiAgU2lnbWEgPC0gbGFwcGx5KDE6SywgZnVuY3Rpb24oaykgeyAgICAgICAgIyBLID0gMzogYSBsaXN0IG9mIDMgbWF0cmljZXNcbiAgICBkIDwtIHN3ZWVwKHosIDIsIG11W2ssIF0pICAgICAgICAgICAgICAgIyB4X24gLSBtdV9rIGZvciBldmVyeSBwYXRpZW50XG4gICAgUyA8LSBjcm9zc3Byb2QoZCAqIHJbLCBrXSwgZCkgLyBOa1trXVxuICAgIGlmIChjb3ZfdHlwZSA9PSBcImRpYWdcIikgICAgICBTIDwtIGRpYWcoZGlhZyhTKSlcbiAgICBpZiAoY292X3R5cGUgPT0gXCJzcGhlcmljYWxcIikgUyA8LSBkaWFnKG1lYW4oZGlhZyhTKSksIG5jb2woeikpXG4gICAgUyArIGRpYWcoMWUtNiwgbmNvbCh6KSkgICAgICAgICAgICAgICAgICMgdGlueSByaWRnZSBrZWVwcyBTIGludmVydGlibGVcbiAgfSlcbiAgbGlzdChwaV9rID0gTmsgLyBucm93KHopLCBtdSA9IG11LCBTaWdtYSA9IFNpZ21hKSAgICMgcGlfayA9IE5fayAvIE5cbn0ifQ==
 </script>
 </div>
 </div>
