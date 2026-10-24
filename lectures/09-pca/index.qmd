@@ -1,0 +1,22 @@
+---
+title: "Dimensionality reduction"
+subtitle: "Principal component analysis"
+date: "Oct 30, 2026"
+date-format: long
+---
+
+PCA as variance maximization and as a reconstruction problem; the SVD; choosing the number of components; PCR as a regression follow-up.
+
+📖 **Assigned reading:** ISLR §6.3
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed.
+
+- 🧪 [Lab: Breast tumors (live R)](code/class9_lab1.html){target="_blank"} — edit and re-run any code cell: PCA by hand on the 30 Wisconsin tumor features (scaling, eigendecomposition, scree plot, loadings, a 2D map), then PCR with the number of components chosen by cross-validation. A "Download my code" button captures whatever you've written before you leave.

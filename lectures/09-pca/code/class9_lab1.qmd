@@ -1,0 +1,711 @@
+---
+title: "Class 9/Lab: PCA and PCR on Breast Tumors"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Oct 30, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - ggplot2
+    - dplyr
+    - tidyr
+    - caret
+    - gridExtra
+    - ggsci
+  resources:
+    - data/wdbc.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+In Labs 5 and 6 we classified breast tumors from 30 measurements. Nobody can
+look at a table with 30 columns and see what is in it. This lab asks two
+questions about the same data:
+
+> *Can 30 correlated measurements be squeezed into a few numbers without
+> losing much? And can those few numbers still tell a benign tumor from a
+> malignant one?*
+
+The first question is **principal component analysis (PCA)**. The second is
+**principal components regression (PCR)**: fit the regression on the first
+few principal components instead of on the original features.
+
+The plan:
+
+0. **Look at the data.** Thirty features, many of them close to copies of
+   each other.
+1. **Scaling.** Why PCA on the raw data tells us nothing.
+2. **PCA by hand.** Eigenvalues, loadings and scores, checked against `prcomp()`.
+3. **How many components?** The scree plot and its rules of thumb.
+4. **Reading the components.** What do the loadings say?
+5. **A map of the tumors.** Two numbers per tumor, coloured by diagnosis, and
+   a check on whether the biggest component is the useful one.
+6. **PCA as compression.** Reconstructing the data from a few components.
+7. **PCR.** Logistic regression on the first $M$ components, with $M$ chosen
+   by cross-validation.
+
+Every code cell runs live in your browser via webR, so you do not need to
+install R. Packages and data load once when the page opens. Give it a few
+seconds on first load. Click **Run Code** to run a cell. Run the cells in
+order from the top, because later cells use objects that earlier cells make.
+
+## A note on the tools
+
+- **PCA has no outcome, so `caret::train()` does not apply.** We use base R's
+  `prcomp()`. We also compute the eigendecomposition ourselves with `eigen()`
+  and check that the two agree.
+- **PCR is two steps, so we write the two steps.** The `pls` package has a
+  `pcr()` function for a numeric outcome, but our outcome is a diagnosis
+  (benign or malignant). So we fit the principal components, then fit a
+  logistic regression on them. The slides write PCR with a linear regression,
+  $Y = Z\theta + \epsilon$. For a binary outcome, the same idea gives
+  $\text{logit}\, P(Y = 1) = \theta_0 + Z\theta$.
+
+## The data: Wisconsin breast tumors
+
+This is the same dataset as Labs 5 and 6: 569 tumors from fine-needle-aspirate
+images (Street, Wolberg and Mangasarian, 1993). Ten properties of the cell
+nuclei are measured (radius, texture, smoothness, and so on). For each
+property the data has its mean, its standard error, and its "worst" value in
+the image, giving 30 columns.
+
+```{webr}
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+wdbc <- read.csv("data/wdbc.csv") |>
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
+
+feat <- wdbc |> select(-diagnosis)   # the 30 features: all that PCA sees
+
+dim(feat)
+table(wdbc$diagnosis)
+```
+
+**The diagnosis is not given to PCA.** PCA is unsupervised. We keep the
+diagnosis on the side and use it only to check what PCA found.
+
+### Many features say the same thing
+
+A tumor with a large radius also has a large perimeter and a large area. The
+correlation matrix shows how much of this there is. The 30 columns come in
+three blocks of 10 (means, standard errors, worst values), in the same order
+in each block.
+
+```{webr}
+cm <- cor(feat)
+
+ggplot(as.data.frame(as.table(cm)), aes(Var1, Var2, fill = Freq)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "#3B4992", mid = "white", high = "#EE0000",
+                       limits = c(-1, 1), name = "correlation") +
+  labs(title = "Correlations between the 30 features") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8),
+        axis.text.y = element_text(size = 8),
+        axis.title = element_blank())
+
+(sum(abs(cm) > 0.9) - ncol(feat)) / 2    # pairs of features with |r| > 0.9
+cor(feat$radius_mean, feat$area_mean)
+```
+
+21 pairs of features have a correlation above 0.9 in absolute value. The
+radius and the area of the same tumor have a correlation of 0.987. These
+columns carry much less than 30 separate pieces of information. That is
+what PCA exploits: if features move together, a few combinations of them
+can stand in for all of them.
+
+# Part 1 — Scaling comes first
+
+The slides say PCA finds the direction of maximum variance. Variance depends
+on the units. Look at the variances of the features:
+
+```{webr}
+round(sort(sapply(feat, var), decreasing = TRUE)[1:3], 0)
+round(sort(sapply(feat, var))[1:3], 6)
+```
+
+`area_worst` has a variance of about 324,000. Some features have a variance
+below 0.0001. Areas are measured in the hundreds, smoothness in hundredths. What
+does PCA do with the raw data?
+
+```{webr}
+pca_raw <- prcomp(feat)                      # scale. = FALSE: raw units
+
+round(summary(pca_raw)$importance[2, 1:3], 3)   # share of variance, PC1 to PC3
+round(sort(abs(pca_raw$rotation[, 1]), decreasing = TRUE)[1:3], 3)
+```
+
+The first component "explains" 98% of the variance. But look at its loadings:
+`area_worst` has weight 0.85, `area_mean` 0.52, and nothing else matters. PC1
+is just the area of the tumor. It is a fact about the units, not about the
+tumors. The other 27 features have such small variances that PCA cannot see
+them.
+
+We **center and scale** every feature to mean 0 and variance 1 first. Then all
+30 features have the same say, and PCA looks at the *correlations* between
+them. In `prcomp()`, this is `scale. = TRUE`.
+
+```{webr}
+pca <- prcomp(feat, scale. = TRUE)
+
+# The sign of a component is arbitrary: -phi is as good as phi. We flip PC1 so
+# that a larger score means a more abnormal tumor.
+pca$rotation[, 1] <- -pca$rotation[, 1]
+pca$x[, 1]        <- -pca$x[, 1]
+
+round(summary(pca)$importance[2, 1:5], 3)
+```
+
+Now PC1 explains 44% of the variance, which is a more honest number.
+**Rule: scale before PCA, unless the features share a unit and you have a
+reason to keep their natural scale.**
+
+# Part 2 — PCA by hand
+
+::: {.callout-tip}
+## Do this on paper first
+
+In class we found the loadings by maximizing variance. Here is the smallest
+case where you can do it all by hand. Take **two standardized features** with
+correlation $\rho$. Their correlation matrix is
+$R = \begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}$.
+
+1. Find the two eigenvalues of $R$. (Solve $\det(R - \lambda I) = 0$.) What
+   is their sum? Why must it equal 2?
+2. Find the unit-length eigenvector for each eigenvalue. These are the
+   loadings $(\phi_{11}, \phi_{21})$ and $(\phi_{12}, \phi_{22})$. Check that
+   they are orthogonal and that $\phi_{1m}^2 + \phi_{2m}^2 = 1$.
+3. What is the proportion of variance explained by PC1, as a function of
+   $\rho$?
+4. What happens when $\rho = 0$? When $\rho$ is close to 1? What would you
+   conclude about PCA on features that are uncorrelated?
+
+Then use your answer for `radius_mean` and `area_mean`, which have
+$\rho = 0.987$, and compare with the code below.
+:::
+
+```{webr}
+two <- feat[, c("radius_mean", "area_mean")]
+rho <- cor(two)[1, 2]
+
+c(rho = rho, PVE1_by_hand = (1 + rho) / 2)
+
+q <- prcomp(two, scale. = TRUE)
+round(summary(q)$importance[2, ], 4)      # PVE from prcomp
+round(q$rotation, 3)                      # loadings from prcomp
+```
+
+The eigenvalues are $1 + \rho$ and $1 - \rho$, the loadings are
+$(1, 1)/\sqrt{2}$ and $(1, -1)/\sqrt{2}$, and PC1 explains $(1 + \rho)/2$ of
+the variance. PC1 is the *average* of the two standardized features (size),
+and PC2 is their *difference* (what is left over). When $\rho$ is close to 1,
+the average carries nearly all of the information, and one number replaces two.
+When $\rho = 0$, both eigenvalues are 1: there is no direction worth keeping.
+
+### All 30 features
+
+The slides say PCA "can be solved via eigen decomposition". The loadings are
+the eigenvectors of the correlation matrix of the data, and the variances of
+the components are its eigenvalues. We check this on the full data:
+
+```{webr}
+e <- eigen(cor(feat))
+
+# variances of the components = eigenvalues
+all.equal(e$values, pca$sdev^2)
+
+# loadings = eigenvectors (up to sign)
+max(abs(abs(e$vectors) - abs(pca$rotation)))
+```
+
+Both agree. The scores are the data projected onto the loading directions,
+$Z = X \Phi$, with $X$ the scaled data:
+
+```{webr}
+Z_manual <- scale(feat) %*% pca$rotation
+max(abs(Z_manual - pca$x))                        # same as pca$x
+
+round(apply(pca$x, 2, var)[1:3], 2)               # variances of PC1 to PC3
+round(e$values[1:3], 2)                           # the eigenvalues
+sum(e$values)                                     # total variance = p = 30
+```
+
+Two more properties from the slides can be checked here:
+
+```{webr}
+# the scores of different components are uncorrelated
+cs <- cor(pca$x)
+max(abs(cs[upper.tri(cs)]))
+
+# every loading vector has length 1
+round(colSums(pca$rotation[, 1:3]^2), 3)
+```
+
+The correlations are zero to machine precision (the number printed is of the
+order $10^{-14}$). That is the "uncorrelated with the previous components"
+constraint, and it is why PCR will not suffer from collinearity in Part 7.
+
+# Part 3 — How many components?
+
+The proportion of variance explained (PVE) by component $m$ is
+$\lambda_m / \sum_j \lambda_j$. Here the denominator is 30. The **scree plot**
+shows the PVE for each component, and the cumulative PVE shows what is kept.
+
+```{webr}
+pve  <- pca$sdev^2 / sum(pca$sdev^2)
+cpve <- cumsum(pve)
+
+p_scree <- ggplot(data.frame(PC = 1:30, pve), aes(PC, pve)) +
+  geom_line() + geom_point(size = 2) +
+  labs(y = "proportion of variance explained", title = "Scree plot") +
+  theme_bw()
+p_cum <- ggplot(data.frame(PC = 1:30, cpve), aes(PC, cpve)) +
+  geom_line() + geom_point(size = 2) +
+  geom_hline(yintercept = c(0.8, 0.9, 0.95), linetype = "dashed",
+             colour = "#EE0000") +
+  labs(y = "cumulative PVE", title = "Cumulative PVE") +
+  theme_bw()
+
+grid.arrange(p_scree, p_cum, nrow = 1)
+
+round(rbind(PVE = pve, cumulative = cpve)[, 1:10], 3)
+```
+
+Three rules of thumb, and they do not agree:
+
+```{webr}
+sapply(c("80%" = 0.80, "90%" = 0.90, "95%" = 0.95),
+       function(t) which(cpve >= t)[1])    # smallest M reaching each threshold
+sum(pca$sdev^2 > 1)                        # components with variance above 1
+```
+
+- **Elbow.** The scree plot bends around component 3 or 4. After that, each
+  component adds little.
+- **Cumulative PVE.** 5 components keep 80% of the variance, 7 keep 90%, and
+  10 keep 95%. The slides suggest the smallest $M$ that reaches 80%.
+- **Variance above 1.** A component with variance below 1 explains less than
+  one original standardized feature. Six components pass this test.
+
+So the 30 features can be summarized by roughly 5 to 10 numbers. There is no
+single right answer, because without an outcome there is nothing to
+cross-validate. When there *is* an outcome, as in PCR (Part 7), we can choose
+$M$ by cross-validation.
+
+# Part 4 — Reading the components
+
+A component is a recipe: a weight (loading) for each of the 30 standardized
+features. The three biggest:
+
+```{webr}
+load3 <- data.frame(round(pca$rotation[, 1:3], 2))
+load3$feature <- factor(rownames(load3), levels = rev(rownames(load3)))
+
+load3 |>
+  tidyr::pivot_longer(PC1:PC3, names_to = "PC", values_to = "loading") |>
+  ggplot(aes(PC, feature, fill = loading)) +
+  geom_tile(colour = "black") +
+  geom_text(aes(label = sprintf("%.2f", loading)), size = 3.5) +
+  scale_fill_gradient2(low = "#3B4992", mid = "white", high = "#EE0000",
+                       limits = c(-0.5, 0.5), name = "loading") +
+  labs(x = NULL, y = NULL) +
+  theme_bw()
+```
+
+- **PC1: overall abnormality.** All 30 loadings have the same sign (after our
+  flip, positive). A tumor with a high PC1 score is high on nearly every
+  feature. The biggest weights are on concavity, concave points, compactness
+  and the size features (perimeter, radius). The smallest are on texture and
+  smoothness. PC1 is a weighted average that mostly measures the size and
+  irregularity of the nuclei.
+- **PC2: size against roughness.** The size features (radius, area, perimeter)
+  have positive loadings. The fractal dimension features (a measure of how
+  rough the outline is) have the largest negative ones. A high PC2 means large
+  nuclei with a smooth outline. A low PC2 means smaller nuclei with a rough
+  outline. A contrast like this is a pattern in the data that no single
+  feature shows.
+- **PC3: variability within the image.** The largest loadings are on the
+  *standard-error* features (`texture_se`, `smoothness_se`, `symmetry_se`).
+  This component is about how much the nuclei within one image vary, not
+  about their typical values.
+
+**A warning.** Names like "abnormality" or "roughness" are our reading of the
+loadings. PCA does not know what the features mean. Another analyst can
+name the same component differently, and a component can mix several things.
+
+# Part 5 — A map of the tumors
+
+Two numbers per tumor can be drawn. We plot the first two scores and colour
+by diagnosis. PCA never saw the diagnosis.
+
+```{webr}
+scores <- data.frame(pca$x[, 1:3], diagnosis = wdbc$diagnosis)
+
+ggplot(scores, aes(PC1, PC2, colour = diagnosis)) +
+  geom_point(size = 2, alpha = 0.7) +
+  ggsci::scale_color_aaas() +
+  labs(title = "30 measurements, 2 numbers per tumor") +
+  theme_bw() + theme(legend.position = "bottom")
+
+tapply(scores$PC1, scores$diagnosis, mean)
+mean((scores$PC1 > 0) == (scores$diagnosis == "Malignant"))   # PC1 > 0 means malignant
+```
+
+The two diagnoses fall in different parts of the plot, mostly along PC1. A
+single rule, "PC1 above 0 means malignant", is right for 92% of the tumors,
+with no labels used to build it. This is what the slides mean by "a simple
+visualization that shows a clear underlying pattern". It also tells us that a
+predictive model has a good chance.
+
+### Is the biggest component the useful one?
+
+PCA orders components by *variance*. It does not know the diagnosis, so there
+is no promise that the highest-variance direction is the one that separates
+the groups. Here we can check. For each component, the AUC of its score for
+telling malignant from benign (0.5 is no signal, 1 is perfect; we take
+`max(auc, 1 - auc)` because the sign is arbitrary):
+
+```{webr}
+auc <- function(s, y) {                 # rank-based AUC; y is TRUE for malignant
+  r <- rank(s)
+  (sum(r[y]) - sum(y) * (sum(y) + 1) / 2) / (sum(y) * sum(!y))
+}
+
+auc_pc <- sapply(1:10, function(j) auc(pca$x[, j], wdbc$diagnosis == "Malignant"))
+
+round(setNames(pmax(auc_pc, 1 - auc_pc), paste0("PC", 1:10)), 3)
+```
+
+PC1 has an AUC of 0.97. Every other component is at 0.62 or below. In these
+data, the direction of most variance is also the direction that separates the
+groups. That is good luck, and it is what makes PCR work in Part 7. In other
+data, the signal can sit in a component with little variance. Then PCR with a
+small $M$ throws it away.
+
+# Part 6 — PCA as compression
+
+The slides gave PCA a second description: the $M$ components give the best
+$M$-dimensional approximation of the data. We build that approximation from
+the first $M$ scores and loadings, $\hat X = Z_{1:M}\, \Phi_{1:M}^\top$, and
+measure what is lost:
+
+```{webr}
+Xs <- scale(feat)
+
+recon_err <- function(M) {
+  Xhat <- pca$x[, 1:M, drop = FALSE] %*% t(pca$rotation[, 1:M, drop = FALSE])
+  sum((Xs - Xhat)^2) / sum(Xs^2)       # share of the variation lost
+}
+
+Ms <- c(1, 2, 5, 10, 30)
+round(rbind(M = Ms,
+            lost_in_reconstruction = sapply(Ms, recon_err),
+            one_minus_cumulative_PVE = 1 - cpve[Ms]), 3)
+```
+
+The two rows are the same. The share lost when we rebuild the data from $M$
+components is exactly $1 -$ the cumulative PVE. So "keep the directions of
+maximum variance" and "make the reconstruction error as small as possible"
+are the same goal. With 10 components, we keep 95% of the information in
+the data, and we use a third of the columns.
+
+# Part 7 — Principal components regression
+
+Now the outcome. We want to predict the diagnosis from the 30 features.
+
+### Why not use all 30?
+
+As in Lab 6, we use the same split: 75% of the tumors for training, and 25% for
+testing.
+
+```{webr}
+library(caret)
+
+set.seed(2155)
+idx   <- createDataPartition(wdbc$diagnosis, p = 0.75, list = FALSE)
+train <- wdbc[idx, ]
+test  <- wdbc[-idx, ]
+
+c(train = nrow(train), test = nrow(test))
+
+full_glm <- glm(diagnosis ~ ., data = train, family = binomial)
+summary(abs(coef(full_glm)))
+```
+
+R warns that the algorithm did not converge. The features are so correlated,
+and the classes so separable in 30 dimensions, that the coefficients grow
+without limit. The estimates have no meaning. This is the instability of OLS
+under collinearity that the slides described. Lab 6 fixed it with a penalty
+(the lasso). PCR fixes it by changing the predictors.
+
+### Step 1: PCA on the training set only
+
+PCA uses only the features, not the outcome. Even so, we fit it on the
+**training** tumors, and then we **project** the test tumors with the training
+means, SDs and loadings. We do not refit on the test set: a new patient arrives
+one at a time, and our model must be able to score each of them alone.
+
+```{webr}
+pca_tr <- prcomp(train[, -1], scale. = TRUE)
+
+Z_train <- pca_tr$x                                   # 427 x 30 scores
+Z_test  <- predict(pca_tr, test[, -1])                # 142 x 30 scores
+y_train <- as.integer(train$diagnosis == "Malignant")
+y_test  <- as.integer(test$diagnosis == "Malignant")
+
+dim(Z_train); dim(Z_test)
+```
+
+### Step 2: Choose $M$ by cross-validation
+
+For each $M$ from 1 to 20, we fit a logistic regression on the first $M$
+scores. We use 10-fold cross-validation and measure two things: the **deviance**
+(a measure of fit that punishes confident mistakes, lower is better) and the
+**accuracy**.
+
+To keep the code short, PCA is fitted once on the training set, and then the
+folds are used for the regression only. PCA never sees $y$, so the leak is
+small.
+
+```{webr}
+#| timelimit: 300
+set.seed(1)
+folds <- createFolds(train$diagnosis, k = 10)
+
+cv_pcr <- function(M) {
+  d <- as.data.frame(Z_train[, 1:M, drop = FALSE])
+  res <- sapply(folds, function(f) {
+    fit <- suppressWarnings(glm(y_train[-f] ~ ., data = d[-f, , drop = FALSE],
+                                family = binomial))
+    ph  <- predict(fit, d[f, , drop = FALSE], type = "response")
+    ph  <- pmin(pmax(ph, 1e-12), 1 - 1e-12)
+    c(accuracy = mean((ph > 0.5) == y_train[f]),
+      deviance = -2 * mean(y_train[f] * log(ph) + (1 - y_train[f]) * log(1 - ph)))
+  })
+  rowMeans(res)
+}
+
+Mgrid <- 1:20
+cv <- data.frame(M = Mgrid, t(sapply(Mgrid, cv_pcr)))
+best_M <- cv$M[which.min(cv$deviance)]
+best_M
+```
+
+```{webr}
+p_dev <- ggplot(cv, aes(M, deviance)) +
+  geom_line() + geom_point(size = 2) +
+  geom_vline(xintercept = best_M, colour = "#EE0000", linetype = "dashed") +
+  scale_y_log10() +
+  labs(x = "number of components M", y = "CV deviance (log scale)",
+       title = "CV deviance: lower is better") +
+  theme_bw()
+p_acc <- ggplot(cv, aes(M, accuracy)) +
+  geom_line() + geom_point(size = 2) +
+  geom_vline(xintercept = best_M, colour = "#EE0000", linetype = "dashed") +
+  labs(x = "number of components M", y = "CV accuracy",
+       title = "CV accuracy: higher is better") +
+  theme_bw()
+
+grid.arrange(p_dev, p_acc, nrow = 1)
+round(cv[c(1, 2, 4, 6, 8, 10, 14, 16, 20), ], 3)
+```
+
+The deviance has a clear U shape. It falls fast up to about 4 components,
+reaches its lowest value at $M = 8$ (the red line), and then rises. Past about
+15 components it explodes, because the model has started to separate the
+training data perfectly (the same problem as the 30-feature fit above). The
+accuracy is flat, about 97%, from 4 to 14 components. So the choice of $M$
+does not need to be exact: anything in that range works. Compare this with
+the rules of thumb in Part 3 (5 to 10 components). Here the outcome gives a
+sharper reason to stop than the variance alone.
+
+### Step 3: Fit and test
+
+```{webr}
+fit_pcr <- function(M) {
+  d <- as.data.frame(Z_train[, 1:M, drop = FALSE])
+  suppressWarnings(glm(y_train ~ ., data = d, family = binomial))
+}
+
+test_acc <- function(M) {
+  ph <- predict(fit_pcr(M), as.data.frame(Z_test[, 1:M, drop = FALSE]),
+                type = "response")
+  mean((ph > 0.5) == y_test)
+}
+
+pcr_best <- fit_pcr(best_M)
+ph_test  <- predict(pcr_best, as.data.frame(Z_test[, 1:best_M]), type = "response")
+
+table(truth = test$diagnosis,
+      predicted = factor(ph_test > 0.5, levels = c(FALSE, TRUE),
+                         labels = c("Benign", "Malignant")))
+round(sapply(c("M=1" = 1, "M=2" = 2, "M=5" = 5, "M=8" = 8, "M=15" = 15, "M=30" = 30),
+             test_acc), 3)
+```
+
+The model with $M = 8$ components classifies about 98% of the held-out tumors
+correctly (3 mistakes in 142). The model with all 30 components (which uses the same information
+as the 30-feature logistic regression) does worse, at about 94%. The test set has
+only 142 tumors, so one tumor is 0.7 percentage points. Do not read much into
+differences of one or two tumors between neighbouring values of $M$. The
+cross-validation curve, which uses all 427 training tumors, is more reliable.
+
+### Back to the original features
+
+The price of PCR is interpretability: the coefficients $\theta_m$ belong to
+components. But the model is still linear in the features. Since
+$Z_m = \sum_j \phi_{jm} X_j$, the coefficient on the original (standardized)
+feature $j$ is
+$$\beta_j = \sum_{m=1}^{M} \theta_m \, \phi_{jm}.$$
+The slides call this *constraining* the coefficients: the 30 values of
+$\beta_j$ are not free, because they are built from only $M$ numbers.
+
+```{webr}
+theta <- coef(pcr_best)                              # intercept + M coefficients
+beta  <- pca_tr$rotation[, 1:best_M] %*% theta[-1]   # one beta per feature
+
+# check: the same linear predictor, computed from the features directly
+X_test_std <- scale(test[, -1], center = pca_tr$center, scale = pca_tr$scale)
+lp_features <- theta[1] + X_test_std %*% beta
+lp_scores   <- predict(pcr_best, as.data.frame(Z_test[, 1:best_M]))
+max(abs(lp_features - lp_scores))
+
+b <- data.frame(feature = rownames(beta), beta = beta[, 1])
+b <- b[order(-abs(b$beta)), ][1:10, ]
+
+ggplot(b, aes(beta, reorder(feature, abs(beta)), fill = beta > 0)) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("TRUE" = "#EE0000", "FALSE" = "#3B4992")) +
+  labs(x = "coefficient on the standardized feature", y = NULL,
+       title = "PCR: the ten largest coefficients") +
+  theme_bw()
+```
+
+The two ways of computing the linear predictor agree. Notice that the weight
+is spread over groups of related features (several size features, several
+concavity features), because the components give related features similar
+loadings. The lasso in Lab 6 behaves differently: it tends to keep one
+feature from each correlated group and drop the rest. Neither is "right".
+PCR is a good choice when you want to use all the information in a group of
+correlated measurements. The lasso is a good choice when you want a short
+list of features to measure.
+
+**Two cautions about PCR.**
+
+- It chooses the components *without looking at the outcome*. It worked here
+  because PC1 separates the classes (Part 5). If the signal were in a
+  low-variance component, PCR with a small $M$ would miss it.
+- It is not a feature-selection method. Every component uses all 30 features,
+  so you still need to measure all 30 to score a new patient.
+
+## Try it yourself
+
+**1. The two-feature formula.** For `compactness_mean` and `concavity_mean`,
+compute $\rho$, the PVE of PC1 from $(1 + \rho)/2$, and check it against
+`prcomp()`. Are these two features as redundant as radius and area?
+
+```{webr}
+#| exercise: ex_two_features
+two2 <- feat[, c("compactness_mean", "concavity_mean")]
+rho2 <- cor(two2)[1, 2]
+c(rho = rho2, PVE1_by_hand = (1 + ______) / 2)
+round(summary(prcomp(two2, scale. = TRUE))$importance[2, 1], 4)
+```
+
+**2. How many components for 95%?** Find the smallest $M$ whose cumulative
+PVE is at least 95%, then compute the share of variance lost in the
+reconstruction with that $M$ (use `recon_err()` from Part 6). Does it match?
+
+```{webr}
+#| exercise: ex_95
+M95 <- which(cpve >= ______)[1]
+M95
+recon_err(M95)
+```
+
+**3. Skip the first component.** PCR uses the *first* $M$ components. What if
+we use two components, but not PC1? Fit the logistic regression on `Z_train`
+columns 2 and 3, and compute its test accuracy. Compare it with $M = 2$ from
+Part 7. What does this tell you about *why* PCR works on these data?
+
+```{webr}
+#| exercise: ex_skip_pc1
+d_23 <- as.data.frame(Z_train[, c(2, ______)])
+fit_23 <- suppressWarnings(glm(y_train ~ ., data = d_23, family = binomial))
+ph_23 <- predict(fit_23, as.data.frame(Z_test[, c(2, 3)]), type = "response")
+mean((ph_23 > 0.5) == y_test)
+```
+
+**4. Forget to scale.** Fit PCA on the training features with
+`scale. = FALSE`, and repeat the cross-validation with `Z_train` replaced by
+the unscaled scores. (Copy `cv_pcr()`, and change the first line inside it.)
+Which $M$ does cross-validation choose now? Is the best CV accuracy as high as
+before? Is the test accuracy at that $M$ much different? Compare how badly
+scaling hurt the *description* (Part 1: PC1 was just the area) with how much
+it hurts the *prediction*. Why can the later components make up for a poor PC1?
+
+**5. A different split.** Change the seed in `set.seed(2155)` and rerun Part 7.
+How much does the best $M$ move? How much does the test accuracy move?
+
+## Things worth remembering
+
+- **PCA finds new axes that capture variance.** Each component is a weighted
+  sum of the features. The first has the most variance, and each later one has
+  the most variance among those uncorrelated with the earlier ones.
+- **Scale first.** PCA follows variance, and variance depends on units. On raw
+  data, one feature with a big unit took over the first component.
+- **PCA is an eigendecomposition.** The loadings are eigenvectors of the
+  correlation matrix, and the variances of the scores are its eigenvalues.
+  With two standardized features, PC1 explains $(1 + \rho)/2$.
+- **There is no single right $M$ in PCA.** The elbow, 80% cumulative PVE and
+  variance above 1 gave 3 to 4, 5, and 6 components. Use the rule to get a
+  range, not an answer.
+- **Variance and compression are one idea.** The error of rebuilding the data
+  from $M$ components is $1 -$ the cumulative PVE.
+- **PCR is regression on the first $M$ scores.** The scores are uncorrelated,
+  so the instability from correlated features goes away. $M$ is chosen by
+  cross-validation. The coefficients can be mapped back to the features by
+  $\beta_j = \sum_m \theta_m \phi_{jm}$.
+- **PCR does not see the outcome when it builds the components.** It works
+  when the high-variance directions are the useful ones. Check this before
+  you trust it.
+- **Components are not features you can measure on their own.** A PCR model
+  still needs all $p$ original measurements for each new patient, and the
+  names we give to components are our reading, not something in the data.
+
+## References
+
+Street, W. N., Wolberg, W. H., and Mangasarian, O. L. (1993). Nuclear feature
+extraction for breast tumor diagnosis. *Biomedical Image Processing and
+Biomedical Visualization*, SPIE 1905, 861–870.
+
+James, G., Witten, D., Hastie, T., and Tibshirani, R. (2021). *An
+Introduction to Statistical Learning* (2nd ed.), §6.3 and §12.2.

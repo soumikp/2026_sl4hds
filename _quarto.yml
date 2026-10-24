@@ -6,7 +6,6 @@ project:
     - "!_solutions/**"
     - "!.claude/**"
     - "!lectures/07-clustering-kmeans/code/class7_lab1.qmd"
-    - "!lectures/09-pca/**"
     - "!lectures/10-trees/**"
     - "!lectures/11-ensemble/**"
     - "!lectures/12-hyptest/**"
@@ -37,6 +36,8 @@ project:
     - "lectures/08-clustering-gmm/slides_clean.pdf"
     - "lectures/08-clustering-gmm/slides_annotated.pdf"
     - "lectures/08-clustering-gmm/code/data/**"
+    - "lectures/09-pca/slides_clean.pdf"
+    - "lectures/09-pca/code/data/**"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"
     # HW2 materials (released Sep 25) — the hw2.qmd download links point here.

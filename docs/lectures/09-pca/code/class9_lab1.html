@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-30">
+
+<title>Class 9/Lab: PCA and PCR on Breast Tumors – BIOST 2155</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6a53539d8ec9bfc63628230de0690b95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
+<link href="../../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="../../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">BIOST 2155</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../syllabus.html"> 
+<span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../assignments/index.html"> 
+<span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../project.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Class 9/Lab: PCA and PCR on Breast Tumors</h1>
+<p class="subtitle lead">Live in-browser R — edit and re-run any cell</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 30, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In Labs 5 and 6 we classified breast tumors from 30 measurements. Nobody can look at a table with 30 columns and see what is in it. This lab asks two questions about the same data:</p>
+<blockquote class="blockquote">
+<p><em>Can 30 correlated measurements be squeezed into a few numbers without losing much? And can those few numbers still tell a benign tumor from a malignant one?</em></p>
+</blockquote>
+<p>The first question is <strong>principal component analysis (PCA)</strong>. The second is <strong>principal components regression (PCR)</strong>: fit the regression on the first few principal components instead of on the original features.</p>
+<p>The plan:</p>
+<ol start="0" type="1">
+<li><strong>Look at the data.</strong> Thirty features, many of them close to copies of each other.</li>
+<li><strong>Scaling.</strong> Why PCA on the raw data tells us nothing.</li>
+<li><strong>PCA by hand.</strong> Eigenvalues, loadings and scores, checked against <code>prcomp()</code>.</li>
+<li><strong>How many components?</strong> The scree plot and its rules of thumb.</li>
+<li><strong>Reading the components.</strong> What do the loadings say?</li>
+<li><strong>A map of the tumors.</strong> Two numbers per tumor, coloured by diagnosis, and a check on whether the biggest component is the useful one.</li>
+<li><strong>PCA as compression.</strong> Reconstructing the data from a few components.</li>
+<li><strong>PCR.</strong> Logistic regression on the first <span class="math inline">\(M\)</span> components, with <span class="math inline">\(M\)</span> chosen by cross-validation.</li>
+</ol>
+<p>Every code cell runs live in your browser via webR, so you do not need to install R. Packages and data load once when the page opens. Give it a few seconds on first load. Click <strong>Run Code</strong> to run a cell. Run the cells in order from the top, because later cells use objects that earlier cells make.</p>
+</section>
+<section id="a-note-on-the-tools" class="level2">
+<h2 class="anchored" data-anchor-id="a-note-on-the-tools">A note on the tools</h2>
+<ul>
+<li><strong>PCA has no outcome, so <code>caret::train()</code> does not apply.</strong> We use base R’s <code>prcomp()</code>. We also compute the eigendecomposition ourselves with <code>eigen()</code> and check that the two agree.</li>
+<li><strong>PCR is two steps, so we write the two steps.</strong> The <code>pls</code> package has a <code>pcr()</code> function for a numeric outcome, but our outcome is a diagnosis (benign or malignant). So we fit the principal components, then fit a logistic regression on them. The slides write PCR with a linear regression, <span class="math inline">\(Y = Z\theta + \epsilon\)</span>. For a binary outcome, the same idea gives <span class="math inline">\(\text{logit}\, P(Y = 1) = \theta_0 + Z\theta\)</span>.</li>
+</ul>
+</section>
+<section id="the-data-wisconsin-breast-tumors" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-wisconsin-breast-tumors">The data: Wisconsin breast tumors</h2>
+<p>This is the same dataset as Labs 5 and 6: 569 tumors from fine-needle-aspirate images (Street, Wolberg and Mangasarian, 1993). Ten properties of the cell nuclei are measured (radius, texture, smoothness, and so on). For each property the data has its mean, its standard error, and its “worst” value in the image, giving 30 columns.</p>
+<div class="cell">
+<div>
+<div id="webr-1" class="exercise-cell">
+
+</div>
+<script type="webr-1-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShkcGx5cilcbmxpYnJhcnkoZ2dwbG90MilcbmxpYnJhcnkoZ3JpZEV4dHJhKVxuXG53ZGJjIDwtIHJlYWQuY3N2KFwiZGF0YS93ZGJjLmNzdlwiKSB8PlxuICBtdXRhdGUoZGlhZ25vc2lzID0gZmFjdG9yKGRpYWdub3NpcywgbGV2ZWxzID0gYyhcIkJcIiwgXCJNXCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGMoXCJCZW5pZ25cIiwgXCJNYWxpZ25hbnRcIikpKVxuXG5mZWF0IDwtIHdkYmMgfD4gc2VsZWN0KC1kaWFnbm9zaXMpICAgIyB0aGUgMzAgZmVhdHVyZXM6IGFsbCB0aGF0IFBDQSBzZWVzXG5cbmRpbShmZWF0KVxudGFibGUod2RiYyRkaWFnbm9zaXMpIn0=
+</script>
+</div>
+</div>
+<p><strong>The diagnosis is not given to PCA.</strong> PCA is unsupervised. We keep the diagnosis on the side and use it only to check what PCA found.</p>
+<section id="many-features-say-the-same-thing" class="level3">
+<h3 class="anchored" data-anchor-id="many-features-say-the-same-thing">Many features say the same thing</h3>
+<p>A tumor with a large radius also has a large perimeter and a large area. The correlation matrix shows how much of this there is. The 30 columns come in three blocks of 10 (means, standard errors, worst values), in the same order in each block.</p>
+<div class="cell">
+<div>
+<div id="webr-2" class="exercise-cell">
+
+</div>
+<script type="webr-2-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiY20gPC0gY29yKGZlYXQpXG5cbmdncGxvdChhcy5kYXRhLmZyYW1lKGFzLnRhYmxlKGNtKSksIGFlcyhWYXIxLCBWYXIyLCBmaWxsID0gRnJlcSkpICtcbiAgZ2VvbV90aWxlKCkgK1xuICBzY2FsZV9maWxsX2dyYWRpZW50Mihsb3cgPSBcIiMzQjQ5OTJcIiwgbWlkID0gXCJ3aGl0ZVwiLCBoaWdoID0gXCIjRUUwMDAwXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIGxpbWl0cyA9IGMoLTEsIDEpLCBuYW1lID0gXCJjb3JyZWxhdGlvblwiKSArXG4gIGxhYnModGl0bGUgPSBcIkNvcnJlbGF0aW9ucyBiZXR3ZWVuIHRoZSAzMCBmZWF0dXJlc1wiKSArXG4gIHRoZW1lX2J3KCkgK1xuICB0aGVtZShheGlzLnRleHQueCA9IGVsZW1lbnRfdGV4dChhbmdsZSA9IDkwLCBoanVzdCA9IDEsIHZqdXN0ID0gMC41LCBzaXplID0gOCksXG4gICAgICAgIGF4aXMudGV4dC55ID0gZWxlbWVudF90ZXh0KHNpemUgPSA4KSxcbiAgICAgICAgYXhpcy50aXRsZSA9IGVsZW1lbnRfYmxhbmsoKSlcblxuKHN1bShhYnMoY20pID4gMC45KSAtIG5jb2woZmVhdCkpIC8gMiAgICAjIHBhaXJzIG9mIGZlYXR1cmVzIHdpdGggfHJ8ID4gMC45XG5jb3IoZmVhdCRyYWRpdXNfbWVhbiwgZmVhdCRhcmVhX21lYW4pIn0=
+</script>
+</div>
+</div>
+<p>21 pairs of features have a correlation above 0.9 in absolute value. The radius and the area of the same tumor have a correlation of 0.987. These columns carry much less than 30 separate pieces of information. That is what PCA exploits: if features move together, a few combinations of them can stand in for all of them.</p>
+</section>
+</section>
+<section id="part-1-scaling-comes-first" class="level1">
+<h1>Part 1 — Scaling comes first</h1>
+<p>The slides say PCA finds the direction of maximum variance. Variance depends on the units. Look at the variances of the features:</p>
+<div class="cell">
+<div>
+<div id="webr-3" class="exercise-cell">
+
+</div>
+<script type="webr-3-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicm91bmQoc29ydChzYXBwbHkoZmVhdCwgdmFyKSwgZGVjcmVhc2luZyA9IFRSVUUpWzE6M10sIDApXG5yb3VuZChzb3J0KHNhcHBseShmZWF0LCB2YXIpKVsxOjNdLCA2KSJ9
+</script>
+</div>
+</div>
+<p><code>area_worst</code> has a variance of about 324,000. Some features have a variance below 0.0001. Areas are measured in the hundreds, smoothness in hundredths. What does PCA do with the raw data?</p>
+<div class="cell">
+<div>
+<div id="webr-4" class="exercise-cell">
+
+</div>
+<script type="webr-4-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicGNhX3JhdyA8LSBwcmNvbXAoZmVhdCkgICAgICAgICAgICAgICAgICAgICAgIyBzY2FsZS4gPSBGQUxTRTogcmF3IHVuaXRzXG5cbnJvdW5kKHN1bW1hcnkocGNhX3JhdykkaW1wb3J0YW5jZVsyLCAxOjNdLCAzKSAgICMgc2hhcmUgb2YgdmFyaWFuY2UsIFBDMSB0byBQQzNcbnJvdW5kKHNvcnQoYWJzKHBjYV9yYXckcm90YXRpb25bLCAxXSksIGRlY3JlYXNpbmcgPSBUUlVFKVsxOjNdLCAzKSJ9
+</script>
+</div>
+</div>
+<p>The first component “explains” 98% of the variance. But look at its loadings: <code>area_worst</code> has weight 0.85, <code>area_mean</code> 0.52, and nothing else matters. PC1 is just the area of the tumor. It is a fact about the units, not about the tumors. The other 27 features have such small variances that PCA cannot see them.</p>
+<p>We <strong>center and scale</strong> every feature to mean 0 and variance 1 first. Then all 30 features have the same say, and PCA looks at the <em>correlations</em> between them. In <code>prcomp()</code>, this is <code>scale. = TRUE</code>.</p>
+<div class="cell">
+<div>
+<div id="webr-5" class="exercise-cell">
+
+</div>
+<script type="webr-5-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicGNhIDwtIHByY29tcChmZWF0LCBzY2FsZS4gPSBUUlVFKVxuXG4jIFRoZSBzaWduIG9mIGEgY29tcG9uZW50IGlzIGFyYml0cmFyeTogLXBoaSBpcyBhcyBnb29kIGFzIHBoaS4gV2UgZmxpcCBQQzEgc29cbiMgdGhhdCBhIGxhcmdlciBzY29yZSBtZWFucyBhIG1vcmUgYWJub3JtYWwgdHVtb3IuXG5wY2Ekcm90YXRpb25bLCAxXSA8LSAtcGNhJHJvdGF0aW9uWywgMV1cbnBjYSR4WywgMV0gICAgICAgIDwtIC1wY2EkeFssIDFdXG5cbnJvdW5kKHN1bW1hcnkocGNhKSRpbXBvcnRhbmNlWzIsIDE6NV0sIDMpIn0=
+</script>
+</div>
+</div>
+<p>Now PC1 explains 44% of the variance, which is a more honest number. <strong>Rule: scale before PCA, unless the features share a unit and you have a reason to keep their natural scale.</strong></p>
+</section>
+<section id="part-2-pca-by-hand" class="level1">
+<h1>Part 2 — PCA by hand</h1>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Do this on paper first
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In class we found the loadings by maximizing variance. Here is the smallest case where you can do it all by hand. Take <strong>two standardized features</strong> with correlation <span class="math inline">\(\rho\)</span>. Their correlation matrix is <span class="math inline">\(R = \begin{pmatrix} 1 &amp; \rho \\ \rho &amp; 1 \end{pmatrix}\)</span>.</p>
+<ol type="1">
+<li>Find the two eigenvalues of <span class="math inline">\(R\)</span>. (Solve <span class="math inline">\(\det(R - \lambda I) = 0\)</span>.) What is their sum? Why must it equal 2?</li>
+<li>Find the unit-length eigenvector for each eigenvalue. These are the loadings <span class="math inline">\((\phi_{11}, \phi_{21})\)</span> and <span class="math inline">\((\phi_{12}, \phi_{22})\)</span>. Check that they are orthogonal and that <span class="math inline">\(\phi_{1m}^2 + \phi_{2m}^2 = 1\)</span>.</li>
+<li>What is the proportion of variance explained by PC1, as a function of <span class="math inline">\(\rho\)</span>?</li>
+<li>What happens when <span class="math inline">\(\rho = 0\)</span>? When <span class="math inline">\(\rho\)</span> is close to 1? What would you conclude about PCA on features that are uncorrelated?</li>
+</ol>
+<p>Then use your answer for <code>radius_mean</code> and <code>area_mean</code>, which have <span class="math inline">\(\rho = 0.987\)</span>, and compare with the code below.</p>
+</div>
+</div>
+<div class="cell">
+<div>
+<div id="webr-6" class="exercise-cell">
+
+</div>
+<script type="webr-6-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoidHdvIDwtIGZlYXRbLCBjKFwicmFkaXVzX21lYW5cIiwgXCJhcmVhX21lYW5cIildXG5yaG8gPC0gY29yKHR3bylbMSwgMl1cblxuYyhyaG8gPSByaG8sIFBWRTFfYnlfaGFuZCA9ICgxICsgcmhvKSAvIDIpXG5cbnEgPC0gcHJjb21wKHR3bywgc2NhbGUuID0gVFJVRSlcbnJvdW5kKHN1bW1hcnkocSkkaW1wb3J0YW5jZVsyLCBdLCA0KSAgICAgICMgUFZFIGZyb20gcHJjb21wXG5yb3VuZChxJHJvdGF0aW9uLCAzKSAgICAgICAgICAgICAgICAgICAgICAjIGxvYWRpbmdzIGZyb20gcHJjb21wIn0=
+</script>
+</div>
+</div>
+<p>The eigenvalues are <span class="math inline">\(1 + \rho\)</span> and <span class="math inline">\(1 - \rho\)</span>, the loadings are <span class="math inline">\((1, 1)/\sqrt{2}\)</span> and <span class="math inline">\((1, -1)/\sqrt{2}\)</span>, and PC1 explains <span class="math inline">\((1 + \rho)/2\)</span> of the variance. PC1 is the <em>average</em> of the two standardized features (size), and PC2 is their <em>difference</em> (what is left over). When <span class="math inline">\(\rho\)</span> is close to 1, the average carries nearly all of the information, and one number replaces two. When <span class="math inline">\(\rho = 0\)</span>, both eigenvalues are 1: there is no direction worth keeping.</p>
+<section id="all-30-features" class="level3">
+<h3 class="anchored" data-anchor-id="all-30-features">All 30 features</h3>
+<p>The slides say PCA “can be solved via eigen decomposition”. The loadings are the eigenvectors of the correlation matrix of the data, and the variances of the components are its eigenvalues. We check this on the full data:</p>
+<div class="cell">
+<div>
+<div id="webr-7" class="exercise-cell">
+
+</div>
+<script type="webr-7-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZSA8LSBlaWdlbihjb3IoZmVhdCkpXG5cbiMgdmFyaWFuY2VzIG9mIHRoZSBjb21wb25lbnRzID0gZWlnZW52YWx1ZXNcbmFsbC5lcXVhbChlJHZhbHVlcywgcGNhJHNkZXZeMilcblxuIyBsb2FkaW5ncyA9IGVpZ2VudmVjdG9ycyAodXAgdG8gc2lnbilcbm1heChhYnMoYWJzKGUkdmVjdG9ycykgLSBhYnMocGNhJHJvdGF0aW9uKSkpIn0=
+</script>
+</div>
+</div>
+<p>Both agree. The scores are the data projected onto the loading directions, <span class="math inline">\(Z = X \Phi\)</span>, with <span class="math inline">\(X\)</span> the scaled data:</p>
+<div class="cell">
+<div>
+<div id="webr-8" class="exercise-cell">
+
+</div>
+<script type="webr-8-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiWl9tYW51YWwgPC0gc2NhbGUoZmVhdCkgJSolIHBjYSRyb3RhdGlvblxubWF4KGFicyhaX21hbnVhbCAtIHBjYSR4KSkgICAgICAgICAgICAgICAgICAgICAgICAjIHNhbWUgYXMgcGNhJHhcblxucm91bmQoYXBwbHkocGNhJHgsIDIsIHZhcilbMTozXSwgMikgICAgICAgICAgICAgICAjIHZhcmlhbmNlcyBvZiBQQzEgdG8gUEMzXG5yb3VuZChlJHZhbHVlc1sxOjNdLCAyKSAgICAgICAgICAgICAgICAgICAgICAgICAgICMgdGhlIGVpZ2VudmFsdWVzXG5zdW0oZSR2YWx1ZXMpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgdG90YWwgdmFyaWFuY2UgPSBwID0gMzAifQ==
+</script>
+</div>
+</div>
+<p>Two more properties from the slides can be checked here:</p>
+<div class="cell">
+<div>
+<div id="webr-9" class="exercise-cell">
+
+</div>
+<script type="webr-9-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyB0aGUgc2NvcmVzIG9mIGRpZmZlcmVudCBjb21wb25lbnRzIGFyZSB1bmNvcnJlbGF0ZWRcbmNzIDwtIGNvcihwY2EkeClcbm1heChhYnMoY3NbdXBwZXIudHJpKGNzKV0pKVxuXG4jIGV2ZXJ5IGxvYWRpbmcgdmVjdG9yIGhhcyBsZW5ndGggMVxucm91bmQoY29sU3VtcyhwY2Ekcm90YXRpb25bLCAxOjNdXjIpLCAzKSJ9
+</script>
+</div>
+</div>
+<p>The correlations are zero to machine precision (the number printed is of the order <span class="math inline">\(10^{-14}\)</span>). That is the “uncorrelated with the previous components” constraint, and it is why PCR will not suffer from collinearity in Part 7.</p>
+</section>
+</section>
+<section id="part-3-how-many-components" class="level1">
+<h1>Part 3 — How many components?</h1>
+<p>The proportion of variance explained (PVE) by component <span class="math inline">\(m\)</span> is <span class="math inline">\(\lambda_m / \sum_j \lambda_j\)</span>. Here the denominator is 30. The <strong>scree plot</strong> shows the PVE for each component, and the cumulative PVE shows what is kept.</p>
+<div class="cell">
+<div>
+<div id="webr-10" class="exercise-cell">
+
+</div>
+<script type="webr-10-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicHZlICA8LSBwY2Ekc2Rldl4yIC8gc3VtKHBjYSRzZGV2XjIpXG5jcHZlIDwtIGN1bXN1bShwdmUpXG5cbnBfc2NyZWUgPC0gZ2dwbG90KGRhdGEuZnJhbWUoUEMgPSAxOjMwLCBwdmUpLCBhZXMoUEMsIHB2ZSkpICtcbiAgZ2VvbV9saW5lKCkgKyBnZW9tX3BvaW50KHNpemUgPSAyKSArXG4gIGxhYnMoeSA9IFwicHJvcG9ydGlvbiBvZiB2YXJpYW5jZSBleHBsYWluZWRcIiwgdGl0bGUgPSBcIlNjcmVlIHBsb3RcIikgK1xuICB0aGVtZV9idygpXG5wX2N1bSA8LSBnZ3Bsb3QoZGF0YS5mcmFtZShQQyA9IDE6MzAsIGNwdmUpLCBhZXMoUEMsIGNwdmUpKSArXG4gIGdlb21fbGluZSgpICsgZ2VvbV9wb2ludChzaXplID0gMikgK1xuICBnZW9tX2hsaW5lKHlpbnRlcmNlcHQgPSBjKDAuOCwgMC45LCAwLjk1KSwgbGluZXR5cGUgPSBcImRhc2hlZFwiLFxuICAgICAgICAgICAgIGNvbG91ciA9IFwiI0VFMDAwMFwiKSArXG4gIGxhYnMoeSA9IFwiY3VtdWxhdGl2ZSBQVkVcIiwgdGl0bGUgPSBcIkN1bXVsYXRpdmUgUFZFXCIpICtcbiAgdGhlbWVfYncoKVxuXG5ncmlkLmFycmFuZ2UocF9zY3JlZSwgcF9jdW0sIG5yb3cgPSAxKVxuXG5yb3VuZChyYmluZChQVkUgPSBwdmUsIGN1bXVsYXRpdmUgPSBjcHZlKVssIDE6MTBdLCAzKSJ9
+</script>
+</div>
+</div>
+<p>Three rules of thumb, and they do not agree:</p>
+<div class="cell">
+<div>
+<div id="webr-11" class="exercise-cell">
+
+</div>
+<script type="webr-11-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoic2FwcGx5KGMoXCI4MCVcIiA9IDAuODAsIFwiOTAlXCIgPSAwLjkwLCBcIjk1JVwiID0gMC45NSksXG4gICAgICAgZnVuY3Rpb24odCkgd2hpY2goY3B2ZSA+PSB0KVsxXSkgICAgIyBzbWFsbGVzdCBNIHJlYWNoaW5nIGVhY2ggdGhyZXNob2xkXG5zdW0ocGNhJHNkZXZeMiA+IDEpICAgICAgICAgICAgICAgICAgICAgICAgIyBjb21wb25lbnRzIHdpdGggdmFyaWFuY2UgYWJvdmUgMSJ9
+</script>
+</div>
+</div>
+<ul>
+<li><strong>Elbow.</strong> The scree plot bends around component 3 or 4. After that, each component adds little.</li>
+<li><strong>Cumulative PVE.</strong> 5 components keep 80% of the variance, 7 keep 90%, and 10 keep 95%. The slides suggest the smallest <span class="math inline">\(M\)</span> that reaches 80%.</li>
+<li><strong>Variance above 1.</strong> A component with variance below 1 explains less than one original standardized feature. Six components pass this test.</li>
+</ul>
+<p>So the 30 features can be summarized by roughly 5 to 10 numbers. There is no single right answer, because without an outcome there is nothing to cross-validate. When there <em>is</em> an outcome, as in PCR (Part 7), we can choose <span class="math inline">\(M\)</span> by cross-validation.</p>
+</section>
+<section id="part-4-reading-the-components" class="level1">
+<h1>Part 4 — Reading the components</h1>
+<p>A component is a recipe: a weight (loading) for each of the 30 standardized features. The three biggest:</p>
+<div class="cell">
+<div>
+<div id="webr-12" class="exercise-cell">
+
+</div>
+<script type="webr-12-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibG9hZDMgPC0gZGF0YS5mcmFtZShyb3VuZChwY2Ekcm90YXRpb25bLCAxOjNdLCAyKSlcbmxvYWQzJGZlYXR1cmUgPC0gZmFjdG9yKHJvd25hbWVzKGxvYWQzKSwgbGV2ZWxzID0gcmV2KHJvd25hbWVzKGxvYWQzKSkpXG5cbmxvYWQzIHw+XG4gIHRpZHlyOjpwaXZvdF9sb25nZXIoUEMxOlBDMywgbmFtZXNfdG8gPSBcIlBDXCIsIHZhbHVlc190byA9IFwibG9hZGluZ1wiKSB8PlxuICBnZ3Bsb3QoYWVzKFBDLCBmZWF0dXJlLCBmaWxsID0gbG9hZGluZykpICtcbiAgZ2VvbV90aWxlKGNvbG91ciA9IFwiYmxhY2tcIikgK1xuICBnZW9tX3RleHQoYWVzKGxhYmVsID0gc3ByaW50ZihcIiUuMmZcIiwgbG9hZGluZykpLCBzaXplID0gMy41KSArXG4gIHNjYWxlX2ZpbGxfZ3JhZGllbnQyKGxvdyA9IFwiIzNCNDk5MlwiLCBtaWQgPSBcIndoaXRlXCIsIGhpZ2ggPSBcIiNFRTAwMDBcIixcbiAgICAgICAgICAgICAgICAgICAgICAgbGltaXRzID0gYygtMC41LCAwLjUpLCBuYW1lID0gXCJsb2FkaW5nXCIpICtcbiAgbGFicyh4ID0gTlVMTCwgeSA9IE5VTEwpICtcbiAgdGhlbWVfYncoKSJ9
+</script>
+</div>
+</div>
+<ul>
+<li><strong>PC1: overall abnormality.</strong> All 30 loadings have the same sign (after our flip, positive). A tumor with a high PC1 score is high on nearly every feature. The biggest weights are on concavity, concave points, compactness and the size features (perimeter, radius). The smallest are on texture and smoothness. PC1 is a weighted average that mostly measures the size and irregularity of the nuclei.</li>
+<li><strong>PC2: size against roughness.</strong> The size features (radius, area, perimeter) have positive loadings. The fractal dimension features (a measure of how rough the outline is) have the largest negative ones. A high PC2 means large nuclei with a smooth outline. A low PC2 means smaller nuclei with a rough outline. A contrast like this is a pattern in the data that no single feature shows.</li>
+<li><strong>PC3: variability within the image.</strong> The largest loadings are on the <em>standard-error</em> features (<code>texture_se</code>, <code>smoothness_se</code>, <code>symmetry_se</code>). This component is about how much the nuclei within one image vary, not about their typical values.</li>
+</ul>
+<p><strong>A warning.</strong> Names like “abnormality” or “roughness” are our reading of the loadings. PCA does not know what the features mean. Another analyst can name the same component differently, and a component can mix several things.</p>
+</section>
+<section id="part-5-a-map-of-the-tumors" class="level1">
+<h1>Part 5 — A map of the tumors</h1>
+<p>Two numbers per tumor can be drawn. We plot the first two scores and colour by diagnosis. PCA never saw the diagnosis.</p>
+<div class="cell">
+<div>
+<div id="webr-13" class="exercise-cell">
+
+</div>
+<script type="webr-13-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoic2NvcmVzIDwtIGRhdGEuZnJhbWUocGNhJHhbLCAxOjNdLCBkaWFnbm9zaXMgPSB3ZGJjJGRpYWdub3NpcylcblxuZ2dwbG90KHNjb3JlcywgYWVzKFBDMSwgUEMyLCBjb2xvdXIgPSBkaWFnbm9zaXMpKSArXG4gIGdlb21fcG9pbnQoc2l6ZSA9IDIsIGFscGhhID0gMC43KSArXG4gIGdnc2NpOjpzY2FsZV9jb2xvcl9hYWFzKCkgK1xuICBsYWJzKHRpdGxlID0gXCIzMCBtZWFzdXJlbWVudHMsIDIgbnVtYmVycyBwZXIgdHVtb3JcIikgK1xuICB0aGVtZV9idygpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJib3R0b21cIilcblxudGFwcGx5KHNjb3JlcyRQQzEsIHNjb3JlcyRkaWFnbm9zaXMsIG1lYW4pXG5tZWFuKChzY29yZXMkUEMxID4gMCkgPT0gKHNjb3JlcyRkaWFnbm9zaXMgPT0gXCJNYWxpZ25hbnRcIikpICAgIyBQQzEgPiAwIG1lYW5zIG1hbGlnbmFudCJ9
+</script>
+</div>
+</div>
+<p>The two diagnoses fall in different parts of the plot, mostly along PC1. A single rule, “PC1 above 0 means malignant”, is right for 92% of the tumors, with no labels used to build it. This is what the slides mean by “a simple visualization that shows a clear underlying pattern”. It also tells us that a predictive model has a good chance.</p>
+<section id="is-the-biggest-component-the-useful-one" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-biggest-component-the-useful-one">Is the biggest component the useful one?</h3>
+<p>PCA orders components by <em>variance</em>. It does not know the diagnosis, so there is no promise that the highest-variance direction is the one that separates the groups. Here we can check. For each component, the AUC of its score for telling malignant from benign (0.5 is no signal, 1 is perfect; we take <code>max(auc, 1 - auc)</code> because the sign is arbitrary):</p>
+<div class="cell">
+<div>
+<div id="webr-14" class="exercise-cell">
+
+</div>
+<script type="webr-14-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiYXVjIDwtIGZ1bmN0aW9uKHMsIHkpIHsgICAgICAgICAgICAgICAgICMgcmFuay1iYXNlZCBBVUM7IHkgaXMgVFJVRSBmb3IgbWFsaWduYW50XG4gIHIgPC0gcmFuayhzKVxuICAoc3VtKHJbeV0pIC0gc3VtKHkpICogKHN1bSh5KSArIDEpIC8gMikgLyAoc3VtKHkpICogc3VtKCF5KSlcbn1cblxuYXVjX3BjIDwtIHNhcHBseSgxOjEwLCBmdW5jdGlvbihqKSBhdWMocGNhJHhbLCBqXSwgd2RiYyRkaWFnbm9zaXMgPT0gXCJNYWxpZ25hbnRcIikpXG5cbnJvdW5kKHNldE5hbWVzKHBtYXgoYXVjX3BjLCAxIC0gYXVjX3BjKSwgcGFzdGUwKFwiUENcIiwgMToxMCkpLCAzKSJ9
+</script>
+</div>
+</div>
+<p>PC1 has an AUC of 0.97. Every other component is at 0.62 or below. In these data, the direction of most variance is also the direction that separates the groups. That is good luck, and it is what makes PCR work in Part 7. In other data, the signal can sit in a component with little variance. Then PCR with a small <span class="math inline">\(M\)</span> throws it away.</p>
+</section>
+</section>
+<section id="part-6-pca-as-compression" class="level1">
+<h1>Part 6 — PCA as compression</h1>
+<p>The slides gave PCA a second description: the <span class="math inline">\(M\)</span> components give the best <span class="math inline">\(M\)</span>-dimensional approximation of the data. We build that approximation from the first <span class="math inline">\(M\)</span> scores and loadings, <span class="math inline">\(\hat X = Z_{1:M}\, \Phi_{1:M}^\top\)</span>, and measure what is lost:</p>
+<div class="cell">
+<div>
+<div id="webr-15" class="exercise-cell">
+
+</div>
+<script type="webr-15-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiWHMgPC0gc2NhbGUoZmVhdClcblxucmVjb25fZXJyIDwtIGZ1bmN0aW9uKE0pIHtcbiAgWGhhdCA8LSBwY2EkeFssIDE6TSwgZHJvcCA9IEZBTFNFXSAlKiUgdChwY2Ekcm90YXRpb25bLCAxOk0sIGRyb3AgPSBGQUxTRV0pXG4gIHN1bSgoWHMgLSBYaGF0KV4yKSAvIHN1bShYc14yKSAgICAgICAjIHNoYXJlIG9mIHRoZSB2YXJpYXRpb24gbG9zdFxufVxuXG5NcyA8LSBjKDEsIDIsIDUsIDEwLCAzMClcbnJvdW5kKHJiaW5kKE0gPSBNcyxcbiAgICAgICAgICAgIGxvc3RfaW5fcmVjb25zdHJ1Y3Rpb24gPSBzYXBwbHkoTXMsIHJlY29uX2VyciksXG4gICAgICAgICAgICBvbmVfbWludXNfY3VtdWxhdGl2ZV9QVkUgPSAxIC0gY3B2ZVtNc10pLCAzKSJ9
+</script>
+</div>
+</div>
+<p>The two rows are the same. The share lost when we rebuild the data from <span class="math inline">\(M\)</span> components is exactly <span class="math inline">\(1 -\)</span> the cumulative PVE. So “keep the directions of maximum variance” and “make the reconstruction error as small as possible” are the same goal. With 10 components, we keep 95% of the information in the data, and we use a third of the columns.</p>
+</section>
+<section id="part-7-principal-components-regression" class="level1">
+<h1>Part 7 — Principal components regression</h1>
+<p>Now the outcome. We want to predict the diagnosis from the 30 features.</p>
+<section id="why-not-use-all-30" class="level3">
+<h3 class="anchored" data-anchor-id="why-not-use-all-30">Why not use all 30?</h3>
+<p>As in Lab 6, we use the same split: 75% of the tumors for training, and 25% for testing.</p>
+<div class="cell">
+<div>
+<div id="webr-16" class="exercise-cell">
+
+</div>
+<script type="webr-16-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibGlicmFyeShjYXJldClcblxuc2V0LnNlZWQoMjE1NSlcbmlkeCAgIDwtIGNyZWF0ZURhdGFQYXJ0aXRpb24od2RiYyRkaWFnbm9zaXMsIHAgPSAwLjc1LCBsaXN0ID0gRkFMU0UpXG50cmFpbiA8LSB3ZGJjW2lkeCwgXVxudGVzdCAgPC0gd2RiY1staWR4LCBdXG5cbmModHJhaW4gPSBucm93KHRyYWluKSwgdGVzdCA9IG5yb3codGVzdCkpXG5cbmZ1bGxfZ2xtIDwtIGdsbShkaWFnbm9zaXMgfiAuLCBkYXRhID0gdHJhaW4sIGZhbWlseSA9IGJpbm9taWFsKVxuc3VtbWFyeShhYnMoY29lZihmdWxsX2dsbSkpKSJ9
+</script>
+</div>
+</div>
+<p>R warns that the algorithm did not converge. The features are so correlated, and the classes so separable in 30 dimensions, that the coefficients grow without limit. The estimates have no meaning. This is the instability of OLS under collinearity that the slides described. Lab 6 fixed it with a penalty (the lasso). PCR fixes it by changing the predictors.</p>
+</section>
+<section id="step-1-pca-on-the-training-set-only" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-pca-on-the-training-set-only">Step 1: PCA on the training set only</h3>
+<p>PCA uses only the features, not the outcome. Even so, we fit it on the <strong>training</strong> tumors, and then we <strong>project</strong> the test tumors with the training means, SDs and loadings. We do not refit on the test set: a new patient arrives one at a time, and our model must be able to score each of them alone.</p>
+<div class="cell">
+<div>
+<div id="webr-17" class="exercise-cell">
+
+</div>
+<script type="webr-17-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicGNhX3RyIDwtIHByY29tcCh0cmFpblssIC0xXSwgc2NhbGUuID0gVFJVRSlcblxuWl90cmFpbiA8LSBwY2FfdHIkeCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyA0MjcgeCAzMCBzY29yZXNcblpfdGVzdCAgPC0gcHJlZGljdChwY2FfdHIsIHRlc3RbLCAtMV0pICAgICAgICAgICAgICAgICMgMTQyIHggMzAgc2NvcmVzXG55X3RyYWluIDwtIGFzLmludGVnZXIodHJhaW4kZGlhZ25vc2lzID09IFwiTWFsaWduYW50XCIpXG55X3Rlc3QgIDwtIGFzLmludGVnZXIodGVzdCRkaWFnbm9zaXMgPT0gXCJNYWxpZ25hbnRcIilcblxuZGltKFpfdHJhaW4pOyBkaW0oWl90ZXN0KSJ9
+</script>
+</div>
+</div>
+</section>
+<section id="step-2-choose-m-by-cross-validation" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-choose-m-by-cross-validation">Step 2: Choose <span class="math inline">\(M\)</span> by cross-validation</h3>
+<p>For each <span class="math inline">\(M\)</span> from 1 to 20, we fit a logistic regression on the first <span class="math inline">\(M\)</span> scores. We use 10-fold cross-validation and measure two things: the <strong>deviance</strong> (a measure of fit that punishes confident mistakes, lower is better) and the <strong>accuracy</strong>.</p>
+<p>To keep the code short, PCA is fitted once on the training set, and then the folds are used for the regression only. PCA never sees <span class="math inline">\(y\)</span>, so the leak is small.</p>
+<div class="cell" data-timelimit="300">
+<div>
+<div id="webr-18" class="exercise-cell">
+
+</div>
+<script type="webr-18-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsInRpbWVsaW1pdCI6MzAwfSwiY29kZSI6InNldC5zZWVkKDEpXG5mb2xkcyA8LSBjcmVhdGVGb2xkcyh0cmFpbiRkaWFnbm9zaXMsIGsgPSAxMClcblxuY3ZfcGNyIDwtIGZ1bmN0aW9uKE0pIHtcbiAgZCA8LSBhcy5kYXRhLmZyYW1lKFpfdHJhaW5bLCAxOk0sIGRyb3AgPSBGQUxTRV0pXG4gIHJlcyA8LSBzYXBwbHkoZm9sZHMsIGZ1bmN0aW9uKGYpIHtcbiAgICBmaXQgPC0gc3VwcHJlc3NXYXJuaW5ncyhnbG0oeV90cmFpblstZl0gfiAuLCBkYXRhID0gZFstZiwgLCBkcm9wID0gRkFMU0VdLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmYW1pbHkgPSBiaW5vbWlhbCkpXG4gICAgcGggIDwtIHByZWRpY3QoZml0LCBkW2YsICwgZHJvcCA9IEZBTFNFXSwgdHlwZSA9IFwicmVzcG9uc2VcIilcbiAgICBwaCAgPC0gcG1pbihwbWF4KHBoLCAxZS0xMiksIDEgLSAxZS0xMilcbiAgICBjKGFjY3VyYWN5ID0gbWVhbigocGggPiAwLjUpID09IHlfdHJhaW5bZl0pLFxuICAgICAgZGV2aWFuY2UgPSAtMiAqIG1lYW4oeV90cmFpbltmXSAqIGxvZyhwaCkgKyAoMSAtIHlfdHJhaW5bZl0pICogbG9nKDEgLSBwaCkpKVxuICB9KVxuICByb3dNZWFucyhyZXMpXG59XG5cbk1ncmlkIDwtIDE6MjBcbmN2IDwtIGRhdGEuZnJhbWUoTSA9IE1ncmlkLCB0KHNhcHBseShNZ3JpZCwgY3ZfcGNyKSkpXG5iZXN0X00gPC0gY3YkTVt3aGljaC5taW4oY3YkZGV2aWFuY2UpXVxuYmVzdF9NIn0=
+</script>
+</div>
+</div>
+<div class="cell">
+<div>
+<div id="webr-19" class="exercise-cell">
+
+</div>
+<script type="webr-19-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicF9kZXYgPC0gZ2dwbG90KGN2LCBhZXMoTSwgZGV2aWFuY2UpKSArXG4gIGdlb21fbGluZSgpICsgZ2VvbV9wb2ludChzaXplID0gMikgK1xuICBnZW9tX3ZsaW5lKHhpbnRlcmNlcHQgPSBiZXN0X00sIGNvbG91ciA9IFwiI0VFMDAwMFwiLCBsaW5ldHlwZSA9IFwiZGFzaGVkXCIpICtcbiAgc2NhbGVfeV9sb2cxMCgpICtcbiAgbGFicyh4ID0gXCJudW1iZXIgb2YgY29tcG9uZW50cyBNXCIsIHkgPSBcIkNWIGRldmlhbmNlIChsb2cgc2NhbGUpXCIsXG4gICAgICAgdGl0bGUgPSBcIkNWIGRldmlhbmNlOiBsb3dlciBpcyBiZXR0ZXJcIikgK1xuICB0aGVtZV9idygpXG5wX2FjYyA8LSBnZ3Bsb3QoY3YsIGFlcyhNLCBhY2N1cmFjeSkpICtcbiAgZ2VvbV9saW5lKCkgKyBnZW9tX3BvaW50KHNpemUgPSAyKSArXG4gIGdlb21fdmxpbmUoeGludGVyY2VwdCA9IGJlc3RfTSwgY29sb3VyID0gXCIjRUUwMDAwXCIsIGxpbmV0eXBlID0gXCJkYXNoZWRcIikgK1xuICBsYWJzKHggPSBcIm51bWJlciBvZiBjb21wb25lbnRzIE1cIiwgeSA9IFwiQ1YgYWNjdXJhY3lcIixcbiAgICAgICB0aXRsZSA9IFwiQ1YgYWNjdXJhY3k6IGhpZ2hlciBpcyBiZXR0ZXJcIikgK1xuICB0aGVtZV9idygpXG5cbmdyaWQuYXJyYW5nZShwX2RldiwgcF9hY2MsIG5yb3cgPSAxKVxucm91bmQoY3ZbYygxLCAyLCA0LCA2LCA4LCAxMCwgMTQsIDE2LCAyMCksIF0sIDMpIn0=
+</script>
+</div>
+</div>
+<p>The deviance has a clear U shape. It falls fast up to about 4 components, reaches its lowest value at <span class="math inline">\(M = 8\)</span> (the red line), and then rises. Past about 15 components it explodes, because the model has started to separate the training data perfectly (the same problem as the 30-feature fit above). The accuracy is flat, about 97%, from 4 to 14 components. So the choice of <span class="math inline">\(M\)</span> does not need to be exact: anything in that range works. Compare this with the rules of thumb in Part 3 (5 to 10 components). Here the outcome gives a sharper reason to stop than the variance alone.</p>
+</section>
+<section id="step-3-fit-and-test" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-fit-and-test">Step 3: Fit and test</h3>
+<div class="cell">
+<div>
+<div id="webr-20" class="exercise-cell">
+
+</div>
+<script type="webr-20-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZml0X3BjciA8LSBmdW5jdGlvbihNKSB7XG4gIGQgPC0gYXMuZGF0YS5mcmFtZShaX3RyYWluWywgMTpNLCBkcm9wID0gRkFMU0VdKVxuICBzdXBwcmVzc1dhcm5pbmdzKGdsbSh5X3RyYWluIH4gLiwgZGF0YSA9IGQsIGZhbWlseSA9IGJpbm9taWFsKSlcbn1cblxudGVzdF9hY2MgPC0gZnVuY3Rpb24oTSkge1xuICBwaCA8LSBwcmVkaWN0KGZpdF9wY3IoTSksIGFzLmRhdGEuZnJhbWUoWl90ZXN0WywgMTpNLCBkcm9wID0gRkFMU0VdKSxcbiAgICAgICAgICAgICAgICB0eXBlID0gXCJyZXNwb25zZVwiKVxuICBtZWFuKChwaCA+IDAuNSkgPT0geV90ZXN0KVxufVxuXG5wY3JfYmVzdCA8LSBmaXRfcGNyKGJlc3RfTSlcbnBoX3Rlc3QgIDwtIHByZWRpY3QocGNyX2Jlc3QsIGFzLmRhdGEuZnJhbWUoWl90ZXN0WywgMTpiZXN0X01dKSwgdHlwZSA9IFwicmVzcG9uc2VcIilcblxudGFibGUodHJ1dGggPSB0ZXN0JGRpYWdub3NpcyxcbiAgICAgIHByZWRpY3RlZCA9IGZhY3RvcihwaF90ZXN0ID4gMC41LCBsZXZlbHMgPSBjKEZBTFNFLCBUUlVFKSxcbiAgICAgICAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSBjKFwiQmVuaWduXCIsIFwiTWFsaWduYW50XCIpKSlcbnJvdW5kKHNhcHBseShjKFwiTT0xXCIgPSAxLCBcIk09MlwiID0gMiwgXCJNPTVcIiA9IDUsIFwiTT04XCIgPSA4LCBcIk09MTVcIiA9IDE1LCBcIk09MzBcIiA9IDMwKSxcbiAgICAgICAgICAgICB0ZXN0X2FjYyksIDMpIn0=
+</script>
+</div>
+</div>
+<p>The model with <span class="math inline">\(M = 8\)</span> components classifies about 98% of the held-out tumors correctly (3 mistakes in 142). The model with all 30 components (which uses the same information as the 30-feature logistic regression) does worse, at about 94%. The test set has only 142 tumors, so one tumor is 0.7 percentage points. Do not read much into differences of one or two tumors between neighbouring values of <span class="math inline">\(M\)</span>. The cross-validation curve, which uses all 427 training tumors, is more reliable.</p>
+</section>
+<section id="back-to-the-original-features" class="level3">
+<h3 class="anchored" data-anchor-id="back-to-the-original-features">Back to the original features</h3>
+<p>The price of PCR is interpretability: the coefficients <span class="math inline">\(\theta_m\)</span> belong to components. But the model is still linear in the features. Since <span class="math inline">\(Z_m = \sum_j \phi_{jm} X_j\)</span>, the coefficient on the original (standardized) feature <span class="math inline">\(j\)</span> is <span class="math display">\[\beta_j = \sum_{m=1}^{M} \theta_m \, \phi_{jm}.\]</span> The slides call this <em>constraining</em> the coefficients: the 30 values of <span class="math inline">\(\beta_j\)</span> are not free, because they are built from only <span class="math inline">\(M\)</span> numbers.</p>
+<div class="cell">
+<div>
+<div id="webr-21" class="exercise-cell">
+
+</div>
+<script type="webr-21-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoidGhldGEgPC0gY29lZihwY3JfYmVzdCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGludGVyY2VwdCArIE0gY29lZmZpY2llbnRzXG5iZXRhICA8LSBwY2FfdHIkcm90YXRpb25bLCAxOmJlc3RfTV0gJSolIHRoZXRhWy0xXSAgICMgb25lIGJldGEgcGVyIGZlYXR1cmVcblxuIyBjaGVjazogdGhlIHNhbWUgbGluZWFyIHByZWRpY3RvciwgY29tcHV0ZWQgZnJvbSB0aGUgZmVhdHVyZXMgZGlyZWN0bHlcblhfdGVzdF9zdGQgPC0gc2NhbGUodGVzdFssIC0xXSwgY2VudGVyID0gcGNhX3RyJGNlbnRlciwgc2NhbGUgPSBwY2FfdHIkc2NhbGUpXG5scF9mZWF0dXJlcyA8LSB0aGV0YVsxXSArIFhfdGVzdF9zdGQgJSolIGJldGFcbmxwX3Njb3JlcyAgIDwtIHByZWRpY3QocGNyX2Jlc3QsIGFzLmRhdGEuZnJhbWUoWl90ZXN0WywgMTpiZXN0X01dKSlcbm1heChhYnMobHBfZmVhdHVyZXMgLSBscF9zY29yZXMpKVxuXG5iIDwtIGRhdGEuZnJhbWUoZmVhdHVyZSA9IHJvd25hbWVzKGJldGEpLCBiZXRhID0gYmV0YVssIDFdKVxuYiA8LSBiW29yZGVyKC1hYnMoYiRiZXRhKSksIF1bMToxMCwgXVxuXG5nZ3Bsb3QoYiwgYWVzKGJldGEsIHJlb3JkZXIoZmVhdHVyZSwgYWJzKGJldGEpKSwgZmlsbCA9IGJldGEgPiAwKSkgK1xuICBnZW9tX2NvbChzaG93LmxlZ2VuZCA9IEZBTFNFKSArXG4gIHNjYWxlX2ZpbGxfbWFudWFsKHZhbHVlcyA9IGMoXCJUUlVFXCIgPSBcIiNFRTAwMDBcIiwgXCJGQUxTRVwiID0gXCIjM0I0OTkyXCIpKSArXG4gIGxhYnMoeCA9IFwiY29lZmZpY2llbnQgb24gdGhlIHN0YW5kYXJkaXplZCBmZWF0dXJlXCIsIHkgPSBOVUxMLFxuICAgICAgIHRpdGxlID0gXCJQQ1I6IHRoZSB0ZW4gbGFyZ2VzdCBjb2VmZmljaWVudHNcIikgK1xuICB0aGVtZV9idygpIn0=
+</script>
+</div>
+</div>
+<p>The two ways of computing the linear predictor agree. Notice that the weight is spread over groups of related features (several size features, several concavity features), because the components give related features similar loadings. The lasso in Lab 6 behaves differently: it tends to keep one feature from each correlated group and drop the rest. Neither is “right”. PCR is a good choice when you want to use all the information in a group of correlated measurements. The lasso is a good choice when you want a short list of features to measure.</p>
+<p><strong>Two cautions about PCR.</strong></p>
+<ul>
+<li>It chooses the components <em>without looking at the outcome</em>. It worked here because PC1 separates the classes (Part 5). If the signal were in a low-variance component, PCR with a small <span class="math inline">\(M\)</span> would miss it.</li>
+<li>It is not a feature-selection method. Every component uses all 30 features, so you still need to measure all 30 to score a new patient.</li>
+</ul>
+</section>
+<section id="try-it-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="try-it-yourself">Try it yourself</h2>
+<p><strong>1. The two-feature formula.</strong> For <code>compactness_mean</code> and <code>concavity_mean</code>, compute <span class="math inline">\(\rho\)</span>, the PVE of PC1 from <span class="math inline">\((1 + \rho)/2\)</span>, and check it against <code>prcomp()</code>. Are these two features as redundant as radius and area?</p>
+<div class="cell" data-exercise="ex_two_features">
+<div>
+<div id="webr-22" class="exercise-cell">
+
+</div>
+<script type="webr-22-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfdHdvX2ZlYXR1cmVzIn0sImNvZGUiOiJ0d28yIDwtIGZlYXRbLCBjKFwiY29tcGFjdG5lc3NfbWVhblwiLCBcImNvbmNhdml0eV9tZWFuXCIpXVxucmhvMiA8LSBjb3IodHdvMilbMSwgMl1cbmMocmhvID0gcmhvMiwgUFZFMV9ieV9oYW5kID0gKDEgKyBfX19fX18pIC8gMilcbnJvdW5kKHN1bW1hcnkocHJjb21wKHR3bzIsIHNjYWxlLiA9IFRSVUUpKSRpbXBvcnRhbmNlWzIsIDFdLCA0KSJ9
+</script>
+</div>
+</div>
+<p><strong>2. How many components for 95%?</strong> Find the smallest <span class="math inline">\(M\)</span> whose cumulative PVE is at least 95%, then compute the share of variance lost in the reconstruction with that <span class="math inline">\(M\)</span> (use <code>recon_err()</code> from Part 6). Does it match?</p>
+<div class="cell" data-exercise="ex_95">
+<div>
+<div id="webr-23" class="exercise-cell">
+
+</div>
+<script type="webr-23-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfOTUifSwiY29kZSI6Ik05NSA8LSB3aGljaChjcHZlID49IF9fX19fXylbMV1cbk05NVxucmVjb25fZXJyKE05NSkifQ==
+</script>
+</div>
+</div>
+<p><strong>3. Skip the first component.</strong> PCR uses the <em>first</em> <span class="math inline">\(M\)</span> components. What if we use two components, but not PC1? Fit the logistic regression on <code>Z_train</code> columns 2 and 3, and compute its test accuracy. Compare it with <span class="math inline">\(M = 2\)</span> from Part 7. What does this tell you about <em>why</em> PCR works on these data?</p>
+<div class="cell" data-exercise="ex_skip_pc1">
+<div>
+<div id="webr-24" class="exercise-cell">
+
+</div>
+<script type="webr-24-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWUsImV4ZXJjaXNlIjoiZXhfc2tpcF9wYzEifSwiY29kZSI6ImRfMjMgPC0gYXMuZGF0YS5mcmFtZShaX3RyYWluWywgYygyLCBfX19fX18pXSlcbmZpdF8yMyA8LSBzdXBwcmVzc1dhcm5pbmdzKGdsbSh5X3RyYWluIH4gLiwgZGF0YSA9IGRfMjMsIGZhbWlseSA9IGJpbm9taWFsKSlcbnBoXzIzIDwtIHByZWRpY3QoZml0XzIzLCBhcy5kYXRhLmZyYW1lKFpfdGVzdFssIGMoMiwgMyldKSwgdHlwZSA9IFwicmVzcG9uc2VcIilcbm1lYW4oKHBoXzIzID4gMC41KSA9PSB5X3Rlc3QpIn0=
+</script>
+</div>
+</div>
+<p><strong>4. Forget to scale.</strong> Fit PCA on the training features with <code>scale. = FALSE</code>, and repeat the cross-validation with <code>Z_train</code> replaced by the unscaled scores. (Copy <code>cv_pcr()</code>, and change the first line inside it.) Which <span class="math inline">\(M\)</span> does cross-validation choose now? Is the best CV accuracy as high as before? Is the test accuracy at that <span class="math inline">\(M\)</span> much different? Compare how badly scaling hurt the <em>description</em> (Part 1: PC1 was just the area) with how much it hurts the <em>prediction</em>. Why can the later components make up for a poor PC1?</p>
+<p><strong>5. A different split.</strong> Change the seed in <code>set.seed(2155)</code> and rerun Part 7. How much does the best <span class="math inline">\(M\)</span> move? How much does the test accuracy move?</p>
+</section>
+<section id="things-worth-remembering" class="level2">
+<h2 class="anchored" data-anchor-id="things-worth-remembering">Things worth remembering</h2>
+<ul>
+<li><strong>PCA finds new axes that capture variance.</strong> Each component is a weighted sum of the features. The first has the most variance, and each later one has the most variance among those uncorrelated with the earlier ones.</li>
+<li><strong>Scale first.</strong> PCA follows variance, and variance depends on units. On raw data, one feature with a big unit took over the first component.</li>
+<li><strong>PCA is an eigendecomposition.</strong> The loadings are eigenvectors of the correlation matrix, and the variances of the scores are its eigenvalues. With two standardized features, PC1 explains <span class="math inline">\((1 + \rho)/2\)</span>.</li>
+<li><strong>There is no single right <span class="math inline">\(M\)</span> in PCA.</strong> The elbow, 80% cumulative PVE and variance above 1 gave 3 to 4, 5, and 6 components. Use the rule to get a range, not an answer.</li>
+<li><strong>Variance and compression are one idea.</strong> The error of rebuilding the data from <span class="math inline">\(M\)</span> components is <span class="math inline">\(1 -\)</span> the cumulative PVE.</li>
+<li><strong>PCR is regression on the first <span class="math inline">\(M\)</span> scores.</strong> The scores are uncorrelated, so the instability from correlated features goes away. <span class="math inline">\(M\)</span> is chosen by cross-validation. The coefficients can be mapped back to the features by <span class="math inline">\(\beta_j = \sum_m \theta_m \phi_{jm}\)</span>.</li>
+<li><strong>PCR does not see the outcome when it builds the components.</strong> It works when the high-variance directions are the useful ones. Check this before you trust it.</li>
+<li><strong>Components are not features you can measure on their own.</strong> A PCR model still needs all <span class="math inline">\(p\)</span> original measurements for each new patient, and the names we give to components are our reading, not something in the data.</li>
+</ul>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Street, W. N., Wolberg, W. H., and Mangasarian, O. L. (1993). Nuclear feature extraction for breast tumor diagnosis. <em>Biomedical Image Processing and Biomedical Visualization</em>, SPIE 1905, 861–870.</p>
+<p>James, G., Witten, D., Hastie, T., and Tibshirani, R. (2021). <em>An Introduction to Statistical Learning</em> (2nd ed.), §6.3 and §12.2.</p>
+
+
+<script type="webr-data">
+eyJvcHRpb25zIjp7ImJhc2VVcmwiOiJodHRwczovL3dlYnIuci13YXNtLm9yZy92MC42LjAvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsiZXZhbHVhdGUiLCJrbml0ciIsImh0bWx0b29scyIsImdncGxvdDIiLCJkcGx5ciIsInRpZHlyIiwiY2FyZXQiLCJncmlkRXh0cmEiLCJnZ3NjaSJdLCJyZXBvcyI6W119LCJyZW5kZXJfZGYiOiJkZWZhdWx0In0=
+</script>
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjQ7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzI0ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwid2Vici0yNC1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF93ZWJyX3ZhbHVlXzI0ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yNCwge30pO1xuX3dlYnJfZmVlZGJhY2tfMjQgPSB7XG4gIGNvbnN0IHsgV2ViUkdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBXZWJSR3JhZGVyKF93ZWJyX3ZhbHVlXzI0LmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjM7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIzID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjMtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwid2Vici0yMy1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF93ZWJyX3ZhbHVlXzIzID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yMywge30pO1xuX3dlYnJfZmVlZGJhY2tfMjMgPSB7XG4gIGNvbnN0IHsgV2ViUkdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBXZWJSR3JhZGVyKF93ZWJyX3ZhbHVlXzIzLmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjI7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIyID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjItY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV4ZXJjaXNlIGNvbmZpZ3VyYXRpb25cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oXG4gICAge1xuICAgICAgaWQ6IFwid2Vici0yMi1jb250ZW50c1wiLFxuICAgICAgZW52aXI6IGBleGVyY2lzZS1lbnYtJHtibG9jay5hdHRyLmV4ZXJjaXNlfWAsXG4gICAgICBlcnJvcjogZmFsc2UsXG4gICAgICBjYXB0aW9uOiAnRXhlcmNpc2UnLFxuICAgIH0sXG4gICAgYmxvY2suYXR0clxuICApO1xuXG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxudmlld29mIF93ZWJyX3ZhbHVlXzIyID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yMiwge30pO1xuX3dlYnJfZmVlZGJhY2tfMjIgPSB7XG4gIGNvbnN0IHsgV2ViUkdyYWRlciB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3QgZW1wdHlGZWVkYmFjayA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO1xuXG4gIGNvbnN0IGdyYWRlciA9IG5ldyBXZWJSR3JhZGVyKF93ZWJyX3ZhbHVlXzIyLmV2YWx1YXRvcik7XG4gIGNvbnN0IGZlZWRiYWNrID0gYXdhaXQgZ3JhZGVyLmdyYWRlRXhlcmNpc2UoKTtcbiAgaWYgKCFmZWVkYmFjaykgcmV0dXJuIGVtcHR5RmVlZGJhY2s7XG4gIHJldHVybiBmZWVkYmFjaztcbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIxID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0yMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yMSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMjEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjA7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0yMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIwID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMjAtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0yMC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yMCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMjAsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTk7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE5ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTktY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xOS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xOSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTksIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTg7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE4ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTgtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xOC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xOCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTgsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTc7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE3ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNyA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTcsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTY7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE2ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTYtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTYsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTU7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE1ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTUtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTUsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTQ7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xNCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzE0ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xNC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xNCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTQsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTM7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzEzID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTMtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMyA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTMsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTI7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzEyID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTItY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzExID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0xMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTA7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xMCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzEwID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMTAtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xMC1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8xMCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMTAsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC05IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV85O1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItOSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzkgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici05LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItOS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV85ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl85LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtOCIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfODtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTgiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl84ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItOC1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTgtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfOCA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfOCwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTciLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzc7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici03IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfNyA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTctY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici03LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzcgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzcsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC02IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV82O1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItNiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzYgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici02LWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItNi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV82ID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl82LCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtNSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfNTtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl81ID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItNS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTUtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfNSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfNSwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTQiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzQ7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici00IiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfNCA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTQtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici00LWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzQgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzQsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0zIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8zO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMyIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzMgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0zLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMy1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8zID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8zLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMjtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8yID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMi1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTItY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMiA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMiwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6InZpZXdvZiBfd2Vicl9lZGl0b3JfMSA9IHtcbiAgY29uc3QgeyBXZWJSRXhlcmNpc2VFZGl0b3IsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTEtY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7IGlkOiBgd2Vici0xLWNvbnRlbnRzYCB9LCBibG9jay5hdHRyKTtcbiAgY29uc3QgZWRpdG9yID0gbmV3IFdlYlJFeGVyY2lzZUVkaXRvcih3ZWJST2pzLndlYlJQcm9taXNlLCBibG9jay5jb2RlLCBvcHRpb25zKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl93ZWJyX3ZhbHVlXzEgPSB3ZWJST2pzLnByb2Nlc3MoX3dlYnJfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ3ZWJST2pzID0ge1xuICBjb25zdCB7IFdlYlIsIENoYW5uZWxUeXBlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lLldlYlI7XG4gIGNvbnN0IHtcbiAgICBXZWJSRXZhbHVhdG9yLFxuICAgIFdlYlJFbnZpcm9ubWVudE1hbmFnZXIsXG4gICAgc2V0dXBSLFxuICAgIGI2NERlY29kZSxcbiAgICBjb2xsYXBzZVBhdGhcbiAgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG5cbiAgY29uc3Qgc3RhdHVzQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLXN0YXR1c1wiKTtcbiAgY29uc3QgaW5kaWNhdG9yQ29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJleGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaW5kaWNhdG9yQ29udGFpbmVyLmNsYXNzTGlzdC5yZW1vdmUoXCJkLW5vbmVcIik7XG5cbiAgbGV0IHN0YXR1c1RleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpXG4gIHN0YXR1c1RleHQuY2xhc3NMaXN0ID0gXCJleGVyY2lzZS1sb2FkaW5nLWRldGFpbHNcIjtcbiAgc3RhdHVzVGV4dCA9IHN0YXR1c0NvbnRhaW5lci5hcHBlbmRDaGlsZChzdGF0dXNUZXh0KTtcbiAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbml0aWFsaXNlYDtcblxuICAvLyBIb2lzdCBpbmRpY2F0b3Igb3V0IGZyb20gZmluYWwgc2xpZGUgd2hlbiBydW5uaW5nIHVuZGVyIHJldmVhbFxuICBjb25zdCByZXZlYWxTdGF0dXMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCAuZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGlmIChyZXZlYWxTdGF0dXMpIHtcbiAgICByZXZlYWxTdGF0dXMucmVtb3ZlKCk7XG4gICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgPiAuc2xpZGVzXCIpLmFwcGVuZENoaWxkKHJldmVhbFN0YXR1cyk7XG4gIH1cblxuICAvLyBNYWtlIGFueSByZXZlYWwgc2xpZGVzIHdpdGggbGl2ZSBjZWxscyBzY3JvbGxhYmxlXG4gIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoXCIucmV2ZWFsIC5leGVyY2lzZS1jZWxsXCIpLmZvckVhY2goKGVsKSA9PiB7XG4gICAgZWwuY2xvc2VzdCgnc2VjdGlvbi5zbGlkZScpLmNsYXNzTGlzdC5hZGQoXCJzY3JvbGxhYmxlXCIpO1xuICB9KVxuXG4gIC8vIHdlYlIgc3VwcGxlbWVudGFsIGRhdGEgYW5kIG9wdGlvbnNcbiAgY29uc3QgZGF0YUNvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici1kYXRhXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZGF0YSA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGRhdGFDb250ZW50KSk7XG5cbiAgLy8gR3JhYiBsaXN0IG9mIHJlc291cmNlcyB0byBiZSBkb3dubG9hZGVkXG4gIGNvbnN0IGZpbGVzQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ2ZnMtZmlsZVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGZpbGVzID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZmlsZXNDb250ZW50KSk7XG5cbiAgLy8gSW5pdGlhbGlzZSB3ZWJSIGFuZCBzZXR1cCBmb3IgUiBjb2RlIGV2YWx1YXRpb25cbiAgbGV0IHdlYlJQcm9taXNlID0gKGFzeW5jICh3ZWJSKSA9PiB7XG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyB3ZWJSYDtcbiAgICBhd2FpdCB3ZWJSLmluaXQoKTtcblxuICAgIC8vIEluc3RhbGwgcHJvdmlkZWQgbGlzdCBvZiBwYWNrYWdlc1xuICAgIC8vIEVuc3VyZSB3ZWJSIGRlZmF1bHQgcmVwbyBpcyBpbmNsdWRlZFxuICAgIGRhdGEucGFja2FnZXMucmVwb3MucHVzaChcImh0dHBzOi8vcmVwby5yLXdhc20ub3JnXCIpXG4gICAgYXdhaXQgZGF0YS5wYWNrYWdlcy5wa2dzLm1hcCgocGtnKSA9PiAoKSA9PiB7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHBhY2thZ2U6ICR7cGtnfWA7XG4gICAgICByZXR1cm4gd2ViUi5ldmFsUlZvaWQoYFxuICAgICAgICB3ZWJyOjppbnN0YWxsKHBrZywgcmVwb3MgPSByZXBvcylcbiAgICAgICAgbGlicmFyeShwa2csIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSlcbiAgICAgIGAsIHsgZW52OiB7XG4gICAgICAgIHBrZzogcGtnLFxuICAgICAgICByZXBvczogZGF0YS5wYWNrYWdlcy5yZXBvcyxcbiAgICAgIH19KTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcblxuICAgIC8vIERvd25sb2FkIGFuZCBpbnN0YWxsIHJlc291cmNlc1xuICAgIGF3YWl0IGZpbGVzLm1hcCgoZmlsZSkgPT4gYXN5bmMgKCkgPT4ge1xuICAgICAgY29uc3QgbmFtZSA9IGZpbGUuc3Vic3RyaW5nKGZpbGUubGFzdEluZGV4T2YoJy8nKSArIDEpO1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyByZXNvdXJjZTogJHtuYW1lfWA7XG4gICAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IGZldGNoKGZpbGUpO1xuICAgICAgaWYgKCFyZXNwb25zZS5vaykge1xuICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYENhbid0IGRvd25sb2FkIFxcYCR7ZmlsZX1cXGAuIEVycm9yICR7cmVzcG9uc2Uuc3RhdHVzfTogXCIke3Jlc3BvbnNlLnN0YXR1c1RleHR9XCIuYCk7XG4gICAgICB9XG4gICAgICBjb25zdCBkYXRhID0gYXdhaXQgcmVzcG9uc2UuYXJyYXlCdWZmZXIoKTtcblxuICAgICAgLy8gU3RvcmUgVVJMcyBpbiB0aGUgY3dkIHdpdGhvdXQgYW55IHN1YmRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGlmIChmaWxlLmluY2x1ZGVzKFwiOi8vXCIpKSB7XG4gICAgICAgIGZpbGUgPSBuYW1lO1xuICAgICAgfVxuXG4gICAgICAvLyBDb2xsYXBzZSBoaWdoZXIgZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgZmlsZSA9IGNvbGxhcHNlUGF0aChmaWxlKTtcblxuICAgICAgLy8gQ3JlYXRlIGRpcmVjdG9yeSB0cmVlLCBpZ25vcmluZyBcImRpcmVjdG9yeSBleGlzdHNcIiBWRlMgZXJyb3JzXG4gICAgICBjb25zdCBwYXJ0cyA9IGZpbGUuc3BsaXQoJy8nKS5zbGljZSgwLCAtMSk7XG4gICAgICBsZXQgcGF0aCA9ICcnO1xuICAgICAgd2hpbGUgKHBhcnRzLmxlbmd0aCA+IDApIHtcbiAgICAgICAgcGF0aCArPSBwYXJ0cy5zaGlmdCgpICsgJy8nO1xuICAgICAgICBjb25zdCBhbmFseXNpcyA9IGF3YWl0IHdlYlIuRlMuYW5hbHl6ZVBhdGgocGF0aCk7XG4gICAgICAgIGlmICghYW5hbHlzaXMuZXhpc3RzKSB7XG4gICAgICAgICAgdHJ5IHtcbiAgICAgICAgICAgIGF3YWl0IHdlYlIuRlMubWtkaXIocGF0aCk7XG4gICAgICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yOiBcIiR7ZS5tZXNzYWdlfVwiLmApO1xuICAgICAgICAgIH1cbiAgICAgICAgfVxuICAgICAgfVxuXG4gICAgICAvLyBXcml0ZSB0aGlzIGZpbGUgdG8gdGhlIFZGU1xuICAgICAgcmV0dXJuIGF3YWl0IHdlYlIuRlMud3JpdGVGaWxlKGZpbGUsIG5ldyBVaW50OEFycmF5KGRhdGEpKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgSW5zdGFsbGluZyB3ZWJSIHNoaW1zYDtcbiAgICBhd2FpdCB3ZWJSLmV2YWxSVm9pZChgd2Vicjo6c2hpbV9pbnN0YWxsKClgKTtcblxuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgV2ViUiBlbnZpcm9ubWVudCBzZXR1cGA7XG4gICAgYXdhaXQgc2V0dXBSKHdlYlIsIGRhdGEpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHdlYlI7XG4gIH0pKG5ldyBXZWJSKGRhdGEub3B0aW9ucykpO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCB3ZWJSID0gYXdhaXQgd2ViUlByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFdlYlJFdmFsdWF0b3Iod2ViUiwgY29udGV4dClcbiAgICBhd2FpdCBldmFsdWF0b3IucHJvY2VzcyhpbnB1dHMpO1xuICAgIHJldHVybiBldmFsdWF0b3IuY29udGFpbmVyO1xuICB9XG5cbiAgcmV0dXJuIHtcbiAgICBwcm9jZXNzLFxuICAgIHdlYlJQcm9taXNlLFxuICAgIHJlbmRlcmVkT2pzLFxuICB9O1xufVxuIn1dfQ==
+</script>
+<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
+<div id="exercise-loading-status" class="d-flex gap-2">
+
+</div>
+<div class="spinner-grow spinner-grow-sm">
+
+</div>
+</div>
+<script type="vfs-file">
+WyJkYXRhL3dkYmMuY3N2Il0=
+</script>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W119
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../lectures/09-pca/code";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/soumikp\.github\.io\/2026_sl4hds\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Soumik Purkayastha</p>
+</div>   
+    <div class="nav-footer-center">
+<p>Department of Biostatistics &amp; Health Data Science · University of Pittsburgh</p>
+</div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org">Quarto</a></p>
+</div>
+  </div>
+</footer>
+<script src="../../../site_libs/quarto-contrib/quarto-project/r-wasm/live/resources/download-code.js"></script>
+
+
+
+
+</body></html>

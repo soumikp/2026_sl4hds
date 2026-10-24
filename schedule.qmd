@@ -101,10 +101,10 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 
 <tr>
 <td>Oct 30</td>
-<td><strong>Dimensionality reduction</strong> — principal component analysis<br><span class="quiz-dates">Quiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.</span></td>
+<td><strong><a href="lectures/09-pca/index.html">Dimensionality reduction</a></strong> — principal component analysis<br><span class="quiz-dates">Quiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.</span></td>
 <td>ISLR §6.3</td>
-<td><em>TBD</em></td>
-<td><em>TBD</em></td>
+<td><a href="lectures/09-pca/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/09-pca/code/class9_lab1.html">Lab 9</a></td>
 <td>—</td>
 <td rowspan="2"><a href="assignments/hw4.qmd">HW4</a><br>Rel: Oct 30, 11:00 AM<br>Due: Nov 13, 11:59 PM</td>
 </tr>
