@@ -14,6 +14,7 @@ PCA as variance maximization and as a reconstruction problem; the SVD; choosing 
 ## 📊 Slides
 
 - 🖥️ [Clean slides](slides_clean.pdf)
+- ✏️ [Annotated slides](slides_annotated.pdf)  *(in-class version)*
 
 ## 🧪 Lab
 
