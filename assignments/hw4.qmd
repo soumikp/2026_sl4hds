@@ -5,7 +5,10 @@ subtitle: "Clustering II; Dimensionality reduction"
 
 ## Materials
 
-*Materials TBD.*
+- 📝 [Template (.Rmd)](hw4/assignment4_blank.Rmd) — start here; fill in each section
+- 📄 [Assignment (PDF)](hw4/assignment4_blank.pdf) — readable version of the questions
+- 📊 [Data — Part A (penguins.csv)](hw4/penguins.csv) — same data as Assignment 3, Part B
+- 📊 [Data — Part B (assign3_data.csv)](hw4/assign3_data.csv) — same data as Assignment 3, Part A
 
 ## Instructions
 
@@ -17,5 +20,5 @@ Remember to set `eval = TRUE` below when compiling the report.
 
 ::: {.callout-tip}
 ## Reproducibility
-Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(2155)` (or any fixed integer).
+Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(42)`, as the assignment asks.
 :::

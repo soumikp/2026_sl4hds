@@ -44,6 +44,8 @@ project:
     - "assignments/hw2/**"
     # HW3 materials (released Oct 16) — the hw3.qmd download links point here.
     - "assignments/hw3/**"
+    # HW4 materials (released Oct 30) — the hw4.qmd download links point here.
+    - "assignments/hw4/**"
 
 website:
   title: "BIOST 2155"
