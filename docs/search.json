@@ -949,7 +949,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nExtras\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\nLab 2\n\n\nbootstrappermutation test\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\nLab 3\n\n\nmodel selectionshrinkage methodspartial least squares\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\nnonlinear methods\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nslidesannotated\n\n\nLab 5\n\n\nclassification summary\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nslidesannotated\n\n\nLab 6.1 (simulations)Lab 6.2 (real data)\n\n\n—\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nslidesannotated\n\n\nLab 7\n\n\n—\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nslidesannotated\n\n\nLab 8\n\n\n—\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nslidesannotated\n\n\nLab 9\n\n\n—\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations (9:00–10:50 AM)\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\nProjectSlides due: Dec 4, 8:59 AMReport due: Dec 9, 11:59 PM\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
+    "text": "The table below maps each Friday to the lecture topic and materials. Click a topic to open the lecture page with slides, code, readings, and lab.\n\n\n\n\nDate\n\n\nTopic\n\n\nReading\n\n\nMaterials\n\n\nLabs\n\n\nExtras\n\n\nAssignment\n\n\n\n\n\n\nAug 28\n\n\nIntroduction — supervised vs. unsupervised; regression, classification, clustering, dimensionality reductionQuiz — Rel: Aug 28, 11:00 AM. Due: Sep 4, 8:59 AM.\n\n\nISLR ch. 2\n\n\nslides\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nSep 4\n\n\nTraining models — bias-variance, training/validation/testing, resamplingQuiz — Rel: Sep 4, 11:00 AM. Due: Sep 11, 8:59 AM.\n\n\nISLR §2.2, ch. 5\n\n\nslides\n\n\nLab 2\n\n\nbootstrappermutation test\n\n\n—\n\n\n\n\nSep 11\n\n\nRegression I — subset selection, ridge, lassoQuiz — Rel: Sep 11, 11:00 AM. Due: Sep 18, 8:59 AM.\n\n\nISLR ch. 3, 6\n\n\nslides\n\n\nLab 3\n\n\nmodel selectionshrinkage methodspartial least squares\n\n\nHW1Rel: Sep 11, 11:00 AMDue: Sep 25, 11:59 PM\n\n\n\n\nSep 18\n\n\nRegression II — non-linear regression, splines, GAMsQuiz — Rel: Sep 18, 11:00 AM. Due: Sep 25, 8:59 AM.\n\n\nISLR ch. 7\n\n\nslides\n\n\nLab 4\n\n\nnonlinear methods\n\n\n\n\nSep 25\n\n\nClassification I — logistic regression, generative modelsQuiz — Rel: Sep 25, 11:00 AM. Due: Oct 2, 8:59 AM.\n\n\nISLR ch. 4\n\n\nslidesannotated\n\n\nLab 5\n\n\nclassification summary\n\n\nHW2Rel: Sep 25, 11:00 AMDue: Oct 9, 11:59 PM\n\n\n\n\nOct 2\n\n\nClassification II — support vector machinesQuiz — Rel: Oct 2, 11:00 AM. Due: Oct 9, 8:59 AM.\n\n\nISLR ch. 9\n\n\nslidesannotated\n\n\nLab 6.1 (simulations)Lab 6.2 (real data)\n\n\n—\n\n\n\n\nOct 9\n\n\nFall Break — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nOct 16\n\n\nClustering I — k-means, cluster evaluationQuiz — Rel: Oct 16, 11:00 AM. Due: Oct 23, 8:59 AM.\n\n\nISLR §10.3\n\n\nslidesannotated\n\n\nLab 7\n\n\n—\n\n\nHW3Rel: Oct 16, 11:00 AMDue: Oct 30, 11:59 PM\n\n\n\n\nOct 23\n\n\nClustering II — Gaussian mixture modelsQuiz — Rel: Oct 23, 11:00 AM. Due: Oct 30, 8:59 AM.\n\n\nPRML §9.1–9.2\n\n\nslidesannotated\n\n\nLab 8\n\n\n—\n\n\n\n\nOct 30\n\n\nDimensionality reduction — principal component analysisQuiz — Rel: Oct 30, 11:00 AM. Due: Nov 6, 8:59 AM.\n\n\nISLR §6.3\n\n\nslidesannotated\n\n\nLab 9\n\n\n—\n\n\nHW4Rel: Oct 30, 11:00 AMDue: Nov 13, 11:59 PM\n\n\n\n\nNov 6\n\n\nDecision trees — CART, regression and classification treesQuiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.\n\n\nISLR §8.1\n\n\nslides\n\n\nLab 10\n\n\n—\n\n\n\n\nNov 13\n\n\nEnsemble learning — bagging, random forests, boostingQuiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.\n\n\nISLR §8.2\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\nHW5Rel: Nov 13, 11:00 AMDue: Nov 27, 11:59 PM\n\n\n\n\nNov 20\n\n\nMultiple hypothesis testing — controlling error rates across many simultaneous testsQuiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.\n\n\nTBD\n\n\nTBD\n\n\nTBD\n\n\n—\n\n\n\n\nNov 27\n\n\nThanksgiving — no class\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\n\n\nDec 4\n\n\nIn-class final project presentations (9:00–10:50 AM)\n\n\n—\n\n\n—\n\n\n—\n\n\n—\n\n\nProjectSlides due: Dec 4, 8:59 AMReport due: Dec 9, 11:59 PM\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nReading codes:\nISLR — James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (Springer, 2013).\nESL — Hastie, Tibshirani, Friedman, The Elements of Statistical Learning (Springer, 2009).\nPRML — Bishop, Pattern Recognition and Machine Learning (Springer, 2006).\nUDL — Prince, Understanding Deep Learning (MIT, 2024)."
   },
   {
     "objectID": "lectures/09-pca/code/class9_lab1.html",
@@ -1020,5 +1020,68 @@
     "title": "Dimensionality reduction",
     "section": "🧪 Lab",
     "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed.\n\n🧪 Lab: Breast tumors (live R) — edit and re-run any code cell: PCA by hand on the 30 Wisconsin tumor features (scaling, eigendecomposition, scree plot, loadings, a 2D map), then PCR with the number of components chosen by cross-validation. A “Download my code” button captures whatever you’ve written before you leave."
+  },
+  {
+    "objectID": "lectures/10-trees/code/class10_lab1.html",
+    "href": "lectures/10-trees/code/class10_lab1.html",
+    "title": "Class 10/Lab: Decision Trees on Breast Tumors",
+    "section": "",
+    "text": "Can a few yes/no questions about a tumor’s measurements tell benign from malignant? That is a decision tree. In this lab we use R packages to fit a single tree, prune it, and then improve it with bagging, random forests and boosting. Same data as Lab 9: 569 tumors, 30 features.\nClick Run Code on each cell, in order."
+  },
+  {
+    "objectID": "lectures/10-trees/code/class10_lab1.html#introduction",
+    "href": "lectures/10-trees/code/class10_lab1.html#introduction",
+    "title": "Class 10/Lab: Decision Trees on Breast Tumors",
+    "section": "",
+    "text": "Can a few yes/no questions about a tumor’s measurements tell benign from malignant? That is a decision tree. In this lab we use R packages to fit a single tree, prune it, and then improve it with bagging, random forests and boosting. Same data as Lab 9: 569 tumors, 30 features.\nClick Run Code on each cell, in order."
+  },
+  {
+    "objectID": "lectures/10-trees/code/class10_lab1.html#data",
+    "href": "lectures/10-trees/code/class10_lab1.html#data",
+    "title": "Class 10/Lab: Decision Trees on Breast Tumors",
+    "section": "Data",
+    "text": "Data\nWe keep 30% of the tumors as a test set."
+  },
+  {
+    "objectID": "lectures/10-trees/code/class10_lab1.html#try-it-yourself",
+    "href": "lectures/10-trees/code/class10_lab1.html#try-it-yourself",
+    "title": "Class 10/Lab: Decision Trees on Breast Tumors",
+    "section": "Try it yourself",
+    "text": "Try it yourself\nChange mtry in the random forest (try 2, 5, 10, 30). How do the OOB error and test accuracy move?"
+  },
+  {
+    "objectID": "lectures/10-trees/code/class10_lab1.html#things-worth-remembering",
+    "href": "lectures/10-trees/code/class10_lab1.html#things-worth-remembering",
+    "title": "Class 10/Lab: Decision Trees on Breast Tumors",
+    "section": "Things worth remembering",
+    "text": "Things worth remembering\n\nA tree splits the feature space into regions with recursive binary splitting, and predicts the majority class (or the mean) in each region.\nA large tree overfits. Prune it with cost-complexity pruning, choosing the penalty by cross-validation.\nBagging averages trees grown on bootstrap samples. The out-of-bag observations give an error estimate with no extra fitting.\nRandom forests also sample the features at each split, which decorrelates the trees.\nBoosting grows trees sequentially on the previous errors.\nThe ensembles usually predict better than one tree, but they are harder to interpret. Variable importance recovers some of the interpretation."
+  },
+  {
+    "objectID": "lectures/10-trees/code/class10_lab1.html#references",
+    "href": "lectures/10-trees/code/class10_lab1.html#references",
+    "title": "Class 10/Lab: Decision Trees on Breast Tumors",
+    "section": "References",
+    "text": "References\nJames, G., Witten, D., Hastie, T., and Tibshirani, R. (2021). An Introduction to Statistical Learning (2nd ed.), §8."
+  },
+  {
+    "objectID": "lectures/10-trees/index.html",
+    "href": "lectures/10-trees/index.html",
+    "title": "Decision trees",
+    "section": "",
+    "text": "Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners; bagging, random forests and boosting.\n📖 Assigned reading: ISLR §8.1"
+  },
+  {
+    "objectID": "lectures/10-trees/index.html#slides",
+    "href": "lectures/10-trees/index.html#slides",
+    "title": "Decision trees",
+    "section": "📊 Slides",
+    "text": "📊 Slides\n\n🖥️ Clean slides"
+  },
+  {
+    "objectID": "lectures/10-trees/index.html#lab",
+    "href": "lectures/10-trees/index.html#lab",
+    "title": "Decision trees",
+    "section": "🧪 Lab",
+    "text": "🧪 Lab\nLive, in-browser R lab — runs entirely in your browser via webR, no local R install needed.\n\n🧪 Lab: Breast tumors (live R) — edit and re-run any code cell: fit and prune a classification tree with rpart, then compare bagging, a random forest and boosting on the Wisconsin tumor data. A “Download my code” button captures whatever you’ve written before you leave."
   }
 ]

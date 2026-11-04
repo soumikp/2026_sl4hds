@@ -1,0 +1,22 @@
+---
+title: "Decision trees"
+subtitle: "CART, pruning, bagging, random forests and boosting"
+date: "Nov 6, 2026"
+date-format: long
+---
+
+Recursive binary splitting; impurity measures (Gini, entropy); tree pruning via cost-complexity; trees as interpretable but high-variance learners; bagging, random forests and boosting.
+
+📖 **Assigned reading:** ISLR §8.1
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed.
+
+- 🧪 [Lab: Breast tumors (live R)](code/class10_lab1.html){target="_blank"} — edit and re-run any code cell: fit and prune a classification tree with `rpart`, then compare bagging, a random forest and boosting on the Wisconsin tumor data. A "Download my code" button captures whatever you've written before you leave.

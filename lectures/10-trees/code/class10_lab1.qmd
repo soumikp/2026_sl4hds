@@ -1,0 +1,207 @@
+---
+title: "Class 10/Lab: Decision Trees on Breast Tumors"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Nov 6, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - dplyr
+    - rpart
+    - rpart.plot
+    - randomForest
+    - gbm
+    - caret
+  resources:
+    - data/wdbc.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+Can a few yes/no questions about a tumor's measurements tell benign from
+malignant? That is a decision tree. In this lab we use R packages to fit a
+single tree, prune it, and then improve it with bagging, random forests and
+boosting. Same data as Lab 9: 569 tumors, 30 features.
+
+Click **Run Code** on each cell, in order.
+
+## Data
+
+We keep 30% of the tumors as a test set.
+
+```{webr}
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+library(caret)
+library(randomForest)
+library(gbm)
+
+wdbc <- read.csv("data/wdbc.csv") |>
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
+
+set.seed(2155)
+idx   <- createDataPartition(wdbc$diagnosis, p = 0.7, list = FALSE)
+train <- wdbc[idx, ]
+test  <- wdbc[-idx, ]
+
+acc <- function(pred) mean(pred == test$diagnosis)   # test accuracy
+```
+
+# 1. A classification tree
+
+`rpart()` does recursive binary splitting, choosing each split by the Gini
+index. We first let it grow a large tree ($T_0$ in the slides).
+
+```{webr}
+set.seed(2155)
+big <- rpart(diagnosis ~ ., data = train,
+             control = rpart.control(cp = 0, minsplit = 2, xval = 10))
+
+rpart.plot(big, type = 2, extra = 0, box.palette = c("#3B4992", "#EE0000"),
+           split.cex = 0.9, branch = 0.5, clip.facs = TRUE)
+acc(predict(big, test, type = "class"))
+```
+
+# 2. Pruning
+
+`cp` is the cost-complexity penalty $\alpha$ (a larger `cp` gives a smaller
+tree). `rpart` already ran 10-fold CV for each `cp` while growing the tree.
+We pick the `cp` with the lowest CV error (`xerror`) and prune back to it.
+
+```{webr}
+printcp(big)
+plotcp(big)
+
+best_cp <- big$cptable[which.min(big$cptable[, "xerror"]), "CP"]
+pruned  <- prune(big, cp = best_cp)
+
+rpart.plot(pruned, type = 4, extra = 104, under = TRUE, box.palette = c("#3B4992", "#EE0000"), tweak = 1.3)
+acc(predict(pruned, test, type = "class"))
+```
+
+**Check:** how many leaves does the pruned tree have compared with the large
+tree? Did test accuracy change?
+
+# 3. Bagging
+
+Bagging is a random forest in which every split may use all $p$ features
+(`mtry = p`). The package also gives the out-of-bag (OOB) error for free.
+
+```{webr}
+set.seed(2155)
+bag <- randomForest(diagnosis ~ ., data = train, mtry = 30, ntree = 500)
+
+bag                                   # includes the OOB error and confusion matrix
+acc(predict(bag, test))
+```
+
+# 4. Random forest
+
+A random forest allows only $m \approx \sqrt{p}$ randomly chosen features at
+each split, which decorrelates the trees.
+
+```{webr}
+set.seed(2155)
+rf <- randomForest(diagnosis ~ ., data = train, ntree = 500, importance = TRUE)
+
+rf                                    # default mtry = sqrt(30), about 5
+acc(predict(rf, test))
+
+varImpPlot(rf, type = 2, n.var = 10)  # total decrease in Gini, per feature
+```
+
+**Check:** compare the OOB error of `bag` and `rf`. Which features matter most?
+
+# 5. Boosting
+
+Boosting grows trees one after another, each fit to what the previous trees
+got wrong. `n.trees` is $n_B$, `shrinkage` is $\lambda$, and
+`interaction.depth` controls the size $d$ of each tree.
+
+```{webr}
+train_b <- train |> mutate(y = as.numeric(diagnosis == "Malignant"), diagnosis = NULL)
+
+set.seed(2155)
+boost <- gbm(y ~ ., data = train_b, distribution = "bernoulli",
+             n.trees = 500, interaction.depth = 2, shrinkage = 0.05, verbose = FALSE)
+
+p_boost <- predict(boost, test, n.trees = 500, type = "response")
+acc(factor(ifelse(p_boost > 0.5, "Malignant", "Benign"), levels = levels(test$diagnosis)))
+
+summary(boost, n.trees = 500, plotit = FALSE)[1:10, ]   # variable importance
+```
+
+# 6. Compare
+
+```{webr}
+data.frame(
+  model = c("Large tree", "Pruned tree", "Bagging", "Random forest", "Boosting"),
+  test_accuracy = round(c(
+    acc(predict(big, test, type = "class")),
+    acc(predict(pruned, test, type = "class")),
+    acc(predict(bag, test)),
+    acc(predict(rf, test)),
+    acc(factor(ifelse(p_boost > 0.5, "Malignant", "Benign"), levels = levels(test$diagnosis)))
+  ), 3)
+)
+```
+
+## Try it yourself
+
+Change `mtry` in the random forest (try 2, 5, 10, 30). How do the OOB error and
+test accuracy move?
+
+```{webr}
+#| exercise: ex_mtry
+set.seed(2155)
+rf2 <- randomForest(diagnosis ~ ., data = train, mtry = ______, ntree = 500)
+rf2
+acc(predict(rf2, test))
+```
+
+## Things worth remembering
+
+- A tree splits the feature space into regions with recursive binary splitting,
+  and predicts the majority class (or the mean) in each region.
+- A large tree overfits. Prune it with cost-complexity pruning, choosing the
+  penalty by cross-validation.
+- Bagging averages trees grown on bootstrap samples. The out-of-bag
+  observations give an error estimate with no extra fitting.
+- Random forests also sample the features at each split, which decorrelates the
+  trees.
+- Boosting grows trees sequentially on the previous errors.
+- The ensembles usually predict better than one tree, but they are harder to
+  interpret. Variable importance recovers some of the interpretation.
+
+## References
+
+James, G., Witten, D., Hastie, T., and Tibshirani, R. (2021). *An Introduction
+to Statistical Learning* (2nd ed.), §8.
