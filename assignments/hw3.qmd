@@ -9,6 +9,7 @@ subtitle: "Classification II; Clustering I"
 - 📄 [Assignment (PDF)](hw3/assignment3_blank.pdf) — readable version of the questions
 - 📊 [Data — Part A (assign3_data.csv)](hw3/assign3_data.csv)
 - 📊 [Data — Part B (penguins.csv)](hw3/penguins.csv)
+- ✅ [Solutions (PDF)](hw3/assignment3_solutions.pdf)
 - Part C is a simulation study: you generate your own data.
 
 ## Instructions
