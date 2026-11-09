@@ -61,7 +61,7 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 
 | Component | Weight |
 |-----------|-------:|
-| Quizzes (12, lowest two dropped†, averaged) | 10% |
+| Quizzes (11, lowest two dropped†, averaged) | 10% |
 | Homework 1 | 12% |
 | Homework 2 | 12% |
 | Homework 3 | 12% |
@@ -74,11 +74,11 @@ Letter-grade cut-offs: A 90–100%, B 80–89%, C 70–79%, D 60–69%, F < 60%.
 
 ### Quiz policy {#quiz-policy}
 
-A short 5-question quiz follows each of the 12 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week's material and are graded on correctness. Your **lowest two quiz scores are dropped** before averaging, so a couple of missed or rough weeks don't disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.
+A short 5-question quiz follows each of the 11 lecture topics, released on Canvas the same day as lecture and due before the next lecture. Quizzes check basic comprehension of that week's material and are graded on correctness. Your **lowest two quiz scores are dropped** before averaging, so a couple of missed or rough weeks don't disproportionately affect your grade. No late quizzes — the drop policy exists instead of a late-submission exception.
 
 ### Homework policy
 
-Five homework assignments, each covering two consecutive lecture topics (modules 2–11) — a mix of theory, simulation, and applied data analysis in R. Each is scoped to about 5 hours of work, released once both of its covered lectures have been taught and due two weeks later. Multiple hypothesis testing (module 12) has no homework, only its quiz. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
+Five homework assignments, each covering two consecutive lecture topics (modules 2–11) — a mix of theory, simulation, and applied data analysis in R. Each is scoped to about 5 hours of work, released once both of its covered lectures have been taught and due two weeks later. Submissions are electronic via Canvas. **Discussion of homework with classmates is allowed**, but each student must independently write and implement their own solution. Solutions are graded on both correctness and clarity. Partial credit is given for identifying gaps in an argument when a complete solution cannot be derived.
 
 Late homework: 80% credit if 0–1 days late, 50% credit if 1–2 days, 0% if more than 2 days. Exceptions for sickness or emergency require the instructor be informed in advance.
 

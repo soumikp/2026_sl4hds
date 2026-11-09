@@ -109,38 +109,38 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td rowspan="2"><a href="assignments/hw4.qmd">HW4</a><br>Rel: Oct 30, 11:00 AM<br>Due: Nov 13, 11:59 PM</td>
 </tr>
 
-<tr>
+<tr class="no-class">
 <td>Nov 6</td>
-<td><strong><a href="lectures/10-trees/index.html">Decision trees</a></strong> — CART, regression and classification trees<br><span class="quiz-dates">Quiz — Rel: Nov 6, 11:00 AM. Due: Nov 13, 8:59 AM.</span></td>
-<td>ISLR §8.1</td>
-<td><a href="lectures/10-trees/slides_clean.pdf">slides</a></td>
-<td><a href="lectures/10-trees/code/class10_lab1.html">Lab 10</a></td>
+<td><em>No class — cancelled; decision trees moved to Nov 13</em></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 <td>—</td>
 </tr>
 
 <tr>
 <td>Nov 13</td>
-<td><strong>Ensemble learning</strong> — bagging, random forests, boosting<br><span class="quiz-dates">Quiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.</span></td>
-<td>ISLR §8.2</td>
-<td><em>TBD</em></td>
-<td><em>TBD</em></td>
+<td><strong><a href="lectures/10-trees/index.html">Decision trees</a></strong> — CART, regression and classification trees<br><span class="quiz-dates">Quiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.</span></td>
+<td>ISLR §8.1</td>
+<td><a href="lectures/10-trees/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/10-trees/code/class10_lab1.html">Lab 10</a></td>
 <td>—</td>
-<td rowspan="2"><a href="assignments/hw5.qmd">HW5</a><br>Rel: Nov 13, 11:00 AM<br>Due: Nov 27, 11:59 PM</td>
+<td>—</td>
 </tr>
 
 <tr>
 <td>Nov 20</td>
-<td><strong>Multiple hypothesis testing</strong> — controlling error rates across many simultaneous tests<br><span class="quiz-dates">Quiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.</span></td>
-<td><em>TBD</em></td>
+<td><strong>Ensemble learning</strong> — bagging, random forests, boosting<br><span class="quiz-dates">Quiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.</span></td>
+<td>ISLR §8.2</td>
 <td><em>TBD</em></td>
 <td><em>TBD</em></td>
 <td>—</td>
+<td rowspan="2"><a href="assignments/hw5.qmd">HW5</a><br>Rel: Nov 20, 11:00 AM<br>Due: Dec 4, 11:59 PM</td>
 </tr>
 
 <tr class="no-class">
 <td>Nov 27</td>
 <td><em>Thanksgiving — no class</em></td>
-<td>—</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>

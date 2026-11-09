@@ -10,7 +10,7 @@ Five homework assignments, each worth 12% of the course grade. Submit electronic
 | 2 | [Regression II; Classification I](hw2.qmd) | Sep 25, 11:00 AM | Oct 9, 11:59 PM |
 | 3 | [Classification II; Clustering I](hw3.qmd) | Oct 16, 11:00 AM | Oct 30, 11:59 PM |
 | 4 | [Clustering II; Dimensionality reduction](hw4.qmd) | Oct 30, 11:00 AM | Nov 13, 11:59 PM |
-| 5 | [Decision trees; Ensemble learning](hw5.qmd) | Nov 13, 11:00 AM | Nov 27, 11:59 PM |
+| 5 | [Decision trees; Ensemble learning](hw5.qmd) | Nov 20, 11:00 AM | Dec 4, 11:59 PM |
 
 ## Submission and grading
 
@@ -35,4 +35,4 @@ Discussion among students is allowed and encouraged. Each student must independe
 
 ## Quizzes
 
-A 5-question quiz follows each of the 12 lecture topics (10% of the course grade total, all 12 averaged with your lowest two scores dropped). Released on Canvas the same day as lecture, due before the next lecture. See the [syllabus](../syllabus.qmd#quiz-policy) for details.
+A 5-question quiz follows each of the 11 lecture topics (10% of the course grade total, all 11 averaged with your lowest two scores dropped). Released on Canvas the same day as lecture, due before the next lecture. See the [syllabus](../syllabus.qmd#quiz-policy) for details.
