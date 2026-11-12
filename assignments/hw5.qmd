@@ -17,5 +17,5 @@ Remember to set `eval = TRUE` below when compiling the report.
 
 ::: {.callout-tip}
 ## Reproducibility
-Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(2155)` (or any fixed integer).
+Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(42)`, as the assignment asks.
 :::
