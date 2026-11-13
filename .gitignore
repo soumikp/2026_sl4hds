@@ -165,11 +165,10 @@ _solutions/
 /lectures/09-pca/code/class9_lab*.html
 /lectures/09-pca/code/class9_lab*_files/
 
-# Lecture 10 is published: clean slides and the trees lab (class10_lab1) go on
-# the site. Keep the rest local (readings, figure scripts, app, annotated slides
-# until after class). The lab's own data (code/data/wdbc.csv) IS shipped.
+# Lecture 10 is published: clean + annotated slides and the trees lab
+# (class10_lab1) go on the site. Keep the rest local (readings, figure scripts,
+# app). The lab's own data (code/data/wdbc.csv) IS shipped.
 /lectures/10-trees/readings/
-/lectures/10-trees/slides_annotated.pdf
 /lectures/10-trees/code/fig*.R
 /lectures/10-trees/code/app1.R
 # Local render byproducts (see lecture 5)

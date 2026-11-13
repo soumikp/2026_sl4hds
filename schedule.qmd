@@ -122,7 +122,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td>Nov 13</td>
 <td><strong><a href="lectures/10-trees/index.html">Decision trees</a></strong> — CART, regression and classification trees<br><span class="quiz-dates">Quiz — Rel: Nov 13, 11:00 AM. Due: Nov 20, 8:59 AM.</span></td>
 <td>ISLR §8.1</td>
-<td><a href="lectures/10-trees/slides_clean.pdf">slides</a></td>
+<td><a href="lectures/10-trees/slides_clean.pdf">slides</a><br><a href="lectures/10-trees/slides_annotated.pdf">annotated</a></td>
 <td><a href="lectures/10-trees/code/class10_lab1.html">Lab 10</a></td>
 <td>—</td>
 <td>—</td>
