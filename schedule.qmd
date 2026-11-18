@@ -133,7 +133,7 @@ The table below maps each Friday to the lecture topic and materials. Click a top
 <td><strong><a href="lectures/11-ensemble/index.html">Ensemble learning</a></strong> — model averaging, SuperLearner<br><span class="quiz-dates">Quiz — Rel: Nov 20, 11:00 AM. Due: Nov 27, 8:59 AM.</span></td>
 <td>ISLR §8.2</td>
 <td><a href="lectures/11-ensemble/slides_clean.pdf">slides</a></td>
-<td><em>TBD</em></td>
+<td><a href="lectures/11-ensemble/code/class11_lab1.html">Lab 11</a></td>
 <td>—</td>
 <td rowspan="2"><a href="assignments/hw5.qmd">HW5</a><br>Rel: Nov 20, 11:00 AM<br>Due: Dec 4, 11:59 PM</td>
 </tr>

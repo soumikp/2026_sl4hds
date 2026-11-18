@@ -175,11 +175,15 @@ _solutions/
 /lectures/10-trees/code/class10_lab*.html
 /lectures/10-trees/code/class10_lab*_files/
 /lectures/10-trees/code/Rplots.pdf
-# Lecture 11 is published: clean slides only for now. The lab, annotated
-# slides and readings stay local until they are released.
+# Lecture 11 is published: clean slides and the bike-share lab (class11_lab1)
+# go on the site. Annotated slides and readings stay local. The lab's own
+# data (code/data/bikeshare.csv) IS shipped.
 /lectures/11-ensemble/slides_annotated.pdf
 /lectures/11-ensemble/readings/
-/lectures/11-ensemble/code/
+# Local render byproducts (see lecture 5)
+/lectures/11-ensemble/code/_extensions/
+/lectures/11-ensemble/code/class11_lab*.html
+/lectures/11-ensemble/code/class11_lab*_files/
 /lectures/12-hyptest/
 
 # Student submissions and grading records — local only, never publish

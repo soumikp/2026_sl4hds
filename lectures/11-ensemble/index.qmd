@@ -14,3 +14,9 @@ Why combining models helps: ensemble risk equals average risk minus diversity; m
 ## 📊 Slides
 
 - 🖥️ [Clean slides](slides_clean.pdf)
+
+## 🧪 Lab
+
+Live, in-browser R lab — runs entirely in your browser via webR, no local R install needed.
+
+- 🧪 [Lab: Bike-share demand (live R)](code/class11_lab1.html){target="_blank"} — fit five different models, then combine them by averaging and by stacking (SuperLearner). Check the identity *ensemble risk = average risk − diversity* on real data, and see when a combination beats the best single model and when it does not. A "Download my code" button captures whatever you've written before you leave.

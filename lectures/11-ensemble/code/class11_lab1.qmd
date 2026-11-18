@@ -1,0 +1,378 @@
+---
+title: "Class 11/Lab: Averaging and Stacking Models on Bike-Share Demand"
+subtitle: "Live in-browser R — edit and re-run any cell"
+date: "Nov 20, 2026"
+format: live-html
+engine: knitr
+resources:
+  - data
+webr:
+  packages:
+    - caret
+    - rpart
+    - randomForest
+    - gbm
+    - nnls
+  resources:
+    - data/bikeshare.csv
+include-after-body:
+  - text: '<script src="../../../_extensions/r-wasm/live/resources/download-code.js"></script>'
+---
+
+{{< include ../../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{=html}
+<style type="text/css">
+    .page-columns {
+      grid-template-columns: [screen-start] 10vw [body-content-start] 80vw [body-content-end] 10vw [screen-end] !important;
+    }
+    .page-columns > main.content {
+      grid-column: body-content-start / body-content-end !important;
+    }
+    body {
+      font-size: 16pt;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 28pt;
+    }
+    code, pre {
+      font-size: 14pt;
+    }
+</style>
+```
+
+## Introduction
+
+A city health department runs a bike-share program. It wants to forecast how many bikes people will ride each hour. Cycling is physical activity, so the forecast helps plan bike lanes, staff and safety messages.
+
+You are the biostatistician. You can fit many models. Which one do you hand over? Lecture 11 gave a different answer: **hand over a combination**. In this lab we fit five different models, then combine them in three ways:
+
+1. **Unweighted and weighted averages** of the predictions.
+2. **Stacking** (the SuperLearner idea): train a new model on the predictions of the other models.
+3. We check the identity from class: *ensemble risk = average risk − diversity*.
+
+The lab asks one question again and again: **does the combination beat the best single model on data it has never seen?** Sometimes it does not. We will see when it does and why.
+
+Every cell runs live in your browser via webR. Click **Run Code** on each cell, in order. The cell that fits five models takes about a minute, so be patient.
+
+## The data: hourly bike rentals
+
+The data come from a bike-share system in Washington, DC (the `Bikeshare` data in the `ISLR2` package). Each row is one hour. We keep 3,000 randomly chosen hours as our "study".
+
+| Variable | Meaning |
+|---|---|
+| `bikers` | Number of bikes rented in that hour (the outcome) |
+| `hour` | Hour of the day, 0 to 23 |
+| `month` | Month of the year, 1 to 12 |
+| `workingday` | Is the day a working day? (no/yes) |
+| `temp_c` | Temperature in °C |
+| `humidity` | Relative humidity, % |
+| `wind_kmh` | Wind speed, km/h |
+| `weather` | `clear`, `cloudy` or `rain_snow` |
+
+```{webr}
+library(caret)
+library(rpart)
+library(randomForest)
+library(gbm)
+library(nnls)
+
+bike <- read.csv("data/bikeshare.csv")
+bike$weather    <- factor(bike$weather, labels = c("clear", "cloudy", "rain_snow"))
+bike$workingday <- factor(bike$workingday, labels = c("no", "yes"))
+
+set.seed(42)
+study <- bike[sample(nrow(bike), 3000), ]       # our 3,000-hour study
+head(study)
+```
+
+### What does demand look like?
+
+Before we fit anything, look at the shape of the outcome. Average rentals by hour, on working days and on other days:
+
+```{webr}
+agg <- aggregate(bikers ~ hour + workingday, data = study, FUN = mean)
+plot(NULL, xlim = c(0, 23), ylim = c(0, max(agg$bikers)),
+     xlab = "Hour of day", ylab = "Average bikers per hour")
+lines(bikers ~ hour, data = subset(agg, workingday == "yes"), col = "firebrick", lwd = 3)
+lines(bikers ~ hour, data = subset(agg, workingday == "no"),  col = "steelblue", lwd = 3)
+legend("topleft", c("Working day", "Other day"), col = c("firebrick", "steelblue"), lwd = 3)
+```
+
+On working days there are two peaks: the morning and evening commute (around 8:00 and 17:00). On other days there is one broad midday hump. So **the effect of `hour` is not a straight line, and it depends on `workingday`**. A model must learn a curve, and a different curve for each kind of day. Keep this in mind. It decides which models do well.
+
+### Train and test
+
+We keep one third of the hours as a test set. The test set is never used for fitting or for choosing weights. Every comparison below uses it.
+
+```{webr}
+idx   <- createDataPartition(study$bikers, p = 2/3, list = FALSE)
+train <- study[idx, ]
+test  <- study[-idx, ]
+c(train = nrow(train), test = nrow(test))
+```
+
+## Part 1: Five different models
+
+We fit five models through `caret::train()` with one shared setup. Two details matter for stacking later:
+
+- All five models use **the same five cross-validation folds**. We create the folds once and pass them in with `index`.
+- `savePredictions = "final"` keeps the **out-of-fold predictions**. Each training hour is predicted by a model that did *not* see that hour.
+
+```{webr}
+set.seed(42)
+folds <- createFolds(train$bikers, k = 5, returnTrain = TRUE)
+ctrl  <- trainControl(method = "cv", index = folds, savePredictions = "final")
+
+fit <- function(method, ...) {
+  set.seed(42)
+  train(bikers ~ ., data = train, method = method, trControl = ctrl, ...)
+}
+
+models <- list(
+  lm   = fit("lm"),
+  knn  = fit("knn", preProcess = c("center", "scale"),
+             tuneGrid = data.frame(k = c(5, 10, 20, 40))),
+  tree = fit("rpart", tuneLength = 10),
+  rf   = fit("rf", tuneGrid = data.frame(mtry = c(2, 4, 7)), ntree = 100),
+  gbm  = fit("gbm", tuneGrid = expand.grid(n.trees = c(100, 300),
+                                           interaction.depth = c(2, 4),
+                                           shrinkage = 0.1, n.minobsinnode = 10),
+             verbose = FALSE)
+)
+
+cv_rmse <- sapply(models, function(m) min(m$results$RMSE))
+round(cv_rmse, 1)
+```
+
+These are cross-validated RMSEs (in bikes per hour). The five models fall into two groups.
+
+- **Poor: `lm` (107.5) and `knn` (86.6).** The linear model fits one straight-line effect of `hour`. It cannot make two commute peaks, and it cannot make a different shape for working days. kNN with these features is also poor, because most features are noise for the hour-by-hour pattern.
+- **Better: `tree` (68.1), then `rf` (47.1) and `gbm` (45.7).** Trees split on `hour` and `workingday` together, so they find the interaction by themselves. A random forest and boosting are ensembles of trees (Lecture 10), so we are about to build an *ensemble of ensembles*.
+
+Here is the same story as a picture. Predicted average rentals by hour on working days, from the linear model and from boosting, against the truth:
+
+```{webr}
+wd <- subset(test, workingday == "yes")
+truth <- aggregate(bikers ~ hour, data = wd, FUN = mean)
+p_lm  <- aggregate(predict(models$lm,  wd) ~ hour, data = wd, FUN = mean)
+p_gbm <- aggregate(predict(models$gbm, wd) ~ hour, data = wd, FUN = mean)
+
+plot(truth$hour, truth$bikers, type = "b", pch = 16, lwd = 2,
+     xlab = "Hour of day (working days, test set)", ylab = "Average bikers per hour")
+lines(p_lm[, 1],  p_lm[, 2],  col = "firebrick", lwd = 3)
+lines(p_gbm[, 1], p_gbm[, 2], col = "forestgreen", lwd = 3)
+legend("topleft", c("Truth", "Linear model", "Boosting"),
+       col = c("black", "firebrick", "forestgreen"), lwd = 3)
+```
+
+The linear model gets the level right and the shape wrong. Boosting follows both peaks.
+
+## Part 2: Do the models make different mistakes?
+
+Lecture 11 said: averaging only helps if the models make **different** predictions. A direct check is the correlation between the models' errors. We use the out-of-fold predictions, so these are honest errors on hours each model did not see.
+
+```{webr}
+# out-of-fold predictions: one column per model, rows in the order of `train`
+oof <- sapply(models, function(m) {
+  p <- m$pred
+  p[order(p$rowIndex), "pred"]
+})
+
+errors <- train$bikers - oof
+round(cor(errors), 2)
+```
+
+The errors are **only moderately correlated** (0.45 to 0.77). Two patterns are clear.
+
+- Models from the **same family** err together: `rf` and `gbm` (0.77), `tree` and `rf` (0.75), and, among the weak models, `lm` and `knn` (0.75).
+- Models from **different families** disagree more. For example `lm` and `rf` have a correlation of 0.49.
+
+So there is real diversity to use. The question is whether we can use it without paying for the weak models.
+
+## Part 3: Ensemble risk = average risk − diversity
+
+Now the identity from class, with numbers. On the test set, take the unweighted average of the five predictions. For squared error:
+
+$$\text{risk of the average} \;=\; \text{average risk of the five models} \;-\; V,$$
+
+where $V$ is the average squared distance of each model's prediction from the ensemble prediction (the *diversity*).
+
+```{webr}
+test_pred <- sapply(models, predict, newdata = test)   # one column per model
+y_test <- test$bikers
+mse <- function(p) mean((y_test - p)^2)
+
+ens <- rowMeans(test_pred)                              # unweighted average
+
+avg_risk  <- mean(apply(test_pred, 2, mse))             # average of the five risks
+diversity <- mean(apply(test_pred, 2, function(p) mean((p - ens)^2)))
+
+round(c(avg_risk = avg_risk, diversity = diversity,
+        ensemble_risk = mse(ens), avg_risk_minus_diversity = avg_risk - diversity), 1)
+```
+
+The last two numbers match. The identity holds exactly.
+
+Look at the size of $V$. The diversity (2,277) is about 41% of the average risk (5,546). That is a lot of diversity. It is also because we included two weak and different models.
+
+Now look at what the identity does **not** say. Compare the ensemble with the single models on the test set (RMSE, in bikes per hour):
+
+```{webr}
+rmse <- function(p) sqrt(mean((y_test - p)^2))
+round(c(apply(test_pred, 2, rmse), ensemble = rmse(ens)), 1)
+```
+
+The unweighted ensemble (57.2) is much better than the *average* model, as the identity promises. But it is **worse than the best single model** (gbm, 44.0). The identity compares the ensemble with the *average* member. When a few members are much worse than the others, the average member is a low bar.
+
+## Part 4: Weighted averages
+
+A natural fix: give good models more weight. Weight each model by the inverse of its cross-validated RMSE, so higher-error models count less. These weights come from the **training** folds only.
+
+```{webr}
+w_inv <- (1 / cv_rmse) / sum(1 / cv_rmse)
+round(w_inv, 3)
+
+weighted <- as.numeric(test_pred %*% w_inv)
+round(c(equal_weights = rmse(ens), inverse_rmse_weights = rmse(weighted),
+        best_single = min(apply(test_pred, 2, rmse))), 1)
+```
+
+Inverse-RMSE weights help (57.2 down to 50.5). But the weights are too even. `lm` (RMSE 107) still gets 12% of the weight, because 1/107 is only about twice as small as 1/46. So the weighted average is still **worse than the best single model**.
+
+Lecture 11 warned about this. Including weak models raises the average risk more than it raises the diversity.
+
+### Try it yourself: average only the good models
+
+What if we average only the *best* models? Fill in the blanks to average the predictions of the two models with the lowest cross-validated RMSE. Then try three models, and all five.
+
+```{webr}
+#| exercise: ex_topk
+# the names of the models, best (lowest CV RMSE) first
+ranked <- names(sort(cv_rmse))
+ranked
+
+chosen <- ranked[1:______]               # try 2, then 3, then 5
+avg_top <- rowMeans(test_pred[, chosen, drop = FALSE])
+round(rmse(avg_top), 1)
+```
+
+With two models (`gbm` and `rf`) the average has a test RMSE of about 41.7. It **beats the best single model** (44.0). Adding the third model (`tree`) makes it worse again. Averaging helps when the members are accurate *and* different.
+
+## Part 5: Stacking by hand
+
+Choosing "the top two" by looking at the results is a manual decision, and we made it after seeing the test performance. Stacking makes the choice automatically and fairly. We follow the five steps from the lecture.
+
+1. Split the training data into folds. *(done: `folds`)*
+2. Train each base model on all but one fold. *(done inside `train()`)*
+3. Predict the held-out fold with each model. *(done: `savePredictions`)*
+4. Repeat until every training hour has a cross-validated prediction from each model. *(this is `oof`)*
+5. Train a **meta-learner** that predicts the outcome from these cross-validated predictions.
+
+Steps 1 to 4 are already done. Our meta-learner is a **non-negative least squares** regression (`method = "nnls"`): the outcome is regressed on the five columns of `oof`, and the coefficients are forced to be zero or positive. Non-negative weights cannot cancel each other, so they are easy to read.
+
+```{webr}
+meta <- train(x = as.data.frame(oof), y = train$bikers,
+              method = "nnls", trControl = trainControl(method = "none"))
+
+w_stack <- meta$finalModel$x          # the stacking weights
+round(w_stack, 3)
+round(sum(w_stack), 3)
+```
+
+Read the weights. **`rf` gets 0.44, `gbm` gets 0.57, and the other three get 0.** The meta-learner dropped `lm`, `knn` and `tree` by itself. The weights add to about 1, so this is a weighted average that was learned from data.
+
+Now the test set. To predict a new hour, we take each base model's prediction and combine them with the stacking weights:
+
+```{webr}
+stack_pred <- as.numeric(test_pred %*% w_stack)
+
+results <- c(apply(test_pred, 2, rmse),
+             equal_average = rmse(ens),
+             inverse_rmse_average = rmse(weighted),
+             stack = rmse(stack_pred))
+round(sort(results), 1)
+```
+
+The stack has the lowest test RMSE of all (41.6, against 44.0 for the best single model). This is a gain of about 5%.
+
+::: {.callout-note}
+## Is a 5% gain a lot?
+
+It depends on the cost of an error. For one test set it is a clear gain, but it is not dramatic, and most of it came from averaging `rf` and `gbm`. The simple average of those two (Part 4 exercise) reached 41.7. What stacking adds is that it found the two models by itself, on the training data, with no peeking at the test set.
+:::
+
+## Part 6: Why out-of-fold predictions?
+
+Why not stack the models' predictions on the data they were trained on? That is simpler: no folds are needed. Let's try, and compare.
+
+```{webr}
+in_sample <- sapply(models, predict, newdata = train)     # predictions on the training hours
+meta_bad  <- train(x = as.data.frame(in_sample), y = train$bikers,
+                   method = "nnls", trControl = trainControl(method = "none"))
+
+round(meta_bad$finalModel$x, 3)
+round(c(stack_in_sample = rmse(as.numeric(test_pred %*% meta_bad$finalModel$x)),
+        stack_out_of_fold = rmse(stack_pred)), 1)
+```
+
+The in-sample stack puts **all the weight on `rf`** (1.01), and its test RMSE is 45.3. That is worse than the correct stack (41.6), and no better than `gbm` alone.
+
+The reason is the random forest. On its own training data it is almost perfect: each tree has seen those hours, so the forest's in-sample predictions are much too good. The meta-learner sees this and trusts the forest completely. On new hours, the forest is no better than boosting. The out-of-fold predictions are honest, so the meta-learner sees the real quality of each model.
+
+**Rule: the meta-learner must learn from predictions the base models made on data they did not train on.** This is the point of steps 1 to 4 in the lecture.
+
+## Part 7: Is one split enough?
+
+All the numbers above come from one sample of 3,000 hours and one train/test split. Could we be lucky? We ran the code in this lab eight times offline, each time with a different random sample of 3,000 hours (the seeds 42 and 1 to 7 for the sample). Average test RMSE over the eight runs:
+
+| Method | Mean test RMSE | Beats the best single model in |
+|---|---|---|
+| Best single model (usually `gbm`) | 44.2 | — |
+| Equal-weight average of all five | 57.1 | 0 of 8 runs |
+| Inverse-RMSE weighted average | 50.8 | 0 of 8 runs |
+| Average of `rf` and `gbm` only | 42.0 | 8 of 8 runs |
+| Stack (non-negative weights) | 42.1 | 8 of 8 runs |
+
+The pattern repeats in every run. Averaging *all* the models never wins. Averaging the *good and different* models, or stacking, always wins by about 5%. The stack gave `lm` a weight of exactly 0 in all eight runs and put its weight on `rf` (average 0.45) and `gbm` (average 0.57).
+
+## Try it yourself: add a bad model
+
+Lecture 11 said that including a very bad model to "increase diversity" does not help. Test it. A very bad model is one that ignores the features and always predicts the training mean. Add it to the stack and to the equal-weight average of `rf` and `gbm`:
+
+```{webr}
+#| exercise: ex_bad_model
+bad <- rep(mean(train$bikers), nrow(test))          # always predicts the training mean
+
+# 1) add the bad model to the equal-weight average of rf and gbm
+good_two <- test_pred[, c("rf", "gbm")]
+round(c(rf_gbm = rmse(rowMeans(good_two)),
+        rf_gbm_plus_bad = rmse(rowMeans(cbind(good_two, ______)))), 1)
+
+# 2) give the stack the bad model as a sixth column. What weight does it get?
+oof_bad  <- cbind(oof, bad = mean(train$bikers))
+meta_bad <- train(x = as.data.frame(oof_bad), y = train$bikers,
+                  method = "nnls", trControl = trainControl(method = "none"))
+round(meta_bad$finalModel$x, 3)
+```
+
+The equal-weight average gets much worse: the test RMSE of `rf` and `gbm` goes from 41.7 to 61.8 when we add the bad model. The stack gives the bad model weight exactly 0 and keeps the weights on `rf` (0.44) and `gbm` (0.57). It sees, from the out-of-fold predictions, that the bad model carries no information. A fixed average cannot do that.
+
+## Things worth remembering
+
+- **Diversity is necessary, not sufficient.** Ensemble risk equals the average member's risk minus diversity. So the ensemble is never worse than the *average* member. It can be worse than the *best* member.
+- **An unweighted average pays for weak members.** Here, averaging all five models was much worse than the best single model.
+- **Stacking chooses the weights from data.** It found that `rf` and `gbm` carry the signal and put weight 0 on the rest.
+- **Train the meta-learner on out-of-fold predictions.** In-sample predictions reward models that overfit, such as a random forest.
+- **The gain is real and modest.** About 5% lower RMSE here. The result held in all eight repeated runs, but we should not expect big gains when one family of models already fits well.
+- **Judge every ensemble on data it never saw.** A comparison of an ensemble's in-sample error with other models' cross-validated error is not fair.
+
+## References
+
+Phillips, R. V., van der Laan, M. J., Lee, H., and Gruber, S. (2023). Practical considerations for specifying a super learner. *International Journal of Epidemiology*, 52(4), 1276–1285.
+
+Krogh, A., and Vedelsby, J. (1995). Neural network ensembles, cross validation, and active learning. *Advances in Neural Information Processing Systems*, 7.
+
+James, G., Witten, D., Hastie, T., and Tibshirani, R. (2021). *An Introduction to Statistical Learning* (2nd ed.), §8.2.
+
+Fanaee-T, H., and Gama, J. (2014). Event labeling combining ensemble detectors and background knowledge. *Progress in Artificial Intelligence*, 2, 113–127. (Source of the bike-share data, via the `ISLR2` package.)

@@ -6,7 +6,6 @@ project:
     - "!_solutions/**"
     - "!.claude/**"
     - "!lectures/07-clustering-kmeans/code/class7_lab1.qmd"
-    - "!lectures/11-ensemble/code/**"
     - "!lectures/12-hyptest/**"
   resources:
     - "lectures/01-intro/slides_clean.pdf"
@@ -42,6 +41,7 @@ project:
     - "lectures/10-trees/slides_annotated.pdf"
     - "lectures/10-trees/code/data/**"
     - "lectures/11-ensemble/slides_clean.pdf"
+    - "lectures/11-ensemble/code/data/**"
     # HW1 materials (released Sep 11) — the hw1.qmd download links point here.
     - "assignments/hw1/**"
     # HW2 materials (released Sep 25) — the hw2.qmd download links point here.
