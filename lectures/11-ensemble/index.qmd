@@ -1,0 +1,16 @@
+---
+title: "Ensemble learning"
+subtitle: "Model averaging and SuperLearner"
+date: "Nov 20, 2026"
+date-format: long
+---
+
+Why combining models helps: ensemble risk equals average risk minus diversity; model averaging with weights; SuperLearner (stacking) with cross-validated predictions and a meta-learner. Bagging, random forests and boosting (Lecture 10) are the tree-based members of this family.
+
+📖 **Assigned reading:** ISLR §8.2
+
+---
+
+## 📊 Slides
+
+- 🖥️ [Clean slides](slides_clean.pdf)

@@ -5,17 +5,21 @@ subtitle: "Decision trees; Ensemble learning"
 
 ## Materials
 
-*Materials TBD.*
+- 📝 [Template (.Rmd)](hw5/assignment5_blank.Rmd) — start here; the code is written, you interpret the results
+- 📄 [Assignment (PDF)](hw5/assignment5_blank.pdf) — readable version of the questions, with the output
+- 📊 [Data (assign3_data.csv)](hw5/assign3_data.csv) — same data as Assignments 3 and 4, Part B
+
+This is a short assignment: two theory problems (20 points each) and ten results to interpret (6 points each).
 
 ## Instructions
 
 Open the R Markdown template, knit it once to confirm your environment is set up, and complete each problem in the appropriate section. Submit a knitted PDF (and optionally the `.Rmd` source) via Canvas before the deadline.
 
 ::: {.callout-important}
-Remember to set `eval = TRUE` below when compiling the report.
+Do not change the provided code. Knit once, read each result, and write your interpretation in the space below it.
 :::
 
 ::: {.callout-tip}
 ## Reproducibility
-Set a random seed at the top of your `.Rmd` so your simulation results don't change between knits. Use `set.seed(42)`, as the assignment asks.
+The template sets `set.seed(42)` for you, so your output should match the PDF.
 :::

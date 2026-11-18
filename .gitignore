@@ -24,7 +24,6 @@ quizzes/
 /QUIZ_REDESIGN_HANDOFF.md
 
 # Homework materials + instructor setup sheet — local until released
-/assignments/hw5/
 /assignments/canvas-setup.md
 /assignments/canvas-setup.html
 /assignments/canvas-setup_files/
@@ -176,7 +175,11 @@ _solutions/
 /lectures/10-trees/code/class10_lab*.html
 /lectures/10-trees/code/class10_lab*_files/
 /lectures/10-trees/code/Rplots.pdf
-/lectures/11-ensemble/
+# Lecture 11 is published: clean slides only for now. The lab, annotated
+# slides and readings stay local until they are released.
+/lectures/11-ensemble/slides_annotated.pdf
+/lectures/11-ensemble/readings/
+/lectures/11-ensemble/code/
 /lectures/12-hyptest/
 
 # Student submissions and grading records — local only, never publish
