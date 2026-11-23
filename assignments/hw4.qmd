@@ -9,6 +9,7 @@ subtitle: "Clustering II; Dimensionality reduction"
 - 📄 [Assignment (PDF)](hw4/assignment4_blank.pdf) — readable version of the questions
 - 📊 [Data — Part A (penguins.csv)](hw4/penguins.csv) — same data as Assignment 3, Part B
 - 📊 [Data — Part B (assign3_data.csv)](hw4/assign3_data.csv) — same data as Assignment 3, Part A
+- ✅ [Solutions (PDF)](hw4/assignment4_solutions.pdf)
 
 ## Instructions
 
